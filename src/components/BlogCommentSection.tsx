@@ -24,6 +24,7 @@ export default function BlogCommentSection({ postId }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -115,10 +116,23 @@ export default function BlogCommentSection({ postId }: Props) {
         </div>
       )}
 
-      {/* Comment form */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6">
-        <h3 className="text-sm font-extrabold text-[#0F172A] mb-5">Yorum Yap</h3>
+      {/* Comment form — collapsible */}
+      <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setFormOpen(!formOpen)}
+          className="w-full px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-[#F8FAFC] transition-colors"
+        >
+          <h3 className="text-sm font-extrabold text-[#0F172A]">Yorum Yap</h3>
+          <svg
+            className={`w-5 h-5 text-[#0F172A]/30 transition-transform duration-200 shrink-0 ${formOpen ? "rotate-180" : ""}`}
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
 
+        <div className={`px-6 pb-6 transition-all duration-300 ${formOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0 overflow-hidden !pb-0"}`}>
         {success ? (
           <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium px-4 py-4 rounded-xl text-center">
             ✅ Yorumunuz alındı! Moderatör onayından sonra yayınlanacaktır.
@@ -182,6 +196,7 @@ export default function BlogCommentSection({ postId }: Props) {
             </button>
           </form>
         )}
+        </div>
       </div>
     </section>
   );

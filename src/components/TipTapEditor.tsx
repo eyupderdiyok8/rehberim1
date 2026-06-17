@@ -34,8 +34,9 @@ export default function TipTapEditor({ content, onChange, placeholder }: Props) 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
+    immediatelyRender: true,
     extensions: [
-      StarterKit.configure({ heading: { levels: [2, 3] } }),
+      StarterKit.configure({ heading: { levels: [2, 3] }, underline: false, link: false }),
       Underline,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Image.configure({ inline: false, allowBase64: false }),
@@ -55,7 +56,7 @@ export default function TipTapEditor({ content, onChange, placeholder }: Props) 
     editorProps: {
       attributes: {
         class:
-          "prose prose-slate max-w-none min-h-[400px] px-6 py-5 focus:outline-none text-[#0F172A] text-sm leading-relaxed",
+          "prose prose-slate max-w-none min-h-[400px] max-h-[600px] overflow-y-auto px-6 py-5 focus:outline-none text-[#0F172A] text-sm leading-relaxed",
       },
     },
   });

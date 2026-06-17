@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import LogoUploader from "@/components/LogoUploader";
+import CoverUploader from "@/components/CoverUploader";
 
 interface City {
   id: string;
@@ -13,6 +14,12 @@ interface District {
   id: string;
   name: string;
   city_id: string;
+}
+
+interface Service {
+  id: string;
+  name: string;
+  slug: string;
 }
 
 interface Firm {
@@ -28,6 +35,7 @@ interface Firm {
   district_id: string | null;
   description: string | null;
   logo_url: string | null;
+  cover_image_url: string | null;
   is_verified: boolean;
   is_premium: boolean;
   premium_until: string | null;
@@ -41,6 +49,8 @@ export default function AdminFirms() {
   const [firms, setFirms] = useState<Firm[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -60,6 +70,7 @@ export default function AdminFirms() {
     district_id: "",
     description: "",
     logo_url: "",
+    cover_image_url: "",
     is_verified: false,
     is_premium: false,
     premium_until: "",
@@ -92,6 +103,9 @@ export default function AdminFirms() {
 
       const { data: districtsData } = await supabase.from("districts").select("id, name, city_id").order("name");
       setDistricts(districtsData || []);
+
+      const { data: servicesData } = await supabase.from("services").select("id, name, slug").order("sort_order");
+      setServices(servicesData || []);
     } catch (err: any) {
       console.error("Veri yuklenirken hata:", err);
       setError("Veriler yüklenemedi: " + err.message);
@@ -100,7 +114,7 @@ export default function AdminFirms() {
     }
   };
 
-  const handleOpenEdit = (firm: Firm) => {
+  const handleOpenEdit = async (firm: Firm) => {
     setEditingFirm(firm);
     setIsAdding(false);
     setFormData({
@@ -114,9 +128,16 @@ export default function AdminFirms() {
       district_id: firm.district_id || "",
       description: firm.description || "",
       logo_url: firm.logo_url || "",
+      cover_image_url: firm.cover_image_url || "",
       premium_until: firm.premium_until ? firm.premium_until.split("T")[0] : "",
       user_id: firm.user_id || "",
     });
+    // Load firm's current services
+    const { data: firmSvcs } = await supabase
+      .from("firm_services")
+      .select("service_id")
+      .eq("firm_id", firm.id);
+    setSelectedServices((firmSvcs || []).map((s: { service_id: string }) => s.service_id));
     setError("");
     setSuccess("");
   };
@@ -136,6 +157,7 @@ export default function AdminFirms() {
       district_id: "",
       description: "",
       logo_url: "",
+      cover_image_url: "",
       is_verified: false,
       is_premium: false,
       premium_until: "",
@@ -144,8 +166,15 @@ export default function AdminFirms() {
       review_count: 0,
       user_id: "",
     });
+    setSelectedServices([]);
     setError("");
     setSuccess("");
+  };
+
+  const toggleService = (serviceId: string) => {
+    setSelectedServices((prev) =>
+      prev.includes(serviceId) ? prev.filter((id) => id !== serviceId) : [...prev, serviceId]
+    );
   };
 
   const handleInputChange = (
@@ -195,6 +224,7 @@ export default function AdminFirms() {
       district_id: formData.district_id || null,
       description: formData.description || null,
       logo_url: formData.logo_url || null,
+      cover_image_url: formData.cover_image_url || null,
       is_verified: formData.is_verified ?? false,
       is_premium: formData.is_premium ?? false,
       premium_until: formData.is_premium && formData.premium_until ? new Date(formData.premium_until).toISOString() : null,
@@ -205,20 +235,36 @@ export default function AdminFirms() {
     };
 
     try {
+      let firmId: string | null = null;
       if (isAdding) {
-        const { error: insErr } = await supabase.from("firms").insert(cleanData);
+        const { data: inserted, error: insErr } = await supabase.from("firms").insert(cleanData).select("id").single();
         if (insErr) throw insErr;
+        firmId = inserted.id;
         setSuccess("Firma başarıyla eklendi.");
-        setIsAdding(false);
       } else if (editingFirm) {
         const { error: updErr } = await supabase
           .from("firms")
           .update(cleanData)
           .eq("id", editingFirm.id);
         if (updErr) throw updErr;
+        firmId = editingFirm.id;
         setSuccess("Firma başarıyla güncellendi.");
-        setEditingFirm(null);
       }
+
+      // Save firm_services
+      if (firmId) {
+        // Delete old services
+        await supabase.from("firm_services").delete().eq("firm_id", firmId);
+        // Insert selected services
+        if (selectedServices.length > 0) {
+          const inserts = selectedServices.map((sid) => ({ firm_id: firmId, service_id: sid }));
+          const { error: svcErr } = await supabase.from("firm_services").insert(inserts);
+          if (svcErr) throw svcErr;
+        }
+      }
+
+      setIsAdding(false);
+      setEditingFirm(null);
       fetchData();
     } catch (err: any) {
       setError("Kayıt hatası: " + err.message);
@@ -420,6 +466,16 @@ export default function AdminFirms() {
                 </div>
               </div>
 
+              {/* Cover Image */}
+              <div>
+                <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">Kapak Fotoğrafı</label>
+                <CoverUploader
+                  currentUrl={formData.cover_image_url}
+                  firmName={formData.name}
+                  onUpload={(url) => setFormData((prev) => ({ ...prev, cover_image_url: url || null }))}
+                />
+              </div>
+
               <div>
                 <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">Açıklama</label>
                 <textarea
@@ -442,6 +498,34 @@ export default function AdminFirms() {
                   placeholder="Tam adres..."
                   className="w-full px-3 py-2 border border-[#E2E8F0] rounded-lg text-sm focus:outline-none focus:ring-[#0EA5E9] focus:border-[#0EA5E9]"
                 />
+              </div>
+
+              {/* Services */}
+              <div>
+                <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-3">Hizmetler</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {services.map((svc) => (
+                    <label
+                      key={svc.id}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all ${
+                        selectedServices.includes(svc.id)
+                          ? "border-[#0EA5E9] bg-[#0EA5E9]/5 text-[#0EA5E9]"
+                          : "border-[#E2E8F0] text-[#0F172A]/70 hover:border-[#0EA5E9]/40"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedServices.includes(svc.id)}
+                        onChange={() => toggleService(svc.id)}
+                        className="rounded text-[#0EA5E9] focus:ring-[#0EA5E9] w-3.5 h-3.5"
+                      />
+                      {svc.name}
+                    </label>
+                  ))}
+                </div>
+                {selectedServices.length === 0 && (
+                  <p className="text-[10px] text-[#0F172A]/40 mt-2">En az bir hizmet seçin</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

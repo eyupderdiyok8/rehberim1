@@ -122,19 +122,33 @@ export default function FirmReviewForm({ firmId, firmName }: Props) {
     }
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="border border-[#E2E8F0] rounded-lg overflow-hidden mt-4">
-      {/* Header */}
-      <div className="px-6 py-4 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-        <h3 className="font-extrabold text-sm text-[#0F172A]">
-          {firmName} için Yorum Yaz
-        </h3>
-        <p className="text-[11px] text-[#0F172A]/45 mt-0.5">
-          Deneyiminizi paylaşın — yorumlar moderatör onayıyla yayınlanır.
-        </p>
-      </div>
+      {/* Header — clickable toggle */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-6 py-4 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-between cursor-pointer hover:bg-[#F1F5F9] transition-colors"
+      >
+        <div className="text-left">
+          <h3 className="font-extrabold text-sm text-[#0F172A]">
+            {firmName} için Yorum Yaz
+          </h3>
+          <p className="text-[11px] text-[#0F172A]/45 mt-0.5">
+            Deneyiminizi paylaşın — yorumlar moderatör onayıyla yayınlanır.
+          </p>
+        </div>
+        <svg
+          className={`w-5 h-5 text-[#0F172A]/30 transition-transform duration-200 shrink-0 ml-3 ${isOpen ? "rotate-180" : ""}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
 
-      <div className="px-6 py-6">
+      <div className={`px-6 py-6 transition-all duration-300 ${isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0 overflow-hidden !py-0 !px-6"}`}>
         {success ? (
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl">

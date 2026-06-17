@@ -144,7 +144,10 @@ body {
   pointer-events: none;
   cursor: col-resize;
 }
-.ProseMirror.resize-cursor { cursor: col-resize; }
+.ProseMirror.resize-cursor,
+.ProseMirror.resize-cursor * {
+  cursor: col-resize !important;
+}
 
 /* TipTap editör placeholder */
 .tiptap p.is-editor-empty:first-child::before {
@@ -156,8 +159,23 @@ body {
 }
 
 /* ── TipTap Editör İçerik Stilleri (.ProseMirror) ── */
+.tiptap {
+  cursor: text !important;
+}
 .ProseMirror {
   outline: none;
+  cursor: text !important;
+  caret-color: #0f172a;
+}
+.ProseMirror,
+.ProseMirror * {
+  cursor: text !important;
+}
+.ProseMirror a {
+  cursor: pointer !important;
+}
+.ProseMirror img {
+  cursor: default !important;
 }
 .ProseMirror h2 {
   font-size: 1.5rem;

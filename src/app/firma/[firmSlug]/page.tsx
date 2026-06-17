@@ -208,7 +208,15 @@ export default async function FirmProfilePage({ params }: PageParams) {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Header card */}
-            <div className="border border-[#E2E8F0] rounded-xl overflow-hidden bg-white shadow-sm">
+            <div className={`border rounded-xl overflow-hidden bg-white shadow-sm ${
+              firm.is_premium
+                ? "border-amber-200/60 ring-1 ring-amber-100 shadow-amber-100/30"
+                : "border-[#E2E8F0]"
+            }`}>
+              {/* Premium Gold Accent Bar */}
+              {firm.is_premium && (
+                <div className="h-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500" />
+              )}
               {/* Cover Image */}
               {firm.cover_image_url ? (
                 <div className="w-full h-32 sm:h-48 relative bg-[#F8FAFC]">
@@ -248,8 +256,8 @@ export default async function FirmProfilePage({ params }: PageParams) {
 
                   <div className="flex gap-2 flex-wrap sm:justify-end pb-2">
                     {firm.is_premium && (
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-[#0284C7] bg-[#F0F9FF] px-2.5 py-1.5 border border-[#BAE6FD]">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wide text-amber-700 bg-gradient-to-r from-amber-50 to-yellow-50 px-3 py-1.5 border border-amber-200 shadow-sm shadow-amber-100/50">
+                        <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                         Premium Üye
                       </span>
                     )}
@@ -288,13 +296,37 @@ export default async function FirmProfilePage({ params }: PageParams) {
                     {firm.description}
                   </p>
                 )}
+
+                {/* Premium Trust Strip */}
+                {firm.is_premium && (
+                  <div className="mt-5 pt-5 border-t border-amber-100 grid grid-cols-3 gap-3">
+                    <div className="text-center">
+                      <p className="text-lg font-black text-amber-600">{reviewsList.length}</p>
+                      <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider">Müşteri Yorumu</p>
+                    </div>
+                    <div className="text-center border-x border-amber-100">
+                      <p className="text-lg font-black text-amber-600">{avgRating.toFixed(1)}</p>
+                      <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider">Ortalama Puan</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-lg font-black text-amber-600">✓</p>
+                      <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider">Onaylı Firma</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Services & Prices */}
             {firm.firm_services && firm.firm_services.length > 0 && (
-              <div className="border border-[#E2E8F0] rounded-lg overflow-hidden">
-                <div className="px-6 py-4 bg-[#F8FAFC] border-b border-[#E2E8F0]">
+              <div className={`border rounded-lg overflow-hidden ${
+                firm.is_premium ? "border-amber-200/60" : "border-[#E2E8F0]"
+              }`}>
+                <div className={`px-6 py-4 border-b ${
+                  firm.is_premium
+                    ? "bg-gradient-to-r from-amber-50/50 to-transparent border-amber-200/60"
+                    : "bg-[#F8FAFC] border-[#E2E8F0]"
+                }`}>
                   <h2 className="font-extrabold text-sm text-[#0F172A]">
                     Sunulan Hizmetler ve Fiyat Aralıkları
                   </h2>
@@ -323,8 +355,14 @@ export default async function FirmProfilePage({ params }: PageParams) {
             )}
 
             {/* Reviews */}
-            <div className="border border-[#E2E8F0] rounded-lg overflow-hidden">
-              <div className="px-6 py-4 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-between">
+            <div className={`border rounded-lg overflow-hidden ${
+              firm.is_premium ? "border-amber-200/60" : "border-[#E2E8F0]"
+            }`}>
+              <div className={`px-6 py-4 border-b flex items-center justify-between ${
+                firm.is_premium
+                  ? "bg-gradient-to-r from-amber-50/50 to-transparent border-amber-200/60"
+                  : "bg-[#F8FAFC] border-[#E2E8F0]"
+              }`}>
                 <h2 className="font-extrabold text-sm text-[#0F172A]">
                   Müşteri Yorumları
                 </h2>
@@ -373,9 +411,9 @@ export default async function FirmProfilePage({ params }: PageParams) {
                         />
                       )}
                       {review.reply_body && (
-                        <div className="mt-3 ml-4 p-3.5 border-l-[3px] border-l-[#0EA5E9] bg-[#F8FAFC] rounded-r-lg space-y-1">
-                          <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider">
-                            Firma Yanıtı
+                        <div className="mt-3 ml-4 p-3.5 border-l-[3px] border-l-amber-400 bg-gradient-to-r from-amber-50/60 to-transparent rounded-r-lg space-y-1">
+                          <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">
+                            ⭐ Firma Yanıtı
                           </p>
                           <p className="text-sm text-[#0F172A]/75 leading-relaxed">
                             {review.reply_body}
@@ -415,9 +453,19 @@ export default async function FirmProfilePage({ params }: PageParams) {
           {/* ── RIGHT / CONTACT SIDEBAR ─────────────── */}
           <div className="space-y-4">
             {/* Contact card */}
-            <div className="border border-[#E2E8F0] rounded-lg overflow-hidden">
-              <div className="px-5 py-4 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                <h3 className="font-bold text-[15px] text-[#0F172A]">İletişim</h3>
+            <div className={`border rounded-lg overflow-hidden ${
+              firm.is_premium ? "border-amber-200/60" : "border-[#E2E8F0]"
+            }`}>
+              <div className={`px-5 py-4 border-b ${
+                firm.is_premium
+                  ? "bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200/60"
+                  : "bg-[#F8FAFC] border-[#E2E8F0]"
+              }`}>
+                <h3 className={`font-bold text-[15px] ${
+                  firm.is_premium ? "text-amber-800" : "text-[#0F172A]"
+                }`}>
+                  {firm.is_premium ? "⭐ İletişim" : "İletişim"}
+                </h3>
               </div>
               <div className="px-5 py-5 space-y-5">
                 {firm.phone && (
@@ -495,9 +543,9 @@ export default async function FirmProfilePage({ params }: PageParams) {
 
             {/* Google Maps (Premium) */}
             {firm.is_premium && firm.google_maps_url && (
-              <div className="border border-[#E2E8F0] rounded-lg overflow-hidden">
-                <div className="px-5 py-4 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                  <h3 className="font-extrabold text-sm text-[#0F172A]">Konum</h3>
+              <div className="border border-amber-200/60 rounded-lg overflow-hidden">
+                <div className="px-5 py-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-amber-200/60">
+                  <h3 className="font-extrabold text-sm text-amber-800">📍 Konum</h3>
                 </div>
                 <div className="aspect-video w-full">
                   <iframe

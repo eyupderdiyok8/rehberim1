@@ -47,7 +47,11 @@ export default function FirmCard({ firm, cityName }: FirmCardProps) {
   const ratingNum = Number(firm.rating);
 
   return (
-    <div className="bg-white border border-[#E2E8F0] rounded-lg hover:border-[#CBD5E1] hover:shadow-md transition-all duration-200 group overflow-hidden flex flex-col">
+    <div className={`bg-white rounded-lg hover:shadow-md transition-all duration-200 group overflow-hidden flex flex-col ${
+      firm.is_premium
+        ? "border-t-2 border-t-amber-400 border-l border-l-amber-100 border-r border-r-amber-100 border-b border-b-amber-100 shadow-amber-50 hover:shadow-amber-100/50"
+        : "border border-[#E2E8F0] hover:border-[#CBD5E1]"
+    }`}>
 
       <div className="p-5 flex-1 flex flex-col">
         {/* Logo + name row */}
@@ -70,8 +74,8 @@ export default function FirmCard({ firm, cityName }: FirmCardProps) {
             )}
           </div>
           {firm.is_premium && (
-            <span className="text-[11px] font-semibold text-[#0284C7] bg-[#F0F9FF] px-2 py-0.5 rounded shrink-0 mt-0.5">
-              Öne Çıkan
+            <span className="text-[10px] font-bold text-amber-700 bg-gradient-to-r from-amber-50 to-yellow-50 px-2 py-1 rounded border border-amber-200 shrink-0 mt-0.5 shadow-sm">
+              ⭐ Premium
             </span>
           )}
         </div>

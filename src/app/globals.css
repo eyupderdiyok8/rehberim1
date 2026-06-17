@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --primary-navy: #0f172a;
+  --accent-teal: #0ea5e9;
+}
+
+@theme {
+  --font-sans: var(--font-nunito), Arial, ui-sans-serif, system-ui, sans-serif;
+  --color-navy: var(--primary-navy);
+  --color-teal-accent: var(--accent-teal);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom horizontal scrollbar styling for a cleaner look */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* ── Blog İçerik Stilleri (TipTap HTML çıktısı) ── */
+.blog-content {
+  color: #1e293b;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  max-width: 100%;
+}
+.blog-content h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.blog-content h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
+}
+.blog-content p { margin-bottom: 1.25rem; }
+.blog-content a { color: #0ea5e9; text-decoration: underline; text-underline-offset: 3px; }
+.blog-content a:hover { color: #0284c7; }
+.blog-content strong { font-weight: 700; color: #0f172a; }
+.blog-content em { font-style: italic; }
+.blog-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+.blog-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+.blog-content li { margin-bottom: 0.375rem; }
+.blog-content blockquote {
+  border-left: 4px solid #0ea5e9;
+  padding: 0.75rem 1.25rem;
+  margin: 1.75rem 0;
+  background: #f0f9ff;
+  border-radius: 0 0.5rem 0.5rem 0;
+  color: #334155;
+  font-style: italic;
+}
+.blog-content code {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  padding: 0.15em 0.4em;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  color: #0f172a;
+}
+.blog-content pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+}
+.blog-content pre code { background: none; border: none; padding: 0; color: inherit; }
+.blog-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 1.75rem 0;
+  border: 1px solid #e2e8f0;
+}
+.blog-content hr { border: none; border-top: 1px solid #e2e8f0; margin: 2.5rem 0; }
+
+/* ── TipTap Tablo Stilleri ── */
+.blog-content table,
+.ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.75rem 0;
+  font-size: 0.875rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+.blog-content table td,
+.blog-content table th,
+.ProseMirror table td,
+.ProseMirror table th {
+  border: 1px solid #e2e8f0;
+  padding: 0.625rem 0.875rem;
+  vertical-align: top;
+  min-width: 100px;
+  position: relative;
+}
+.blog-content table th,
+.ProseMirror table th {
+  background: #f8fafc;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #0f172a;
+}
+.ProseMirror table td.selectedCell,
+.ProseMirror table th.selectedCell {
+  background: #e0f2fe;
+}
+/* Column resize handle */
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #0ea5e9;
+  pointer-events: none;
+  cursor: col-resize;
+}
+.ProseMirror.resize-cursor { cursor: col-resize; }
+
+/* TipTap editör placeholder */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  pointer-events: none;
+  float: left;
+  height: 0;
+}

@@ -1,0 +1,233 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+
+interface Firm {
+  id: string;
+  name: string;
+  is_premium: boolean;
+}
+
+export default function FirmPremium() {
+  const [firm, setFirm] = useState<Firm | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFirmData = async () => {
+      try {
+        setLoading(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { data: firmData, error: firmErr } = await supabase
+          .from("firms")
+          .select("id, name, is_premium")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        if (firmErr) throw firmErr;
+        if (firmData) {
+          setFirm(firmData);
+        }
+      } catch (err) {
+        console.error("Premium page error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFirmData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="w-8 h-8 border-4 border-[#0EA5E9] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!firm) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-sm text-[#0F172A]/50">Firma verileri yüklenemedi.</p>
+      </div>
+    );
+  }
+
+  // Already Premium view
+  if (firm.is_premium) {
+    return (
+      <div className="space-y-8 max-w-3xl">
+        {/* Title */}
+        <div>
+          <h1 className="text-2xl font-extrabold text-[#0F172A] tracking-tight">Premium Üyelik</h1>
+          <p className="text-xs text-[#0F172A]/50 font-semibold mt-0.5 uppercase tracking-wider">Ayrıcalıklı Paket Bilgileriniz</p>
+        </div>
+
+        {/* Success Card */}
+        <div className="bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-white border border-amber-200 rounded-2xl p-8 space-y-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-white shadow-md shadow-amber-500/20 shrink-0">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-extrabold text-[#0F172A]">Tebrikler, Premium Paketiniz Aktif!</h2>
+              <p className="text-xs text-[#0F172A]/60 mt-0.5">Su Arıtma Rehberi ayrıcalıklarının keyfini çıkarıyorsunuz.</p>
+            </div>
+          </div>
+
+          <div className="border-t border-amber-200/40 pt-6">
+            <h3 className="text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-4">Aktif Özellikleriniz:</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { title: "Öncelikli Listeleme", desc: "Şehir, ilçe ve hizmet sayfalarında en üst sırada çıkarsınız." },
+                { title: "Reklamsız Profil Sayfası", desc: "Profil sayfanızda rakip firmaların reklamları gizlenir." },
+                { title: "Yorum Yanıtlama Yetkisi", desc: "Müşterilerinizin onaylanmış yorumlarına doğrudan cevap yazabilirsiniz." },
+                { title: "PREMİUM Üye Rozeti", desc: "Kartınızda ve profilinizde altın renkli ⭐ rozet gösterilir." },
+                { title: "Gelişmiş İletişim Butonları", desc: "Telefon ve yeşil renkli doğrudan WhatsApp butonları aktiftir." },
+                { title: "Harita ve Detay Desteği", desc: "Adresinizi harita ve detaylarla zenginleştirirsiniz." }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-3 bg-white p-4 border border-amber-100 rounded-xl">
+                  <span className="text-emerald-500 shrink-0 font-bold">✓</span>
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-bold text-[#0F172A]">{item.title}</p>
+                    <p className="text-[10px] text-[#0F172A]/55 font-medium leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Not Premium - Show Upsell / Pricing page
+  return (
+    <div className="space-y-8 max-w-4xl">
+      {/* Title */}
+      <div>
+        <h1 className="text-2xl font-extrabold text-[#0F172A] tracking-tight">Premium Üyelik</h1>
+        <p className="text-xs text-[#0F172A]/50 font-semibold mt-0.5 uppercase tracking-wider">Firma Profilinizi Yükseltin ve Satışlarınızı Artırın</p>
+      </div>
+
+      {/* Comparison Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        
+        {/* Comparison Table Card */}
+        <div className="lg:col-span-2 bg-white border border-[#E2E8F0] rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+          <div className="px-6 py-5 bg-[#F8FAFC] border-b border-[#E2E8F0]">
+            <h3 className="font-extrabold text-sm text-[#0F172A] uppercase tracking-wide">Üyelik Modelleri Karşılaştırması</h3>
+          </div>
+          
+          <div className="divide-y divide-[#E2E8F0] flex-1">
+            {[
+              {
+                feature: "Arama Sonuçlarında Sıralama",
+                std: "Standart (En altta listelenir)",
+                prem: "⚡ Öncelikli (En üst sırada listelenir)",
+                isHighlight: true
+              },
+              {
+                feature: "Profil Sayfasında Rakip Reklamları",
+                std: "Gösterilir (Kullanıcı kaybedebilirsiniz)",
+                prem: "🚫 Reklamsız (Tamamen temiz profil)",
+                isHighlight: false
+              },
+              {
+                feature: "Yorum Yanıtlama Yetkisi",
+                std: "Kapalı (Yorumları yanıtlayamazsınız)",
+                prem: "💬 Açık (Müşteri sorularına yanıt)",
+                isHighlight: true
+              },
+              {
+                feature: "İletişim Butonları Görünümü",
+                std: "Temel, sönük görünümlü düğmeler",
+                prem: "🟢 Vurgulu yeşil WhatsApp ve Hızlı Arama",
+                isHighlight: false
+              },
+              {
+                feature: "Firma Kartı Rozetleri",
+                std: "Rozetsiz standart kart",
+                prem: "⭐ 'PREMİUM Üye' Altın Rozeti",
+                isHighlight: false
+              }
+            ].map((row, idx) => (
+              <div key={idx} className="p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="text-xs font-bold text-[#0F172A]">{row.feature}</div>
+                <div className="text-xs text-[#0F172A]/50 font-semibold sm:text-center">{row.std}</div>
+                <div className={`text-xs font-bold sm:text-center ${row.isHighlight ? "text-[#0EA5E9]" : "text-[#0F172A]/80"}`}>{row.prem}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Pricing & Upgrade CTA Card */}
+        <div className="bg-white border border-amber-200 rounded-2xl p-6 shadow-md shadow-amber-500/5 flex flex-col justify-between space-y-6 relative overflow-hidden">
+          {/* Badge */}
+          <div className="absolute top-0 right-0 bg-amber-500 text-white font-black text-[9px] uppercase tracking-widest px-3 py-1 rounded-bl-lg">
+            Popüler
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <span className="text-[10px] font-black text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                Yıllık Paket
+              </span>
+              <h3 className="text-xl font-extrabold text-[#0F172A] mt-2">Premium Üye</h3>
+              <p className="text-[10px] text-[#0F172A]/45 font-medium leading-relaxed mt-1">
+                Tüm Premium ayrıcalıklarından 1 yıl boyunca yararlanın.
+              </p>
+            </div>
+
+            <div className="flex items-baseline gap-1 pt-2">
+              <span className="text-3xl font-black text-[#0F172A] tracking-tight">₺1.490</span>
+              <span className="text-xs font-bold text-[#0F172A]/40 uppercase">/ Yıl</span>
+            </div>
+
+            <div className="border-t border-[#E2E8F0] pt-4 space-y-2 text-[10px] text-[#0F172A]/60 font-semibold">
+              <p className="flex items-center gap-1.5">
+                <span className="text-amber-500">★</span> %300 Daha Fazla Müşteri Erişimi
+              </p>
+              <p className="flex items-center gap-1.5">
+                <span className="text-amber-500">★</span> 7/24 Teknik Destek & Düzenleme
+              </p>
+              <p className="flex items-center gap-1.5">
+                <span className="text-amber-500">★</span> Hızlı Onay ve İndeksleme
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {/* WhatsApp CTA */}
+            <a
+              href="https://wa.me/905551234567?text=Merhaba%2C%20firma%20profilimi%20Premium%20%C3%BCyeli%C4%9Fe%20y%C3%BCkseltmek%20istiyorum."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-[#25D366] hover:bg-[#20BA56] border-none text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-green-500/10 cursor-pointer"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.444 5.703 1.445h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              WhatsApp ile Yükselt
+            </a>
+
+            {/* Email CTA */}
+            <a
+              href="mailto:eyupder@gmail.com?subject=Premium%20%C3%9Cyelik%20Talebi%20-%20Su%20Ar%C4%B1tma%20Rehberi"
+              className="w-full flex items-center justify-center py-2.5 border border-[#0F172A] hover:bg-[#0F172A] hover:text-white text-[#0F172A] text-xs font-bold rounded-xl transition-all cursor-pointer"
+            >
+              E-posta ile Talep Gönder
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+

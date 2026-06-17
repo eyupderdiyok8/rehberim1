@@ -11,6 +11,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
+  const [pendingCounts, setPendingCounts] = useState<{
+    firms: number;
+    reviews: number;
+    blogComments: number;
+  }>({ firms: 0, reviews: 0, blogComments: 0 });
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -25,6 +30,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     };
     checkAdmin();
   }, [router]);
+
+  // Fetch pending approval counts
+  useEffect(() => {
+    const fetchPendingCounts = async () => {
+      const [
+        { count: firmsCount },
+        { count: reviewsCount },
+        { count: blogCommentsCount },
+      ] = await Promise.all([
+        supabase.from("firms").select("id", { count: "exact", head: true }).eq("is_active", false),
+        supabase.from("reviews").select("id", { count: "exact", head: true }).eq("is_approved", false),
+        supabase.from("blog_comments").select("id", { count: "exact", head: true }).eq("is_approved", false),
+      ]);
+      setPendingCounts({
+        firms: firmsCount ?? 0,
+        reviews: reviewsCount ?? 0,
+        blogComments: blogCommentsCount ?? 0,
+      });
+    };
+    if (!loading) fetchPendingCounts();
+    // Refresh every 60 seconds
+    const interval = setInterval(fetchPendingCounts, 60000);
+    return () => clearInterval(interval);
+  }, [loading]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -46,6 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: "Kontrol Paneli",
       href: "/panel/admin",
+      badge: 0,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
@@ -55,6 +85,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: "Firmaları Yönet",
       href: "/panel/admin/firms",
+      badge: pendingCounts.firms,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -64,6 +95,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: "Yorum Onay Sırası",
       href: "/panel/admin/reviews",
+      badge: pendingCounts.reviews,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -73,6 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: "Reklam Bannerları",
       href: "/panel/admin/banners",
+      badge: 0,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -82,6 +115,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: "Blog Yazıları",
       href: "/panel/admin/blog",
+      badge: 0,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -91,6 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: "Blog Yorumları",
       href: "/panel/admin/blog/yorumlar",
+      badge: pendingCounts.blogComments,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
@@ -100,6 +135,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: "İstatistikler",
       href: "/panel/admin/stats",
+      badge: 0,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -109,6 +145,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: "SEO & Sayfalar",
       href: "/panel/admin/seo",
+      badge: 0,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
@@ -161,7 +198,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 }`}
               >
                 {item.icon}
-                {item.name}
+                <span className="flex-1">{item.name}</span>
+                {item.badge > 0 && (
+                  <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center px-1.5 text-[10px] font-black text-white bg-red-500 rounded-full shadow-sm shadow-red-500/30">
+                    {item.badge}
+                  </span>
+                )}
               </a>
             );
           })}

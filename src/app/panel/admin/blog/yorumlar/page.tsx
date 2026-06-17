@@ -11,6 +11,8 @@ interface Comment {
   body: string;
   is_approved: boolean;
   created_at: string;
+  reply_body: string | null;
+  replied_at: string | null;
   blog_posts: { title: string; slug: string } | null;
 }
 
@@ -21,6 +23,8 @@ export default function AdminBlogComments() {
   const [actionId, setActionId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
   const [editBody, setEditBody] = useState("");
+  const [replyId, setReplyId] = useState<string | null>(null);
+  const [replyBody, setReplyBody] = useState("");
   const [msg, setMsg] = useState({ type: "", text: "" });
 
   const fetchComments = async () => {
@@ -82,6 +86,33 @@ export default function AdminBlogComments() {
     setActionId(null);
     setEditId(null);
     flash("success", "Yorum güncellendi.");
+  };
+
+  const startReply = (c: Comment) => {
+    setReplyId(c.id);
+    setReplyBody(c.reply_body || "");
+  };
+
+  const saveReply = async (id: string) => {
+    if (!replyBody.trim()) return;
+    setActionId(id);
+    await supabase.from("blog_comments").update({
+      reply_body: replyBody.trim(),
+      replied_at: new Date().toISOString(),
+    }).eq("id", id);
+    await fetchComments();
+    setActionId(null);
+    setReplyId(null);
+    flash("success", "Yanıt kaydedildi.");
+  };
+
+  const removeReply = async (id: string) => {
+    if (!confirm("Yanıtı silmek istediğinize emin misiniz?")) return;
+    setActionId(id);
+    await supabase.from("blog_comments").update({ reply_body: null, replied_at: null }).eq("id", id);
+    await fetchComments();
+    setActionId(null);
+    flash("success", "Yanıt silindi.");
   };
 
   return (
@@ -208,8 +239,51 @@ export default function AdminBlogComments() {
                     </p>
                   )}
 
+                  {/* Existing Admin Reply */}
+                  {c.reply_body && editId !== c.id && replyId !== c.id && (
+                    <div className="ml-6 mb-3 p-3.5 border-l-[3px] border-l-[#0EA5E9] bg-[#F0F9FF] rounded-r-lg">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] font-bold text-[#0EA5E9] uppercase tracking-wider">Admin Yanıtı</span>
+                        {c.replied_at && (
+                          <span className="text-[10px] text-[#0F172A]/30">
+                            {new Date(c.replied_at).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" })}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-[#0F172A]/75 leading-relaxed">{c.reply_body}</p>
+                    </div>
+                  )}
+
+                  {/* Reply — edit mode */}
+                  {replyId === c.id && (
+                    <div className="ml-6 mb-3 space-y-2">
+                      <textarea
+                        value={replyBody}
+                        onChange={(e) => setReplyBody(e.target.value)}
+                        rows={3}
+                        placeholder="Yanıtınızı yazın…"
+                        className="w-full border border-[#0EA5E9]/40 rounded-lg px-3 py-2 text-sm text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#0EA5E9]/30 resize-none bg-[#F0F9FF]"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => saveReply(c.id)}
+                          disabled={actionId === c.id}
+                          className="px-3 py-1.5 text-xs font-bold bg-[#0EA5E9] text-white rounded-lg hover:bg-[#0284C7] transition-colors disabled:opacity-50"
+                        >
+                          {actionId === c.id ? "Kaydediliyor…" : "Yanıtı Kaydet"}
+                        </button>
+                        <button
+                          onClick={() => { setReplyId(null); setReplyBody(""); }}
+                          className="px-3 py-1.5 text-xs font-bold border border-[#E2E8F0] text-[#0F172A]/60 rounded-lg hover:bg-[#F8FAFC] transition-colors"
+                        >
+                          İptal
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Actions */}
-                  {editId !== c.id && (
+                  {editId !== c.id && replyId !== c.id && (
                     <div className="flex items-center gap-3 flex-wrap">
                       {!c.is_approved ? (
                         <button
@@ -226,6 +300,21 @@ export default function AdminBlogComments() {
                           className="text-xs font-bold text-amber-600 hover:text-amber-700 disabled:opacity-50 transition-colors"
                         >
                           ↩ Onayı Kaldır
+                        </button>
+                      )}
+                      <button
+                        onClick={() => startReply(c)}
+                        className="text-xs font-bold text-[#0EA5E9] hover:text-[#0284C7] transition-colors"
+                      >
+                        💬 {c.reply_body ? "Yanıtı Düzenle" : "Yanıtla"}
+                      </button>
+                      {c.reply_body && (
+                        <button
+                          onClick={() => removeReply(c.id)}
+                          disabled={actionId === c.id}
+                          className="text-xs font-bold text-orange-500 hover:text-orange-700 disabled:opacity-50 transition-colors"
+                        >
+                          Yanıtı Sil
                         </button>
                       )}
                       <button

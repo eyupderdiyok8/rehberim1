@@ -8,6 +8,8 @@ interface Comment {
   author_name: string;
   body: string;
   created_at: string;
+  reply_body: string | null;
+  replied_at: string | null;
 }
 
 interface Props {
@@ -27,7 +29,7 @@ export default function BlogCommentSection({ postId }: Props) {
     const fetchComments = async () => {
       const { data } = await supabase
         .from("blog_comments")
-        .select("id, author_name, body, created_at")
+        .select("id, author_name, body, created_at, reply_body, replied_at")
         .eq("post_id", postId)
         .eq("is_approved", true)
         .order("created_at", { ascending: true });
@@ -88,6 +90,21 @@ export default function BlogCommentSection({ postId }: Props) {
                   </span>
                 </div>
                 <p className="text-sm text-[#0F172A]/75 leading-relaxed">{c.body}</p>
+
+                {/* Admin Reply */}
+                {c.reply_body && (
+                  <div className="mt-3 ml-2 p-3 border-l-[3px] border-l-[#0EA5E9] bg-[#F0F9FF] rounded-r-lg">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-bold text-[#0EA5E9] uppercase tracking-wider">Admin Yanıtı</span>
+                      {c.replied_at && (
+                        <span className="text-[10px] text-[#0F172A]/30">
+                          {new Date(c.replied_at).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" })}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-[#0F172A]/75 leading-relaxed">{c.reply_body}</p>
+                  </div>
+                )}
               </div>
             </div>
           ))}

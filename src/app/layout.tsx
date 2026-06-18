@@ -13,6 +13,15 @@ const nunito = Nunito_Sans({
 export const metadata: Metadata = {
   title: "Su Arıtma Firmaları, Fiyatları ve Gerçek Yorumlar — Su Arıtma Rehberi",
   description: "Türkiye genelinde onaylı su arıtma bayileri, şeffaf fiyat karşılaştırması ve müşteri yorumları tek adreste.",
+  icons: {
+    icon: [
+      { url: "/icon0.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  manifest: "/manifest.json",
+  themeColor: "#0EA5E9",
 };
 
 export default function RootLayout({

@@ -1,7 +1,7 @@
 -- =====================================================
--- AUTO page_urls TRIGGER
--- Creates SEO pages ONLY when a firm becomes active
--- Covers: admin add, admin activate, onboarding approval
+-- FIX: page_urls RLS violation from auto_create_page_urls trigger
+-- The trigger must run as SECURITY DEFINER (postgres)
+-- to bypass RLS on page_urls table.
 -- Run once in Supabase SQL Editor
 -- =====================================================
 
@@ -62,11 +62,3 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Attach trigger: fires AFTER INSERT or UPDATE on firms
-DROP TRIGGER IF EXISTS trg_firm_active_page_urls ON firms;
-CREATE TRIGGER trg_firm_active_page_urls
-  AFTER INSERT OR UPDATE ON firms
-  FOR EACH ROW
-  WHEN (NEW.is_active = true)
-  EXECUTE FUNCTION auto_create_page_urls();

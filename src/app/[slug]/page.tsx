@@ -92,7 +92,10 @@ export default async function Page({ params }: PageParams) {
     .eq('is_active', true);
 
   if (pageUrl.district_id) {
-    query = query.eq('district_id', pageUrl.district_id);
+    // District page: show district firms + premium firms from the same city
+    query = query.or(
+      `district_id.eq.${pageUrl.district_id},and(city_id.eq.${pageUrl.city_id},is_premium.eq.true)`
+    );
   } else if (pageUrl.city_id) {
     query = query.eq('city_id', pageUrl.city_id);
   }

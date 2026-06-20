@@ -36,6 +36,8 @@ export default function Header() {
               <a href="/izmir-su-aritma-cihazi-firmalari" className="block px-4 py-2 text-[13px] font-semibold text-[#0F172A]/70 hover:bg-[#F8FAFC] hover:text-[#0EA5E9]">İzmir</a>
               <a href="/bursa-su-aritma-cihazi-firmalari" className="block px-4 py-2 text-[13px] font-semibold text-[#0F172A]/70 hover:bg-[#F8FAFC] hover:text-[#0EA5E9]">Bursa</a>
               <a href="/antalya-su-aritma-cihazi-firmalari" className="block px-4 py-2 text-[13px] font-semibold text-[#0F172A]/70 hover:bg-[#F8FAFC] hover:text-[#0EA5E9]">Antalya</a>
+              <div className="border-t border-[#E2E8F0] mx-3 my-1.5" />
+              <a href="/hizmetler" className="block px-4 py-2 text-[13px] font-bold text-[#0EA5E9] hover:bg-sky-50">Tüm İller ve Hizmetler →</a>
             </div>
           </div>
 
@@ -59,13 +61,6 @@ export default function Header() {
             className="text-sm font-bold text-[#0F172A]/70 hover:text-[#0EA5E9] transition-colors uppercase tracking-wider py-4"
           >
             Blog
-          </a>
-
-          <a
-            href="/hizmetler"
-            className="text-sm font-bold text-[#0F172A]/70 hover:text-[#0EA5E9] transition-colors uppercase tracking-wider py-4"
-          >
-            İller
           </a>
         </nav>
 

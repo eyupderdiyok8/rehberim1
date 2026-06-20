@@ -60,6 +60,13 @@ export default function Header() {
           >
             Blog
           </a>
+
+          <a
+            href="/hizmetler"
+            className="text-sm font-bold text-[#0F172A]/70 hover:text-[#0EA5E9] transition-colors uppercase tracking-wider py-4"
+          >
+            İller
+          </a>
         </nav>
 
         {/* Right Action */}

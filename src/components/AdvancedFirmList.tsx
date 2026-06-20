@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import FirmCard from "@/components/FirmCard";
 import BannerSlot from "@/components/BannerSlot";
 import BannerPlaceholder from "@/components/BannerPlaceholder";
+import FirmCompareBar from "@/components/FirmCompareBar";
 
 // Dynamically import the map view so Leaflet doesn't break SSR
 const FirmMapView = dynamic(() => import("@/components/FirmMapView"), {
@@ -43,6 +44,12 @@ interface Firm {
   }[];
 }
 
+interface CompareFirm {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 interface Props {
   initialFirms: Firm[];
   availableServices: Service[];
@@ -52,6 +59,24 @@ interface Props {
 
 export default function AdvancedFirmList({ initialFirms, availableServices, defaultServiceSlug, midBanner }: Props) {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+
+  // Compare selection state (max 3 firms)
+  const [compareSelection, setCompareSelection] = useState<CompareFirm[]>([]);
+
+  const toggleCompare = (firm: { id: string; name: string; slug: string }) => {
+    setCompareSelection((prev) => {
+      const exists = prev.find((f) => f.id === firm.id);
+      if (exists) return prev.filter((f) => f.id !== firm.id);
+      if (prev.length >= 3) return prev;
+      return [...prev, { id: firm.id, name: firm.name, slug: firm.slug }];
+    });
+  };
+
+  const removeCompare = (id: string) => {
+    setCompareSelection((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const clearCompare = () => setCompareSelection([]);
 
   // Filters
   const [onlyPremium, setOnlyPremium] = useState(false);
@@ -207,7 +232,19 @@ export default function AdvancedFirmList({ initialFirms, availableServices, defa
             {viewMode === "list" ? (
               <div className="space-y-4">
                 {filteredFirms.slice(0, Math.ceil(filteredFirms.length / 2)).map((firm) => (
-                  <FirmCard key={firm.id} firm={firm as any} />
+                  <div key={firm.id} className="relative">
+                    <label className="absolute top-3 right-3 z-10 flex items-center gap-1.5 cursor-pointer group/cmp" title={compareSelection.find(f => f.id === firm.id) ? 'Karsilastirmadan cikar' : compareSelection.length >= 3 ? 'Maksimum 3 firma secebilirsiniz' : 'Karsilastirmaya ekle'}>
+                      <input
+                        type="checkbox"
+                        checked={!!compareSelection.find(f => f.id === firm.id)}
+                        onChange={() => toggleCompare(firm)}
+                        disabled={!compareSelection.find(f => f.id === firm.id) && compareSelection.length >= 3}
+                        className="w-4 h-4 rounded border-slate-300 text-[#0EA5E9] focus:ring-[#0EA5E9] disabled:opacity-30 disabled:cursor-not-allowed"
+                      />
+                      <span className="text-[10px] font-bold text-[#64748B] group-hover/cmp:text-[#0EA5E9] uppercase tracking-wider select-none hidden sm:inline">Karsilastir</span>
+                    </label>
+                    <FirmCard firm={firm as any} />
+                  </div>
                 ))}
                 {midBanner ? (
                   <BannerSlot banner={midBanner} variant="horizontal" />
@@ -215,7 +252,19 @@ export default function AdvancedFirmList({ initialFirms, availableServices, defa
                   <BannerPlaceholder variant="horizontal" />
                 )}
                 {filteredFirms.slice(Math.ceil(filteredFirms.length / 2)).map((firm) => (
-                  <FirmCard key={firm.id} firm={firm as any} />
+                  <div key={firm.id} className="relative">
+                    <label className="absolute top-3 right-3 z-10 flex items-center gap-1.5 cursor-pointer group/cmp" title={compareSelection.find(f => f.id === firm.id) ? 'Karsilastirmadan cikar' : compareSelection.length >= 3 ? 'Maksimum 3 firma secebilirsiniz' : 'Karsilastirmaya ekle'}>
+                      <input
+                        type="checkbox"
+                        checked={!!compareSelection.find(f => f.id === firm.id)}
+                        onChange={() => toggleCompare(firm)}
+                        disabled={!compareSelection.find(f => f.id === firm.id) && compareSelection.length >= 3}
+                        className="w-4 h-4 rounded border-slate-300 text-[#0EA5E9] focus:ring-[#0EA5E9] disabled:opacity-30 disabled:cursor-not-allowed"
+                      />
+                      <span className="text-[10px] font-bold text-[#64748B] group-hover/cmp:text-[#0EA5E9] uppercase tracking-wider select-none hidden sm:inline">Karsilastir</span>
+                    </label>
+                    <FirmCard firm={firm as any} />
+                  </div>
                 ))}
               </div>
             ) : (
@@ -225,6 +274,13 @@ export default function AdvancedFirmList({ initialFirms, availableServices, defa
         )}
 
       </div>
+
+      {/* Floating compare bar */}
+      <FirmCompareBar
+        selectedFirms={compareSelection}
+        onRemove={removeCompare}
+        onClear={clearCompare}
+      />
     </div>
   );
 }

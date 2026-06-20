@@ -122,7 +122,9 @@ export default function FirmPremium() {
                 { title: "Yorum Yanıtlama Yetkisi", desc: "Müşterilerinizin onaylanmış yorumlarına doğrudan cevap yazabilirsiniz." },
                 { title: "PREMİUM Üye Rozeti", desc: "Kartınızda ve profilinizde altın renkli ⭐ rozet gösterilir." },
                 { title: "Gelişmiş İletişim Butonları", desc: "Telefon ve yeşil renkli doğrudan WhatsApp butonları aktiftir." },
-                { title: "Harita ve Detay Desteği", desc: "Adresinizi harita ve detaylarla zenginleştirirsiniz." }
+                { title: "Harita ve Detay Desteği", desc: "Adresinizi harita ve detaylarla zenginleştirirsiniz." },
+                { title: "Ürün Kataloğu (10 Ürün)", desc: "10 ürüne kadar fotoğraf, fiyat ve WhatsApp bilgisiyle ürün vitrini oluşturun." },
+                { title: "Ürün Lightbox Galerisi", desc: "Profil sayfanızda ürün görselleri tıklayınca büyük açılır." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-3 bg-white p-4 border border-amber-100 rounded-xl">
                   <span className="text-emerald-500 shrink-0 font-bold">✓</span>
@@ -194,6 +196,18 @@ export default function FirmPremium() {
                 std: "Rozetsiz standart kart",
                 prem: "⭐ 'PREMİUM Üye' Altın Rozeti",
                 isHighlight: false
+              },
+              {
+                feature: "Ürün Kataloğu (10 Ürün)",
+                std: "Kapalı (Ürün ekleyemezsiniz)",
+                prem: "📦 Açık (10 ürüne kadar fotoğraf, fiyat ve WhatsApp ile)",
+                isHighlight: true
+              },
+              {
+                feature: "Profil Sayfasında Ürün Vitrini",
+                std: "Gösterilmez",
+                prem: "🛍️ Ürünleriniz profil sayfanızda lightbox ile sergilenir",
+                isHighlight: false
               }
             ].map((row, idx) => (
               <div key={idx} className="p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -240,6 +254,9 @@ export default function FirmPremium() {
               </p>
               <p className="flex items-center gap-1.5">
                 <span className="text-amber-500">★</span> Hızlı Onay ve İndeksleme
+              </p>
+              <p className="flex items-center gap-1.5">
+                <span className="text-amber-500">★</span> 10 Ürün Kataloğu & Lightbox Galeri
               </p>
             </div>
           </div>

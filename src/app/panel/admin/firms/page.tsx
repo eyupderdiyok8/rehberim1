@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { createFirmAccount } from "@/lib/actions";
 import LogoUploader from "@/components/LogoUploader";
 import CoverUploader from "@/components/CoverUploader";
+import ProductImageUploader from "@/components/ProductImageUploader";
 
 interface City {
   id: string;
@@ -88,6 +89,91 @@ export default function AdminFirms() {
   const [accountCreating, setAccountCreating] = useState<string | null>(null); // firmId being processed
   const [accountResult, setAccountResult] = useState<{ email: string; password: string } | null>(null);
   const [accountError, setAccountError] = useState("");
+
+  // Products modal state
+  interface AdminProduct { id: string; name: string; description: string | null; image_url: string; price: number; whatsapp: string | null; sort_order: number; }
+  const [productsFirm, setProductsFirm] = useState<Firm | null>(null);
+  const [products, setProducts] = useState<AdminProduct[]>([]);
+  const [productLoading, setProductLoading] = useState(false);
+  const [productSaving, setProductSaving] = useState(false);
+  const [productEditing, setProductEditing] = useState<AdminProduct | null>(null);
+  const [productAdding, setProductAdding] = useState(false);
+  const [pName, setPName] = useState("");
+  const [pDesc, setPDesc] = useState("");
+  const [pImage, setPImage] = useState("");
+  const [pPrice, setPPrice] = useState("0");
+  const [pWhatsapp, setPWhatsapp] = useState("");
+  const [productError, setProductError] = useState("");
+
+  const openProductsModal = async (firm: Firm) => {
+    setProductsFirm(firm);
+    setProductEditing(null);
+    setProductAdding(false);
+    setProductError("");
+    setProductLoading(true);
+    const { data } = await supabase
+      .from("firm_products")
+      .select("*")
+      .eq("firm_id", firm.id)
+      .order("sort_order")
+      .order("created_at");
+    setProducts(data || []);
+    setProductLoading(false);
+  };
+
+  const closeProductsModal = () => {
+    setProductsFirm(null);
+    setProductEditing(null);
+    setProductAdding(false);
+  };
+
+  const openProductAdd = () => {
+    setProductEditing(null);
+    setProductAdding(true);
+    setPName(""); setPDesc(""); setPImage(""); setPPrice("0"); setPWhatsapp(productsFirm?.whatsapp || "");
+    setProductError("");
+  };
+
+  const openProductEdit = (p: AdminProduct) => {
+    setProductEditing(p);
+    setProductAdding(false);
+    setPName(p.name); setPDesc(p.description || ""); setPImage(p.image_url); setPPrice(String(p.price)); setPWhatsapp(p.whatsapp || "");
+    setProductError("");
+  };
+
+  const handleProductSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!productsFirm) return;
+    if (!pName.trim()) { setProductError("Urun adi gerekli."); return; }
+    if (!pImage) { setProductError("Urun gorseli gerekli."); return; }
+    setProductSaving(true);
+    setProductError("");
+    const payload = { firm_id: productsFirm.id, name: pName.trim(), description: pDesc.trim() || null, image_url: pImage, price: parseFloat(pPrice) || 0, whatsapp: pWhatsapp.trim() || null, sort_order: products.length };
+    try {
+      if (productAdding) {
+        const { error: insErr } = await supabase.from("firm_products").insert(payload);
+        if (insErr) throw insErr;
+      } else if (productEditing) {
+        const { error: updErr } = await supabase.from("firm_products").update({ name: pName.trim(), description: pDesc.trim() || null, image_url: pImage, price: parseFloat(pPrice) || 0, whatsapp: pWhatsapp.trim() || null }).eq("id", productEditing.id);
+        if (updErr) throw updErr;
+      }
+      const { data } = await supabase.from("firm_products").select("*").eq("firm_id", productsFirm.id).order("sort_order").order("created_at");
+      setProducts(data || []);
+      setProductAdding(false);
+      setProductEditing(null);
+    } catch (err: any) {
+      setProductError(err.message.includes("10") ? "En fazla 10 urun eklenebilir." : "Hata: " + err.message);
+    } finally {
+      setProductSaving(false);
+    }
+  };
+
+  const handleProductDelete = async (id: string) => {
+    if (!confirm("Bu urunu silmek istediginize emin misiniz?")) return;
+    const { error: delErr } = await supabase.from("firm_products").delete().eq("id", id);
+    if (delErr) { setProductError("Silme hatasi: " + delErr.message); return; }
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+  };
 
   useEffect(() => {
     fetchData();
@@ -754,7 +840,13 @@ export default function AdminFirms() {
                             onClick={() => handleOpenEdit(firm)}
                             className="text-[#0EA5E9] hover:text-[#0284C7] font-bold cursor-pointer"
                           >
-                            Düzenle
+                            Duzenle
+                          </button>
+                          <button
+                            onClick={() => openProductsModal(firm)}
+                            className="text-violet-600 hover:text-violet-800 font-bold cursor-pointer"
+                          >
+                            Urunler
                           </button>
                           <button
                             onClick={() => handleDelete(firm.id)}
@@ -847,6 +939,113 @@ export default function AdminFirms() {
           </svg>
           {accountError}
           <button onClick={() => setAccountError("")} className="ml-2 text-white/70 hover:text-white cursor-pointer">×</button>
+        </div>
+      )}
+
+      {/* Products Modal */}
+      {productsFirm && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className="bg-white border border-[#E2E8F0] rounded-xl shadow-xl max-w-3xl w-full my-8 max-h-[85vh] flex flex-col">
+            {/* Header */}
+            <div className="px-6 py-4 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-between">
+              <div>
+                <h3 className="font-extrabold text-sm text-[#0F172A] uppercase tracking-wide">
+                  Urunler: {productsFirm.name}
+                </h3>
+                <p className="text-[10px] text-[#0F172A]/40 font-semibold mt-0.5">{products.length} / 10 urun</p>
+              </div>
+              <button onClick={closeProductsModal} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-5">
+              {productError && (
+                <div className="bg-red-50 border border-red-200 text-xs font-semibold text-red-800 p-3 rounded-lg">{productError}</div>
+              )}
+
+              {/* Product form (add/edit) */}
+              {(productAdding || productEditing) && (
+                <form onSubmit={handleProductSave} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-5 space-y-4">
+                  <h4 className="text-xs font-extrabold text-[#0F172A] uppercase tracking-wider">
+                    {productAdding ? "Yeni Urun Ekle" : `Duzenle: ${productEditing?.name}`}
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#0F172A] uppercase tracking-wider mb-1">Urun Adi *</label>
+                      <input type="text" value={pName} onChange={(e) => setPName(e.target.value)} className="w-full px-3 py-2 border border-[#E2E8F0] rounded-lg text-sm focus:outline-none focus:ring-[#0EA5E9] focus:border-[#0EA5E9]" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#0F172A] uppercase tracking-wider mb-1">Fiyat (TL)</label>
+                      <input type="number" step="0.01" min="0" value={pPrice} onChange={(e) => setPPrice(e.target.value)} className="w-full px-3 py-2 border border-[#E2E8F0] rounded-lg text-sm focus:outline-none focus:ring-[#0EA5E9] focus:border-[#0EA5E9]" />
+                      <p className="text-[9px] text-[#0F172A]/40 mt-1">0 = Fiyat sorunuz</p>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#0F172A] uppercase tracking-wider mb-1">WhatsApp</label>
+                      <input type="text" value={pWhatsapp} onChange={(e) => setPWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-[#E2E8F0] rounded-lg text-sm focus:outline-none focus:ring-[#0EA5E9] focus:border-[#0EA5E9]" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#0F172A] uppercase tracking-wider mb-1">Aciklama</label>
+                      <textarea value={pDesc} onChange={(e) => setPDesc(e.target.value)} rows={2} className="w-full px-3 py-2 border border-[#E2E8F0] rounded-lg text-sm focus:outline-none focus:ring-[#0EA5E9] focus:border-[#0EA5E9] resize-none" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-[#0F172A] uppercase tracking-wider mb-1">Urun Gorseli *</label>
+                    <ProductImageUploader currentUrl={pImage} onUpload={setPImage} firmName={productsFirm.name} />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button type="button" onClick={() => { setProductAdding(false); setProductEditing(null); }} className="px-3 py-1.5 border border-[#E2E8F0] text-xs font-bold rounded-lg hover:bg-white transition-colors cursor-pointer">Iptal</button>
+                    <button type="submit" disabled={productSaving} className="px-4 py-1.5 bg-[#0EA5E9] hover:bg-[#0284C7] text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50 cursor-pointer">
+                      {productSaving ? "Kaydediliyor..." : "Kaydet"}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* Add button */}
+              {products.length < 10 && !productAdding && !productEditing && (
+                <button onClick={openProductAdd} className="inline-flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
+                  Urun Ekle
+                </button>
+              )}
+
+              {/* Products list */}
+              {productLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="w-6 h-6 border-2 border-violet-600 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : products.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {products.map((p) => (
+                    <div key={p.id} className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
+                      <div className="aspect-[4/3] bg-[#F8FAFC] relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+                        {Number(p.price) > 0 ? (
+                          <span className="absolute top-2 right-2 bg-white/90 text-[#0F172A] text-[10px] font-black px-2 py-0.5 rounded">{Number(p.price).toLocaleString("tr-TR")} TL</span>
+                        ) : (
+                          <span className="absolute top-2 right-2 bg-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">Fiyat Sorunuz</span>
+                        )}
+                      </div>
+                      <div className="p-3 space-y-1">
+                        <p className="text-xs font-bold text-[#0F172A] line-clamp-1">{p.name}</p>
+                        {p.description && <p className="text-[10px] text-[#0F172A]/50 line-clamp-1">{p.description}</p>}
+                        <div className="flex gap-2 pt-1.5 border-t border-[#E2E8F0]">
+                          <button onClick={() => openProductEdit(p)} className="text-[10px] font-bold text-[#0EA5E9] hover:underline cursor-pointer">Duzenle</button>
+                          <button onClick={() => handleProductDelete(p.id)} className="text-[10px] font-bold text-red-500 hover:underline cursor-pointer">Sil</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : !productAdding ? (
+                <p className="text-center text-xs text-[#0F172A]/40 py-8">Henuz urun eklenmedi.</p>
+              ) : null}
+            </div>
+          </div>
         </div>
       )}
     </div>

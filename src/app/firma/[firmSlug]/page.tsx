@@ -10,6 +10,7 @@ import TrackLink from "@/components/TrackLink";
 import BannerSlot from "@/components/BannerSlot";
 import BannerPlaceholder from "@/components/BannerPlaceholder";
 import ImageLightbox from "@/components/ImageLightbox";
+import ProductGallery from "@/components/ProductGallery";
 import Image from "next/image";
 
 export const revalidate = 3600;
@@ -109,6 +110,16 @@ export default async function FirmProfilePage({ params }: PageParams) {
     .order("created_at", { ascending: false });
 
   const reviewsList = reviews ?? [];
+
+  // Fetch products
+  const { data: products } = await supabase
+    .from("firm_products")
+    .select("*")
+    .eq("firm_id", firm.id)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  const productsList = products ?? [];
 
   const cityObj = Array.isArray(firm.city) ? firm.city[0] : firm.city;
   const districtObj = Array.isArray(firm.district) ? firm.district[0] : firm.district;
@@ -351,6 +362,29 @@ export default async function FirmProfilePage({ params }: PageParams) {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Products */}
+            {productsList.length > 0 && (
+              <div className={`border rounded-lg overflow-hidden ${
+                firm.is_premium ? "border-amber-200/60" : "border-[#E2E8F0]"
+              }`}>
+                <div className={`px-6 py-4 border-b ${
+                  firm.is_premium
+                    ? "bg-gradient-to-r from-amber-50/50 to-transparent border-amber-200/60"
+                    : "bg-[#F8FAFC] border-[#E2E8F0]"
+                }`}>
+                  <h2 className="font-extrabold text-sm text-[#0F172A]">
+                    Urunler
+                  </h2>
+                </div>
+                <ProductGallery
+                  products={productsList}
+                  firmName={firm.name}
+                  firmWhatsapp={firm.whatsapp}
+                  isPremium={firm.is_premium}
+                />
               </div>
             )}
 

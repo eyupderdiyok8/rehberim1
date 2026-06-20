@@ -286,6 +286,7 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
     {
       name: "Genel Bakış",
       href: "/panel/firma",
+      premiumOnly: false,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
@@ -295,6 +296,7 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
     {
       name: "Profil Bilgileri",
       href: "/panel/firma/profile",
+      premiumOnly: false,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -304,6 +306,7 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
     {
       name: "Hizmet & Fiyatlar",
       href: "/panel/firma/services",
+      premiumOnly: false,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -311,8 +314,19 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
       ),
     },
     {
+      name: "Urunler",
+      href: "/panel/firma/products",
+      premiumOnly: true,
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      ),
+    },
+    {
       name: "Müşteri Yorumları",
       href: "/panel/firma/reviews",
+      premiumOnly: false,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -322,6 +336,7 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
     {
       name: "Premium Üyelik",
       href: "/panel/firma/premium",
+      premiumOnly: false,
       icon: (
         <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -331,6 +346,7 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
     {
       name: "Reklam Alanları",
       href: "/panel/firma/ads",
+      premiumOnly: false,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.833c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
@@ -340,6 +356,7 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
     {
       name: "Müşteri Kazan",
       href: "/panel/firma/acquisition",
+      premiumOnly: false,
       icon: (
         <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -385,10 +402,13 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
+            const effectiveHref = item.premiumOnly && !firm?.is_premium
+              ? "/panel/firma/premium"
+              : item.href;
             return (
               <a
                 key={item.href}
-                href={item.href}
+                href={effectiveHref}
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 ${
                   isActive
                     ? "bg-[#0EA5E9]/5 text-[#0EA5E9] border border-[#0EA5E9]/10"
@@ -397,6 +417,11 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
               >
                 {item.icon}
                 {item.name}
+                {item.premiumOnly && !firm?.is_premium && (
+                  <span className="ml-auto text-[8px] font-black text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    Premium
+                  </span>
+                )}
               </a>
             );
           })}

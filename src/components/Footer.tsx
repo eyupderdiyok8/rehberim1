@@ -18,11 +18,7 @@ export default function Footer() {
           <div className="mt-6">
             {/* Google Play Badge - Coming Soon */}
             <div className="relative inline-block">
-              <a
-                href="#"
-                className="flex items-center gap-2.5 bg-[#1E293B] border border-[#334155] rounded-lg px-4 py-2.5 text-slate-400 cursor-default select-none"
-                onClick={(e) => e.preventDefault()}
-              >
+              <div className="flex items-center gap-2.5 bg-[#1E293B] border border-[#334155] rounded-lg px-4 py-2.5 text-slate-400 select-none">
                 <svg className="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302a1 1 0 010 1.38l-2.302 2.302L15.396 12l2.302-2.492zM5.864 3.658L16.8 9.99l-2.302 2.302L5.864 3.658z" />
                 </svg>
@@ -30,7 +26,7 @@ export default function Footer() {
                   <span className="text-[8px] font-bold uppercase tracking-wider text-slate-500 leading-none">Yakında</span>
                   <span className="text-xs font-extrabold text-slate-300 leading-tight">Google Play</span>
                 </div>
-              </a>
+              </div>
               <div className="absolute -top-1.5 -right-1.5 bg-amber-500 text-white text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shadow-md">
                 Yakında
               </div>

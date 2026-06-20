@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { createFirmAccount } from "@/lib/actions";
 import LogoUploader from "@/components/LogoUploader";
 import CoverUploader from "@/components/CoverUploader";
 
@@ -82,6 +83,11 @@ export default function AdminFirms() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // Create account modal state
+  const [accountCreating, setAccountCreating] = useState<string | null>(null); // firmId being processed
+  const [accountResult, setAccountResult] = useState<{ email: string; password: string } | null>(null);
+  const [accountError, setAccountError] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -284,6 +290,30 @@ export default function AdminFirms() {
       fetchData();
     } catch (err: any) {
       setError("Silme hatası: " + err.message);
+    }
+  };
+
+  const handleCreateAccount = async (firm: Firm) => {
+    if (!firm.email) {
+      setError("Bu firmanın e-posta adresi yok. Önce düzenlemeden ekleyin.");
+      return;
+    }
+    setAccountCreating(firm.id);
+    setAccountError("");
+    setAccountResult(null);
+    try {
+      const result = await createFirmAccount(firm.id, firm.email, firm.name);
+      if (result.success && result.email && result.password) {
+        setAccountResult({ email: result.email, password: result.password });
+        setSuccess(`${firm.name} için hesap oluşturuldu. Şifre ekranda gösteriliyor.`);
+        fetchData(); // refresh table
+      } else {
+        setAccountError(result.error || "Hesap oluşturulamadı.");
+      }
+    } catch (err: any) {
+      setAccountError("Hata: " + err.message);
+    } finally {
+      setAccountCreating(null);
     }
   };
 
@@ -697,9 +727,26 @@ export default function AdminFirms() {
                               Bağlı ({firm.user_id.substring(0, 6)}...)
                             </span>
                           ) : (
-                            <span className="text-xs font-semibold text-rose-500 bg-rose-50 px-2 py-1 rounded border border-rose-100">
-                              Bağlantı Yok
-                            </span>
+                            <button
+                              onClick={() => handleCreateAccount(firm)}
+                              disabled={accountCreating === firm.id || !firm.email}
+                              title={firm.email ? "Hesap oluştur ve şifreyi e-posta ile gönder" : "Önce firmaya e-posta ekleyin"}
+                              className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded border border-emerald-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                              {accountCreating === firm.id ? (
+                                <>
+                                  <span className="w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                                  Oluşturuluyor...
+                                </>
+                              ) : (
+                                <>
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                                  </svg>
+                                  Hesap Oluştur
+                                </>
+                              )}
+                            </button>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold space-x-2">
@@ -731,6 +778,77 @@ export default function AdminFirms() {
           </div>
         )}
       </div>
+
+      {/* Password Result Modal */}
+      {accountResult && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white border border-[#E2E8F0] rounded-2xl shadow-2xl max-w-md w-full">
+            <div className="px-6 py-4 border-b border-[#E2E8F0] bg-emerald-50 rounded-t-2xl flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-extrabold text-sm text-emerald-900">Hesap Oluşturuldu</h3>
+                <p className="text-xs text-emerald-700 font-medium">Şifre e-posta ile gönderildi</p>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p className="text-xs font-bold text-amber-800 flex items-center gap-1.5">
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Bu şifre yalnızca bir kez gösterilir. Lütfen not alın.
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider mb-1">E-posta</p>
+                <p className="text-sm font-bold text-[#0F172A] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-3 py-2 font-mono">{accountResult.email}</p>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider mb-1">Şifre</p>
+                <div className="flex gap-2">
+                  <p className="flex-1 text-sm font-bold text-[#0F172A] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-3 py-2 font-mono tracking-wider select-all">{accountResult.password}</p>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(accountResult.password);
+                      setSuccess("Şifre panoya kopyalandı.");
+                    }}
+                    className="px-3 py-2 bg-[#0EA5E9] hover:bg-[#0284C7] text-white text-xs font-bold rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                  >
+                    Kopyala
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-[#E2E8F0] flex justify-end">
+              <button
+                onClick={() => setAccountResult(null)}
+                className="px-5 py-2 bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+              >
+                Tamam
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Account creation error toast */}
+      {accountError && (
+        <div className="fixed bottom-6 right-6 z-50 bg-red-600 text-white text-xs font-bold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          {accountError}
+          <button onClick={() => setAccountError("")} className="ml-2 text-white/70 hover:text-white cursor-pointer">×</button>
+        </div>
+      )}
     </div>
   );
 }

@@ -62,7 +62,7 @@ export default function ComparisonTable({ firms }: ComparisonTableProps) {
   const formatPrice = (min?: number | null, max?: number | null) => {
     if (!min && !max) return "—";
     if (min && max) return `₺${min.toLocaleString("tr-TR")} – ₺${max.toLocaleString("tr-TR")}`;
-    if (min) return `₺${min.toLocaleString("tr-TR")}'den baslayan`;
+    if (min) return `₺${min.toLocaleString("tr-TR")}'den başlayan`;
     return `₺${(max ?? 0).toLocaleString("tr-TR")}'e kadar`;
   };
 
@@ -100,7 +100,7 @@ export default function ComparisonTable({ firms }: ComparisonTableProps) {
                       <span className="text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">Premium</span>
                     )}
                     {firm.is_verified && (
-                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Onayli</span>
+                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Onaylı</span>
                     )}
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export default function ComparisonTable({ firms }: ComparisonTableProps) {
           {/* Review Count */}
           <tr>
             <td className="p-4 border border-[#E2E8F0] font-bold text-xs text-[#0F172A] uppercase tracking-wider bg-[#F8FAFC]">
-              Yorum Sayisi
+              Yorum Sayısı
             </td>
             {firms.map((firm) => {
               const count = firm.review_count || 0;
@@ -234,7 +234,7 @@ export default function ComparisonTable({ firms }: ComparisonTableProps) {
                   href={`/firma/${firm.slug}`}
                   className="inline-block text-xs font-bold text-white bg-[#0F172A] hover:bg-[#1E293B] px-4 py-2 rounded-lg transition-colors"
                 >
-                  Profili Goruntule
+                  Profili Görüntüle
                 </a>
               </td>
             ))}

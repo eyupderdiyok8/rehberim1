@@ -233,7 +233,7 @@ export default function AdvancedFirmList({ initialFirms, availableServices, defa
               <div className="space-y-4">
                 {filteredFirms.slice(0, Math.ceil(filteredFirms.length / 2)).map((firm) => (
                   <div key={firm.id} className="relative">
-                    <label className="absolute top-3 right-3 z-10 flex items-center gap-1.5 cursor-pointer group/cmp" title={compareSelection.find(f => f.id === firm.id) ? 'Karsilastirmadan cikar' : compareSelection.length >= 3 ? 'Maksimum 3 firma secebilirsiniz' : 'Karsilastirmaya ekle'}>
+                    <label className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 cursor-pointer group/cmp" title={compareSelection.find(f => f.id === firm.id) ? 'Karşılaştırmadan çıkar' : compareSelection.length >= 3 ? 'Maksimum 3 firma seçebilirsiniz' : 'Karşılaştırmaya ekle'}>
                       <input
                         type="checkbox"
                         checked={!!compareSelection.find(f => f.id === firm.id)}
@@ -241,7 +241,7 @@ export default function AdvancedFirmList({ initialFirms, availableServices, defa
                         disabled={!compareSelection.find(f => f.id === firm.id) && compareSelection.length >= 3}
                         className="w-4 h-4 rounded border-slate-300 text-[#0EA5E9] focus:ring-[#0EA5E9] disabled:opacity-30 disabled:cursor-not-allowed"
                       />
-                      <span className="text-[10px] font-bold text-[#64748B] group-hover/cmp:text-[#0EA5E9] uppercase tracking-wider select-none hidden sm:inline">Karsilastir</span>
+                      <span className="text-[10px] font-bold text-[#64748B] group-hover/cmp:text-[#0EA5E9] uppercase tracking-wider select-none hidden sm:inline">Karşılaştır</span>
                     </label>
                     <FirmCard firm={firm as any} />
                   </div>
@@ -253,7 +253,7 @@ export default function AdvancedFirmList({ initialFirms, availableServices, defa
                 )}
                 {filteredFirms.slice(Math.ceil(filteredFirms.length / 2)).map((firm) => (
                   <div key={firm.id} className="relative">
-                    <label className="absolute top-3 right-3 z-10 flex items-center gap-1.5 cursor-pointer group/cmp" title={compareSelection.find(f => f.id === firm.id) ? 'Karsilastirmadan cikar' : compareSelection.length >= 3 ? 'Maksimum 3 firma secebilirsiniz' : 'Karsilastirmaya ekle'}>
+                    <label className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 cursor-pointer group/cmp" title={compareSelection.find(f => f.id === firm.id) ? 'Karşılaştırmadan çıkar' : compareSelection.length >= 3 ? 'Maksimum 3 firma seçebilirsiniz' : 'Karşılaştırmaya ekle'}>
                       <input
                         type="checkbox"
                         checked={!!compareSelection.find(f => f.id === firm.id)}
@@ -261,7 +261,7 @@ export default function AdvancedFirmList({ initialFirms, availableServices, defa
                         disabled={!compareSelection.find(f => f.id === firm.id) && compareSelection.length >= 3}
                         className="w-4 h-4 rounded border-slate-300 text-[#0EA5E9] focus:ring-[#0EA5E9] disabled:opacity-30 disabled:cursor-not-allowed"
                       />
-                      <span className="text-[10px] font-bold text-[#64748B] group-hover/cmp:text-[#0EA5E9] uppercase tracking-wider select-none hidden sm:inline">Karsilastir</span>
+                      <span className="text-[10px] font-bold text-[#64748B] group-hover/cmp:text-[#0EA5E9] uppercase tracking-wider select-none hidden sm:inline">Karşılaştır</span>
                     </label>
                     <FirmCard firm={firm as any} />
                   </div>

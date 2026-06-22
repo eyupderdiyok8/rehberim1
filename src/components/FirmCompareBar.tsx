@@ -33,7 +33,7 @@ export default function FirmCompareBar({ selectedFirms, onRemove, onClear }: Fir
           {/* Selected firms chips */}
           <div className="flex-1 flex items-center gap-2 flex-wrap">
             <span className="text-xs font-bold text-[#0F172A]/50 uppercase tracking-wider shrink-0">
-              Karsilastir:
+              Karşılaştır:
             </span>
             {selectedFirms.map((firm) => (
               <span
@@ -45,7 +45,7 @@ export default function FirmCompareBar({ selectedFirms, onRemove, onClear }: Fir
                   type="button"
                   onClick={() => onRemove(firm.id)}
                   className="w-4 h-4 flex items-center justify-center rounded-full hover:bg-sky-200 transition-colors text-[#0EA5E9] shrink-0"
-                  aria-label={`${firm.name} kaldir`}
+                  aria-label={`${firm.name} kaldır`}
                 >
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
@@ -72,7 +72,7 @@ export default function FirmCompareBar({ selectedFirms, onRemove, onClear }: Fir
               onClick={handleCompare}
               className="bg-[#0EA5E9] hover:bg-[#0284C7] text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
             >
-              Karsilastir
+              Karşılaştır
             </button>
           </div>
         </div>

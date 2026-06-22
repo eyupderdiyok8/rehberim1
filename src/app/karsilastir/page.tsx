@@ -12,14 +12,14 @@ interface PageProps {
 
 export function generateMetadata() {
   return {
-    title: "Firma Karsilastir — Su Aritma Rehberi",
-    description: "Su aritma firmalarini puan, yorum sayisi ve fiyatlara gore yan yana karsilastirin.",
+    title: "Firma Karşılaştır — Su Arıtma Rehberi",
+    description: "Su arıtma firmalarını puan, yorum sayısı ve fiyatlara göre yan yana karşılaştırın.",
     alternates: { canonical: "https://suaritmarehberi.com.tr/karsilastir" },
     openGraph: {
-      title: "Firma Karsilastir — Su Aritma Rehberi",
-      description: "Su aritma firmalarini yan yana karsilastirin.",
+      title: "Firma Karşılaştır — Su Arıtma Rehberi",
+      description: "Su arıtma firmalarını yan yana karşılaştırın.",
       url: "https://suaritmarehberi.com.tr/karsilastir",
-      siteName: "Su Aritma Rehberi",
+      siteName: "Su Arıtma Rehberi",
       locale: "tr_TR",
       type: "website",
     },
@@ -61,7 +61,7 @@ export default async function KarsilastirPage({ searchParams }: PageProps) {
         <Breadcrumb
           items={[
             { label: "Ana Sayfa", href: "/" },
-            { label: "Firma Karsilastir" },
+            { label: "Firma Karşılaştır" },
           ]}
         />
 
@@ -70,14 +70,14 @@ export default async function KarsilastirPage({ searchParams }: PageProps) {
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            Karsilastir
+            Karşılaştır
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
-            Firma Karsilastirma
+            Firma Karşılaştırma
           </h1>
           <p className="mt-3 text-sm text-[#0F172A]/55 max-w-2xl">
-            Sectiginiz firmalari puan, yorum sayisi ve hizmet fiyatlarina gore yan yana karsilastirin.
-            En iyi secenegi kolayca belirleyin.
+            Seçtiğiniz firmaları puan, yorum sayısı ve hizmet fiyatlarına göre yan yana karşılaştırın.
+            En iyi seçeneği kolayca belirleyin.
           </p>
         </div>
 
@@ -87,11 +87,11 @@ export default async function KarsilastirPage({ searchParams }: PageProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <h2 className="text-lg font-extrabold text-[#0F172A] mb-2">
-              Karsilastirma icin firma secin
+              Karşılaştırma için firma seçin
             </h2>
             <p className="text-sm text-[#0F172A]/50 text-center max-w-md mb-6">
-              Karsilastirma yapmak icin firma listeleme sayfalarindan en az 2, en fazla 3 firma secebilirsiniz.
-              Firma kartlarinin uzerindeki &quot;Karsilastir&quot; kutucugunu isaretleyin.
+              Karşılaştırma yapmak için firma listeleme sayfalarından en az 2, en fazla 3 firma seçebilirsiniz.
+              Firma kartlarının üzerindeki &quot;Karşılaştır&quot; kutucuğunu işaretleyin.
             </p>
             <a
               href="/"
@@ -114,9 +114,9 @@ export default async function KarsilastirPage({ searchParams }: PageProps) {
             <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-[#94A3B8]">
               <span className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-200 inline-block" />
-                En iyi deger vurgulandi
+                En iyi değer vurgulandı
               </span>
-              <span>Fiyatlar firma tarafindan belirlenir ve degisebilir.</span>
+              <span>Fiyatlar firma tarafından belirlenir ve değişebilir.</span>
             </div>
           </>
         )}

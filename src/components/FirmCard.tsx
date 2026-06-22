@@ -32,9 +32,12 @@ interface Firm {
 interface FirmCardProps {
   firm: Firm;
   cityName?: string;
+  compareChecked?: boolean;
+  compareDisabled?: boolean;
+  onCompareToggle?: () => void;
 }
 
-export default function FirmCard({ firm, cityName }: FirmCardProps) {
+export default function FirmCard({ firm, cityName, compareChecked, compareDisabled, onCompareToggle }: FirmCardProps) {
   const initials = firm.name
     .split(" ")
     .slice(0, 2)
@@ -131,17 +134,29 @@ export default function FirmCard({ firm, cityName }: FirmCardProps) {
         <div className="flex-1" />
 
         {/* CTA row */}
-        <div className="mt-auto flex gap-2 pt-3 border-t border-[#F1F5F9]">
+        <div className="mt-auto flex items-center gap-2 pt-3 border-t border-[#F1F5F9]">
           <a
             href={`/firma/${firm.slug}`}
-            className="flex-1 text-center text-[13px] font-semibold py-2.5 rounded-md bg-[#0F172A] text-white hover:bg-[#1E293B] transition-colors"
+            className="text-center text-[12px] font-semibold py-2 px-4 rounded-md bg-[#0F172A] text-white hover:bg-[#1E293B] transition-colors whitespace-nowrap"
           >
             Profili Görüntüle
           </a>
+          {onCompareToggle && (
+            <label className="flex items-center gap-1 cursor-pointer group/cmp" title={compareChecked ? 'Karşılaştırmadan çıkar' : compareDisabled ? 'Maksimum 3 firma seçebilirsiniz' : 'Karşılaştırmaya ekle'}>
+              <input
+                type="checkbox"
+                checked={!!compareChecked}
+                onChange={onCompareToggle}
+                disabled={!!compareDisabled}
+                className="w-3.5 h-3.5 rounded border-slate-300 text-[#0EA5E9] focus:ring-[#0EA5E9] disabled:opacity-30 disabled:cursor-not-allowed"
+              />
+              <span className="text-[10px] font-bold text-[#64748B] group-hover/cmp:text-[#0EA5E9] uppercase tracking-wider select-none hidden sm:inline">Karşılaştır</span>
+            </label>
+          )}
           {firm.phone && (
             <a
               href={`tel:${firm.phone}`}
-              className="px-3 py-2.5 rounded-md border border-[#E2E8F0] text-[#64748B] hover:text-[#0F172A] hover:border-[#CBD5E1] transition-colors text-[13px] font-medium flex items-center gap-1.5"
+              className="ml-auto px-2.5 py-2 rounded-md border border-[#E2E8F0] text-[#64748B] hover:text-[#0F172A] hover:border-[#CBD5E1] transition-colors text-[12px] font-medium flex items-center gap-1.5"
               title="Ara"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>

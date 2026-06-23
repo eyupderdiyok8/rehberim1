@@ -154,7 +154,7 @@ export default function FirmReviews() {
             </p>
           </div>
           <a
-            href="mailto:eyupder@gmail.com?subject=Premium%20Uyelik%20ve%20Yorum%20Cevaplama%20-%20Su%20Ar%C4%B1tma%20Rehberi"
+            href="/panel/firma/premium"
             className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             Premium Modeline Geç →

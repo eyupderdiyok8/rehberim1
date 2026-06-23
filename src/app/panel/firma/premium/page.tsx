@@ -64,7 +64,7 @@ export default function FirmPremium() {
         {/* Title */}
         <div>
           <h1 className="text-2xl font-extrabold text-[#0F172A] tracking-tight">Premium Üyelik</h1>
-          <p className="text-xs text-[#0F172A]/50 font-semibold mt-0.5 uppercase tracking-wider">Ayrıcalıklı Paket Bilgileriniz</p>
+          <p className="text-sm text-[#0F172A]/50 font-semibold mt-0.5 uppercase tracking-wider">Ayrıcalıklı Paket Bilgileriniz</p>
         </div>
 
         {/* Success Card */}
@@ -77,7 +77,7 @@ export default function FirmPremium() {
             </div>
             <div>
               <h2 className="text-xl font-extrabold text-[#0F172A]">Tebrikler, Premium Paketiniz Aktif!</h2>
-              <p className="text-xs text-[#0F172A]/60 mt-0.5">Su Arıtma Rehberi ayrıcalıklarının keyfini çıkarıyorsunuz.</p>
+              <p className="text-sm text-[#0F172A]/60 mt-0.5">Su Arıtma Rehberi ayrıcalıklarının keyfini çıkarıyorsunuz.</p>
             </div>
           </div>
 
@@ -88,7 +88,7 @@ export default function FirmPremium() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <div>
-                <p className="text-[10px] font-bold text-[#0F172A]/50 uppercase tracking-wider">Üyelik Bitiş Tarihi</p>
+                <p className="text-[11px] font-bold text-[#0F172A]/50 uppercase tracking-wider">Üyelik Bitiş Tarihi</p>
                 <p className="text-sm font-bold text-[#0F172A]">
                   {new Date(firm.premium_until).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
                 </p>
@@ -106,14 +106,14 @@ export default function FirmPremium() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="text-[10px] font-bold text-[#0F172A]/50 uppercase tracking-wider">Üyelik Durumu</p>
+                <p className="text-[11px] font-bold text-[#0F172A]/50 uppercase tracking-wider">Üyelik Durumu</p>
                 <p className="text-sm font-bold text-[#0F172A]">Süresiz Premium Üyelik</p>
               </div>
             </div>
           )}
 
           <div className="border-t border-amber-200/40 pt-6">
-            <h3 className="text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-4">Aktif Özellikleriniz:</h3>
+            <h3 className="text-sm font-bold text-[#0F172A] uppercase tracking-wider mb-4">Aktif Özellikleriniz:</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 { title: "Öncelikli Listeleme", desc: "Şehir, ilçe ve hizmet sayfalarında en üst sırada çıkarsınız." },
@@ -129,8 +129,8 @@ export default function FirmPremium() {
                 <div key={i} className="flex gap-3 bg-white p-4 border border-amber-100 rounded-xl">
                   <span className="text-emerald-500 shrink-0 font-bold">✓</span>
                   <div className="space-y-0.5">
-                    <p className="text-xs font-bold text-[#0F172A]">{item.title}</p>
-                    <p className="text-[10px] text-[#0F172A]/55 font-medium leading-relaxed">{item.desc}</p>
+                    <p className="text-sm font-bold text-[#0F172A]">{item.title}</p>
+                    <p className="text-[12px] text-[#0F172A]/55 font-medium leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -143,153 +143,193 @@ export default function FirmPremium() {
 
   // Not Premium - Show Upsell / Pricing page
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-8 max-w-5xl">
       {/* Title */}
       <div>
         <h1 className="text-2xl font-extrabold text-[#0F172A] tracking-tight">Premium Üyelik</h1>
-        <p className="text-xs text-[#0F172A]/50 font-semibold mt-0.5 uppercase tracking-wider">Firma Profilinizi Yükseltin ve Satışlarınızı Artırın</p>
+        <p className="text-sm text-[#0F172A]/50 font-semibold mt-0.5 uppercase tracking-wider">Firma Profilinizi Yükseltin ve Satışlarınızı Artırın</p>
       </div>
 
       {/* Comparison Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
         
         {/* Comparison Table Card */}
-        <div className="lg:col-span-2 bg-white border border-[#E2E8F0] rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
-          <div className="px-6 py-5 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-            <h3 className="font-extrabold text-sm text-[#0F172A] uppercase tracking-wide">Üyelik Modelleri Karşılaştırması</h3>
+        <div className="lg:col-span-2 bg-white border border-[#E2E8F0] rounded-2xl shadow-sm overflow-hidden">
+          <div className="px-5 py-4 bg-[#F8FAFC] border-b border-[#E2E8F0]">
+            <h3 className="font-extrabold text-sm text-[#0F172A] uppercase tracking-wide">Standart vs Premium</h3>
           </div>
           
-          <div className="divide-y divide-[#E2E8F0] flex-1">
+          <div className="divide-y divide-[#F1F5F9]">
             {[
               {
-                feature: "İl Genelinde Görünürlük",
-                std: "Sadece seçtiğiniz ilçede listelenir",
-                prem: "🌍 İl geneli (TÜM ilçelerde listelenir)",
+                feature: "İl Geneli Görünürlük",
+                std: "Sadece seçtiğiniz ilçe",
+                prem: "TÜM ilçelerde listelenir",
                 isHighlight: true
               },
               {
-                feature: "Arama Sonuçlarında Sıralama",
-                std: "Standart (En altta listelenir)",
-                prem: "⚡ Öncelikli (En üst sırada listelenir)",
+                feature: "Arama Sıralaması",
+                std: "Altta",
+                prem: "En üst sırada",
                 isHighlight: true
               },
               {
-                feature: "Profil Sayfasında Rakip Reklamları",
-                std: "Gösterilir (Kullanıcı kaybedebilirsiniz)",
-                prem: "🚫 Reklamsız (Tamamen temiz profil)",
+                feature: "Rakip Reklamları",
+                std: "Gösterilir",
+                prem: "Reklamsız profil",
                 isHighlight: false
               },
               {
-                feature: "Yorum Yanıtlama Yetkisi",
-                std: "Kapalı (Yorumları yanıtlayamazsınız)",
-                prem: "💬 Açık (Müşteri sorularına yanıt)",
+                feature: "Yorum Yanıtlama",
+                std: "Kapalı",
+                prem: "Müşteri sorularına yanıt",
                 isHighlight: true
               },
               {
-                feature: "İletişim Butonları Görünümü",
-                std: "Temel, sönük görünümlü düğmeler",
-                prem: "🟢 Vurgulu yeşil WhatsApp ve Hızlı Arama",
+                feature: "İletişim Butonları",
+                std: "Temel görünüm",
+                prem: "Vurgulu WhatsApp + Arama",
                 isHighlight: false
               },
               {
-                feature: "Firma Kartı Rozetleri",
-                std: "Rozetsiz standart kart",
-                prem: "⭐ 'PREMİUM Üye' Altın Rozeti",
+                feature: "Kart Rozeti",
+                std: "Yok",
+                prem: "⭐ Premium rozet",
                 isHighlight: false
               },
               {
-                feature: "Ürün Kataloğu (10 Ürün)",
-                std: "Kapalı (Ürün ekleyemezsiniz)",
-                prem: "📦 Açık (10 ürüne kadar fotoğraf, fiyat ve WhatsApp ile)",
+                feature: "Ürün Kataloğu",
+                std: "Kapalı",
+                prem: "10 ürün + Lightbox",
                 isHighlight: true
-              },
-              {
-                feature: "Profil Sayfasında Ürün Vitrini",
-                std: "Gösterilmez",
-                prem: "🛍️ Ürünleriniz profil sayfanızda lightbox ile sergilenir",
-                isHighlight: false
               }
             ].map((row, idx) => (
-              <div key={idx} className="p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="text-xs font-bold text-[#0F172A]">{row.feature}</div>
-                <div className="text-xs text-[#0F172A]/50 font-semibold sm:text-center">{row.std}</div>
-                <div className={`text-xs font-bold sm:text-center ${row.isHighlight ? "text-[#0EA5E9]" : "text-[#0F172A]/80"}`}>{row.prem}</div>
+              <div key={idx} className="px-5 py-3 grid grid-cols-3 gap-2">
+                <div className="text-[13px] font-bold text-[#0F172A]">{row.feature}</div>
+                <div className="text-[12px] text-[#0F172A]/40 font-medium text-center flex items-center justify-center">{row.std}</div>
+                <div className={`text-[12px] font-bold text-center flex items-center justify-center ${row.isHighlight ? "text-[#0EA5E9]" : "text-[#0F172A]/70"}`}>{row.prem}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Pricing & Upgrade CTA Card */}
-        <div className="bg-white border border-amber-200 rounded-2xl p-6 shadow-md shadow-amber-500/5 flex flex-col justify-between space-y-6 relative overflow-hidden">
-          {/* Badge */}
-          <div className="absolute top-0 right-0 bg-amber-500 text-white font-black text-[9px] uppercase tracking-widest px-3 py-1 rounded-bl-lg">
-            Popüler
-          </div>
+        {/* 3 Pricing Cards */}
+        <div className="lg:col-span-3 flex flex-col gap-4">
 
-          <div className="space-y-4">
+          {/* Coffee Math Banner */}
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/60 rounded-xl px-5 py-3 flex items-center gap-3">
+            <span className="text-2xl">☕</span>
             <div>
-              <span className="text-[10px] font-black text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                Yıllık Paket
+              <p className="text-sm font-extrabold text-[#0F172A]">4 Kahve Parasına Yeni Müşteriler Edinmek İster misin?</p>
+              <p className="text-[13px] text-[#0F172A]/60 font-semibold">Günde sadece <span className="text-amber-600 font-extrabold">₺29.7</span> — <span className="text-amber-700 font-extrabold">4 kahve parasına</span> tüm ay premium!</p>
+            </div>
+          </div>
+
+          {/* Pricing Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+            {/* Monthly */}
+            <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 flex flex-col gap-4 relative">
+              <span className="text-[11px] font-black text-[#0F172A]/40 bg-[#F1F5F9] px-2.5 py-0.5 rounded-full uppercase tracking-wider self-start">
+                Aylık
               </span>
-              <h3 className="text-xl font-extrabold text-[#0F172A] mt-2">Premium Üye</h3>
-              <p className="text-[10px] text-[#0F172A]/45 font-medium leading-relaxed mt-1">
-                Tüm Premium ayrıcalıklarından 1 yıl boyunca yararlanın.
-              </p>
+              <div>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-2xl font-black text-[#0F172A] tracking-tight">₺890</span>
+                  <span className="text-[13px] font-bold text-[#0F172A]/40">/ay</span>
+                </div>
+                <p className="text-[12px] text-[#0F172A]/45 font-medium mt-1">Esnek ödeme, istediğiniz zaman iptal.</p>
+              </div>
+              <div className="border-t border-[#F1F5F9] pt-3 space-y-1.5">
+                <p className="text-[12px] text-[#0F172A]/55 font-semibold flex items-center gap-1.5"><span className="text-amber-500">★</span> Tüm Premium özellikler</p>
+                <p className="text-[12px] text-[#0F172A]/55 font-semibold flex items-center gap-1.5"><span className="text-amber-500">★</span> İstediğiniz zaman iptal</p>
+                <p className="text-[12px] text-[#0F172A]/55 font-semibold flex items-center gap-1.5"><span className="text-amber-500">★</span> 7/24 destek</p>
+              </div>
+              <a
+                href="https://wa.me/905345957147?text=Merhaba%2C%20Ayl%C4%B1k%20Premium%20%C3%BCyelik%20(890%E2%82%BA)%20sat%C4%B1n%20almak%20istiyorum."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-[#0F172A] hover:bg-[#1E293B] text-white text-[13px] font-bold rounded-xl transition-all cursor-pointer"
+              >
+                Aylık Satın Al
+              </a>
             </div>
 
-            <div className="flex items-baseline gap-1 pt-2">
-              <span className="text-3xl font-black text-[#0F172A] tracking-tight">₺1.490</span>
-              <span className="text-xs font-bold text-[#0F172A]/40 uppercase">/ Yıl</span>
+            {/* Annual — Featured */}
+            <div className="bg-white border-2 border-amber-400 rounded-2xl p-5 flex flex-col gap-4 relative shadow-lg shadow-amber-500/10">
+              <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-amber-500 text-white font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full">
+                En Popüler
+              </div>
+              <div className="mt-1">
+                <span className="text-[11px] font-black text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider self-start">
+                  Yıllık
+                </span>
+              </div>
+              <div>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-2xl font-black text-[#0F172A] tracking-tight">₺7.900</span>
+                  <span className="text-[13px] font-bold text-[#0F172A]/40">/yıl</span>
+                </div>
+                <p className="text-[12px] font-bold text-emerald-600 mt-1">%26 tasarruf <span className="text-[#0F172A]/40 font-medium">(₺658/ay)</span></p>
+              </div>
+              <div className="border-t border-amber-100 pt-3 space-y-1.5">
+                <p className="text-[12px] text-[#0F172A]/55 font-semibold flex items-center gap-1.5"><span className="text-amber-500">★</span> Tüm Premium özellikler</p>
+                <p className="text-[12px] text-[#0F172A]/55 font-semibold flex items-center gap-1.5"><span className="text-amber-500">★</span> 2 ay bedava!</p>
+                <p className="text-[12px] text-[#0F172A]/55 font-semibold flex items-center gap-1.5"><span className="text-amber-500">★</span> Öncelikli destek</p>
+              </div>
+              <a
+                href="https://wa.me/905345957147?text=Merhaba%2C%20Y%C4%B1ll%C4%B1k%20Premium%20%C3%BCyelik%20(7.900%E2%82%BA)%20sat%C4%B1n%20almak%20istiyorum."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-[13px] font-bold rounded-xl transition-all shadow-md shadow-amber-500/20 cursor-pointer"
+              >
+                Yıllık Satın Al
+              </a>
             </div>
 
-            <div className="border-t border-[#E2E8F0] pt-4 space-y-2 text-[10px] text-[#0F172A]/60 font-semibold">
-              <p className="flex items-center gap-1.5">
-                <span className="text-amber-500">★</span> İlçeniz + Tüm İl Genelinde Görünürlük
-              </p>
-              <p className="flex items-center gap-1.5">
-                <span className="text-amber-500">★</span> %300 Daha Fazla Müşteri Erişimi
-              </p>
-              <p className="flex items-center gap-1.5">
-                <span className="text-amber-500">★</span> 7/24 Teknik Destek & Düzenleme
-              </p>
-              <p className="flex items-center gap-1.5">
-                <span className="text-amber-500">★</span> Hızlı Onay ve İndeksleme
-              </p>
-              <p className="flex items-center gap-1.5">
-                <span className="text-amber-500">★</span> 10 Ürün Kataloğu & Lightbox Galeri
-              </p>
+            {/* Lifetime */}
+            <div className="bg-gradient-to-b from-[#0F172A] to-[#1E293B] border border-[#334155] rounded-2xl p-5 flex flex-col gap-4 relative">
+              <span className="text-[11px] font-black text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider self-start">
+                Yaşam Boyu
+              </span>
+              <div>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-2xl font-black text-white tracking-tight">₺19.900</span>
+                  <span className="text-[13px] font-bold text-white/40">tek seferlik</span>
+                </div>
+                <p className="text-[12px] font-bold text-amber-400 mt-1">Bir kere öde, ömür boyu kullan</p>
+              </div>
+              <div className="border-t border-white/10 pt-3 space-y-1.5">
+                <p className="text-[12px] text-white/55 font-semibold flex items-center gap-1.5"><span className="text-amber-400">★</span> Tüm Premium özellikler</p>
+                <p className="text-[12px] text-white/55 font-semibold flex items-center gap-1.5"><span className="text-amber-400">★</span> Asla yenileme yok</p>
+                <p className="text-[12px] text-white/55 font-semibold flex items-center gap-1.5"><span className="text-amber-400">★</span> VIP destek</p>
+                <p className="text-[12px] text-white/55 font-semibold flex items-center gap-1.5"><span className="text-amber-400">★</span> Tüm yeni özelliklerden yararlanma</p>
+              </div>
+              <a
+                href="https://wa.me/905345957147?text=Merhaba%2C%20Ya%C5%9Fam%20Boyu%20Premium%20%C3%BCyelik%20(19.900%E2%82%BA)%20sat%C4%B1n%20almak%20istiyorum."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-white hover:bg-slate-100 text-[#0F172A] text-[13px] font-bold rounded-xl transition-all cursor-pointer"
+              >
+                Ömür Boyu Satın Al
+              </a>
             </div>
+
           </div>
 
-          <div className="space-y-2">
-            {/* Direct Purchase CTA */}
-            <a
-              href="https://wa.me/905345957147?text=Merhaba%2C%20Premium%20%C3%BCyelik%20sat%C4%B1n%20almak%20istiyorum.%20Firma%20ad%C4%B1m%3A%20"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-3 bg-amber-500 hover:bg-amber-600 border-none text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-amber-500/20 cursor-pointer"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-              </svg>
-              Premium Satın Al — ₺1.490
-            </a>
-
-            {/* WhatsApp Soru CTA */}
-            <a
-              href="https://wa.me/905345957147?text=Merhaba%2C%20Premium%20%C3%BCyelik%20hakk%C4%B1nda%20soru%20sormak%20istiyorum."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#25D366] hover:bg-[#20BA56] border-none text-white text-xs font-bold rounded-xl transition-all cursor-pointer"
-            >
-              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.444 5.703 1.445h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-              </svg>
-              Sorularınız için WhatsApp
-            </a>
-          </div>
+          {/* WhatsApp Soru */}
+          <a
+            href="https://wa.me/905345957147?text=Merhaba%2C%20Premium%20%C3%BCyelik%20hakk%C4%B1nda%20soru%20sormak%20istiyorum."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#25D366] hover:bg-[#20BA56] text-white text-sm font-bold rounded-xl transition-all cursor-pointer"
+          >
+            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.444 5.703 1.445h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+            Sorularınız için WhatsApp
+          </a>
         </div>
-
       </div>
     </div>
   );

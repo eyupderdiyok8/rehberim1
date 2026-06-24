@@ -187,27 +187,6 @@ export default async function Home() {
       />
       <Header />
 
-      {/* ── YOUTUBE VIDEO SECTION ─────────────────── */}
-      <section className="py-12 px-4 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-[#0F172A] tracking-tight mb-4">
-            Su Arıtma Rehberi Nedir?
-          </h2>
-          <p className="text-[15px] text-[#0F172A]/60 max-w-xl mx-auto mb-8">
-            Platformumuzun nasıl çalıştığını ve su arıtma ihtiyaçlarınız için size nasıl yardımcı olduğunu bu kısa tanıtım videosunda izleyebilirsiniz.
-          </p>
-          <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0] bg-black">
-            <iframe
-              className="w-full h-full border-0"
-              src="https://www.youtube.com/embed/rYT-repwfnU"
-              title="Su Arıtma Rehberi Tanıtım Videosu"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      </section>
-
       {/* ── 1. HERO ──────────────────────────────── */}
       <section className="relative bg-[#0F172A] pt-20 pb-24 px-4">
         {/* Subtle geometric accent — not blobs */}
@@ -230,6 +209,16 @@ export default async function Home() {
 
           <div className="max-w-2xl mx-auto mb-10">
             <SearchBar cities={citiesList} districts={districtsList} services={servicesList} />
+          </div>
+
+          <div className="max-w-2xl mx-auto mb-12 aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-black">
+            <iframe
+              className="w-full h-full border-0"
+              src="https://www.youtube.com/embed/rYT-repwfnU"
+              title="Su Arıtma Rehberi Tanıtım Videosu"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-slate-500">

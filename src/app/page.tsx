@@ -80,6 +80,17 @@ export default async function Home() {
   // Only show Tier 1 cities in the popular cities bar
   const popularCities = citiesList.filter((c: any) => c.priority === 1);
 
+  // Prioritize big cities first, then sort remainder alphabetically
+  const prioritizedSlugs = ["istanbul", "izmir", "ankara", "bursa", "antalya"];
+  popularCities.sort((a: any, b: any) => {
+    const idxA = prioritizedSlugs.indexOf(a.slug);
+    const idxB = prioritizedSlugs.indexOf(b.slug);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return a.name.localeCompare(b.name, "tr");
+  });
+
   // Count firms per city
   const cityCountMap: Record<string, number> = {};
   (firmCityIds ?? []).forEach((row) => {

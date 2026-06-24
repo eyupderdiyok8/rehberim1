@@ -55,6 +55,43 @@ function readingTime(html: string): number {
   return Math.max(1, Math.round(words / 200));
 }
 
+interface Heading {
+  text: string;
+  id: string;
+  level: 2 | 3;
+}
+
+function parseHeadingsAndInjectIds(html: string): { headings: Heading[]; cleanHtml: string } {
+  const headings: Heading[] = [];
+  let count = 0;
+
+  const cleanHtml = html.replace(/<(h[23])([^>]*)>([\s\S]*?)<\/h[23]>/gi, (match, tag, attrs, content) => {
+    count++;
+    const text = content.replace(/<[^>]+>/g, "").trim();
+    const slug = text
+      .toLowerCase()
+      .replace(/ğ/g, "g").replace(/Ğ/g, "g")
+      .replace(/ü/g, "u").replace(/Ü/g, "u")
+      .replace(/ş/g, "s").replace(/Ş/g, "s")
+      .replace(/ı/g, "i").replace(/I/g, "i")
+      .replace(/ö/g, "o").replace(/Ö/g, "o")
+      .replace(/ç/g, "c").replace(/Ç/g, "c")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+
+    const id = `${slug || "heading"}-${count}`;
+    const level = tag.toLowerCase() === "h2" ? 2 : 3;
+
+    headings.push({ text, id, level });
+
+    return `<${tag} id="${id}"${attrs}>${content}</${tag}>`;
+  });
+
+  return { headings, cleanHtml };
+}
+
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
 
@@ -68,6 +105,7 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const minutes = readingTime(post.content ?? "");
+  const { headings, cleanHtml } = parseHeadingsAndInjectIds(post.content ?? "");
 
   // Fetch banner for blog post bottom placement
   const { data: blogBanner } = await supabase
@@ -139,10 +177,30 @@ export default async function BlogPostPage({ params }: Props) {
             </p>
           )}
 
+          {/* Table of Contents */}
+          {headings.length > 0 && (
+            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-5 mb-8">
+              <p className="font-extrabold text-xs text-[#0F172A]/40 uppercase tracking-widest mb-3">İçindekiler</p>
+              <nav className="space-y-2">
+                {headings.map((h) => (
+                  <a
+                    key={h.id}
+                    href={`#${h.id}`}
+                    className={`block text-xs font-semibold text-[#0F172A]/70 hover:text-[#0EA5E9] transition-colors leading-relaxed ${
+                      h.level === 3 ? "pl-4 text-[11px] text-[#0F172A]/50 font-medium" : ""
+                    }`}
+                  >
+                    {h.level === 3 ? "• " : ""}{h.text}
+                  </a>
+                ))}
+              </nav>
+            </div>
+          )}
+
           {/* Body */}
           <div
             className="blog-content"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: cleanHtml }}
           />
 
           {/* Divider */}

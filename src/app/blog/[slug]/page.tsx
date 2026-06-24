@@ -182,7 +182,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-5 mb-8">
               <p className="font-extrabold text-xs text-[#0F172A]/40 uppercase tracking-widest mb-3">İçindekiler</p>
               <nav className="space-y-2">
-                {headings.map((h) => (
+                {headings.slice(0, 5).map((h) => (
                   <a
                     key={h.id}
                     href={`#${h.id}`}
@@ -193,6 +193,29 @@ export default async function BlogPostPage({ params }: Props) {
                     {h.level === 3 ? "• " : ""}{h.text}
                   </a>
                 ))}
+
+                {headings.length > 5 && (
+                  <details className="group [&_summary::-webkit-details-marker]:hidden">
+                    <summary className="text-xs font-bold text-[#0EA5E9] hover:text-[#0284C7] cursor-pointer list-none flex items-center gap-1 mt-3 select-none outline-none">
+                      <span className="group-open:hidden">Daha Fazla Göster ({headings.length - 5})</span>
+                      <span className="hidden group-open:inline">Daha Az Göster</span>
+                      <svg className="w-3.5 h-3.5 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
+                    </summary>
+                    <div className="space-y-2 mt-2 pt-2 border-t border-dashed border-[#E2E8F0]">
+                      {headings.slice(5).map((h) => (
+                        <a
+                          key={h.id}
+                          href={`#${h.id}`}
+                          className={`block text-xs font-semibold text-[#0F172A]/70 hover:text-[#0EA5E9] transition-colors leading-relaxed ${
+                            h.level === 3 ? "pl-4 text-[11px] text-[#0F172A]/50 font-medium" : ""
+                          }`}
+                        >
+                          {h.level === 3 ? "• " : ""}{h.text}
+                        </a>
+                      ))}
+                    </div>
+                  </details>
+                )}
               </nav>
             </div>
           )}

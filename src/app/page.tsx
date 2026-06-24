@@ -242,7 +242,7 @@ export default async function Home() {
       {citiesList.length > 0 && (
         <section className="border-b border-[#E2E8F0] py-4 bg-white">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-1">
+            <div className="flex flex-nowrap items-center gap-3 overflow-x-auto no-scrollbar py-1">
               <span className="text-sm font-bold uppercase tracking-wider text-[#0F172A]/50 whitespace-nowrap shrink-0">
                 Popüler İller:
               </span>

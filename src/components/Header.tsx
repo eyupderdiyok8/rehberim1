@@ -1,6 +1,10 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 
 export default function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <header className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-[#E2E8F0] z-50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -13,7 +17,7 @@ export default function Header() {
           <span className="w-1.5 h-1.5 rounded-full bg-[#0EA5E9] inline-block" />
         </a>
 
-        {/* Center Links */}
+        {/* Center Links (Desktop Only) */}
         <nav className="hidden md:flex items-center gap-6">
           <a
             href="/"
@@ -64,8 +68,8 @@ export default function Header() {
           </a>
         </nav>
 
-        {/* Right Action */}
-        <div className="flex items-center gap-3">
+        {/* Right Action & Mobile Menu Toggle */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <a
             href="/panel/login"
             className="hidden sm:inline-block text-sm font-bold text-[#0F172A]/65 hover:text-[#0F172A] px-3 py-2 transition-colors"
@@ -74,13 +78,78 @@ export default function Header() {
           </a>
           <a
             href="/firma-ekle"
-            className="bg-[#0EA5E9] hover:bg-[#0284C7] text-white text-sm font-bold px-4 py-2.5 rounded-lg transition-colors duration-150 shadow-sm shadow-sky-500/10"
+            className="bg-[#0EA5E9] hover:bg-[#0284C7] text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-colors duration-150 shadow-sm shadow-sky-500/10"
           >
             Firma Ekle
           </a>
+
+          {/* Hamburger Menu Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 text-[#0F172A] hover:bg-slate-100 rounded-lg md:hidden transition-colors"
+            aria-label="Menüyü Aç/Kapat"
+          >
+            {isOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isOpen && (
+        <div className="md:hidden border-t border-[#E2E8F0] bg-white px-4 py-4 space-y-3 shadow-lg">
+          <a
+            href="/"
+            className="block text-sm font-bold text-[#0F172A]/70 hover:text-[#0EA5E9] py-1.5 border-b border-slate-50 transition-colors"
+          >
+            Ana Sayfa
+          </a>
+
+          {/* Popular Cities in Mobile */}
+          <div className="space-y-1.5 py-1">
+            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block">Popüler Şehirler</span>
+            <div className="grid grid-cols-2 gap-1">
+              <a href="/istanbul-su-aritma-cihazi-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9] py-1">İstanbul</a>
+              <a href="/ankara-su-aritma-cihazi-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9] py-1">Ankara</a>
+              <a href="/izmir-su-aritma-cihazi-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9] py-1">İzmir</a>
+              <a href="/bursa-su-aritma-cihazi-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9] py-1">Bursa</a>
+              <a href="/antalya-su-aritma-cihazi-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9] py-1">Antalya</a>
+              <a href="/hizmetler" className="text-xs font-bold text-[#0EA5E9] py-1">Tüm İller →</a>
+            </div>
+          </div>
+
+          {/* Services in Mobile */}
+          <div className="space-y-1.5 py-1 border-t border-slate-100">
+            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block">Hizmetler</span>
+            <div className="flex flex-col gap-1.5">
+              <a href="/istanbul-su-aritma-cihazi-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9]">Su Arıtma Cihazı</a>
+              <a href="/istanbul-su-aritma-filtresi-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9]">Su Arıtma Filtresi</a>
+              <a href="/istanbul-su-aritma-servisi-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9]">Su Arıtma Servisi</a>
+              <a href="/istanbul-endustriyel-aritma-firmalari" className="text-xs font-semibold text-[#0F172A]/80 hover:text-[#0EA5E9]">Endüstriyel Arıtma</a>
+            </div>
+          </div>
+
+          <a
+            href="/blog"
+            className="block text-sm font-bold text-[#0F172A]/70 hover:text-[#0EA5E9] py-2 border-t border-slate-100 transition-colors"
+          >
+            Blog
+          </a>
+          <a
+            href="/panel/login"
+            className="block text-sm font-bold text-slate-500 hover:text-[#0EA5E9] py-2 border-t border-slate-100 transition-colors"
+          >
+            Firma Girişi
+          </a>
+        </div>
+      )}
     </header>
   );
 }
-

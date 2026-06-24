@@ -376,7 +376,7 @@ export default async function FirmProfilePage({ params }: PageParams) {
                     : "bg-[#F8FAFC] border-[#E2E8F0]"
                 }`}>
                   <h2 className="font-extrabold text-sm text-[#0F172A]">
-                    Urunler
+                    Ürünler
                   </h2>
                 </div>
                 <ProductGallery

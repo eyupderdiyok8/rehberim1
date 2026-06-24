@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    let finalBuffer = buffer;
+    let finalBuffer: any = buffer;
     let finalContentType = contentType;
     let ext = "webp";
 

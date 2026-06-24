@@ -4,6 +4,7 @@ import CityFirmsPage from '@/components/pages/CityFirmsPage';
 import DistrictFirmsPage from '@/components/pages/DistrictFirmsPage';
 import CityPricePage from '@/components/pages/CityPricePage';
 import DistrictPricePage from '@/components/pages/DistrictPricePage';
+import EmptyDistrictPage from '@/components/pages/EmptyDistrictPage';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -68,6 +69,80 @@ export default async function Page({ params }: PageParams) {
     .maybeSingle();
 
   if (!pageUrl) {
+    // URL pattern: {district-slug}-{service-slug}-firmalari
+    // Strip the -firmalari suffix, then find a district whose slug is a prefix of what remains.
+    if (slug.endsWith('-firmalari')) {
+      const withoutSuffix = slug.slice(0, -'-firmalari'.length);
+
+      const { data: allDistricts } = await supabase
+        .from('districts')
+        .select('id, name, slug, city:cities(id, name, slug)');
+
+      // Sort longest slug first so the most specific match wins
+      const matched = (allDistricts ?? [])
+        .sort((a, b) => b.slug.length - a.slug.length)
+        .find((d) => withoutSuffix === d.slug || withoutSuffix.startsWith(d.slug + '-'));
+
+      if (matched) {
+        const cityObj = Array.isArray(matched.city) ? matched.city[0] : matched.city as any;
+
+        // Check if there are firms in this district
+        const { data: districtFirms } = await supabase
+          .from('firms')
+          .select(`
+            id, name, slug, address, rating, review_count,
+            is_premium, is_verified, logo_url,
+            latitude, longitude,
+            district:districts(id, name),
+            firm_services(price_min, price_max, service:services(name, slug))
+          `)
+          .eq('is_active', true)
+          .or(`district_id.eq.${matched.id},and(city_id.eq.${cityObj?.id},is_premium.eq.true)`)
+          .order('is_premium', { ascending: false })
+          .order('rating', { ascending: false })
+          .limit(20);
+
+        const firmsList = districtFirms ?? [];
+
+        if (firmsList.length === 0) {
+          return (
+            <EmptyDistrictPage districtName={matched.name} cityName={cityObj?.name} citySlug={cityObj?.slug} />
+          );
+        }
+
+        // Detect which service the URL refers to from the slug
+        const KNOWN_SERVICES = [
+          { name: "Su Arıtma Cihazı",   slug: "su-aritma-cihazi" },
+          { name: "Su Arıtma Filtresi", slug: "su-aritma-filtresi" },
+          { name: "Su Arıtma Servisi",  slug: "su-aritma-servisi" },
+          { name: "Su Arıtma Bakımı",   slug: "su-aritma-bakimi" },
+          { name: "Su Arıtma Montajı",  slug: "su-aritma-montaji" },
+          { name: "Endüstriyel Arıtma", slug: "endustriyel-aritma" },
+        ];
+        const detectedService = KNOWN_SERVICES.find((s) =>
+          withoutSuffix.includes(s.slug)
+        ) ?? { name: "Su Arıtma", slug: "su-aritma" };
+
+        // Synthesize a minimal pageUrl object so DistrictFirmsPage can render
+        const syntheticPageUrl = {
+          slug,
+          page_type: 'district_firms',
+          meta_title: `${matched.name} ${detectedService.name} Firmaları`,
+          meta_desc: `${matched.name} ilçesindeki ${detectedService.name.toLowerCase()} firmaları, fiyatlar ve müşteri yorumları.`,
+          city_id: cityObj?.id,
+          district_id: matched.id,
+          city: cityObj,
+          district: matched,
+          service: detectedService,
+          faqs: [],
+          h1: null,
+          body: null,
+        };
+
+        return <DistrictFirmsPage pageUrl={syntheticPageUrl as any} firms={firmsList} banner={null} midBanner={null} recentReviews={undefined} />;
+      }
+    }
+
     notFound();
   }
 

@@ -246,8 +246,9 @@ export default async function FirmProfilePage({ params }: PageParams) {
 
               <div className="px-6 pb-6 relative">
                 {/* Logo & Top Info */}
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
-                  <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12 relative z-10">
+                <div className="flex items-end justify-between gap-4">
+                  {/* Logo only — overlaps cover */}
+                  <div className="flex gap-4 -mt-10 sm:-mt-12 relative z-10 shrink-0">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white border-4 border-white shadow-md flex items-center justify-center font-bold text-2xl text-[#0F172A] shrink-0 overflow-hidden relative">
                       {firm.logo_url ? (
                         <Image src={firm.logo_url} alt={firm.name} fill sizes="96px" className="object-contain" />
@@ -255,16 +256,9 @@ export default async function FirmProfilePage({ params }: PageParams) {
                         firm.name.split(" ").slice(0, 2).map((w: string) => w[0]).join("")
                       )}
                     </div>
-                    <div className="pb-1">
-                      <h1 className="text-2xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
-                        {firm.name}
-                      </h1>
-                      <p className="text-sm text-[#0F172A]/60 font-semibold mt-1">
-                        {[cityObj?.name, districtObj?.name].filter(Boolean).join(" · ")}
-                      </p>
-                    </div>
                   </div>
 
+                  {/* Badges */}
                   <div className="flex gap-2 flex-wrap sm:justify-end pb-2">
                     {firm.is_premium && (
                       <span className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wide text-amber-700 bg-gradient-to-r from-amber-50 to-yellow-50 px-3 py-1.5 border border-amber-200 shadow-sm shadow-amber-100/50">
@@ -279,6 +273,16 @@ export default async function FirmProfilePage({ params }: PageParams) {
                       </span>
                     )}
                   </div>
+                </div>
+
+                {/* Firm name & location — clearly below cover */}
+                <div className="mt-3 mb-5">
+                  <h1 className="text-2xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
+                    {firm.name}
+                  </h1>
+                  <p className="text-sm text-[#0F172A]/60 font-semibold mt-1">
+                    {[cityObj?.name, districtObj?.name].filter(Boolean).join(" · ")}
+                  </p>
                 </div>
 
                 {/* Rating summary */}

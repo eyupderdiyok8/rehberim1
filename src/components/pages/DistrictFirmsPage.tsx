@@ -48,7 +48,7 @@ export default async function DistrictFirmsPage({ pageUrl, firms, banner, midBan
     .limit(8);
 
   const relatedServices = ALL_SERVICES
-    .filter((s) => s.slug !== pageUrl.service.slug)
+    .filter((s) => s.slug !== pageUrl.service?.slug)
     .map((s) => ({
       label: s.name,
       href: `/${pageUrl.district.slug}-${s.slug}-firmalari`,

@@ -60,6 +60,7 @@ export default async function Home() {
       .eq("is_active", true)
       .order("is_premium", { ascending: false })
       .order("rating", { ascending: false })
+      .order("review_count", { ascending: false })
       .limit(6),
     // For city firm counts
     supabase

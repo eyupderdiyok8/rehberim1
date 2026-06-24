@@ -242,29 +242,27 @@ export default async function Home() {
       {citiesList.length > 0 && (
         <section className="border-b border-[#E2E8F0] py-4 bg-white">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-1">
-              <span className="text-sm font-bold uppercase tracking-wider text-[#0F172A]/50 whitespace-nowrap">
+            <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-1">
+              <span className="text-sm font-bold uppercase tracking-wider text-[#0F172A]/50 whitespace-nowrap shrink-0">
                 Popüler İller:
               </span>
-              <div className="flex gap-2">
-                {popularCities.map((city: any) => {
-                  const count = cityCountMap[city.id] ?? 0;
-                  return (
-                    <a
-                      key={city.id}
-                      href={`/${city.slug}-${defaultServiceSlug}-firmalari`}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#E2E8F0] hover:border-[#0EA5E9] bg-white text-sm font-medium text-[#0F172A] transition-all duration-150 whitespace-nowrap"
-                    >
-                      <span>{city.name}</span>
-                      {count > 0 && (
-                        <span className="px-1.5 py-0.5 rounded text-[11px] bg-[#F1F5F9] text-[#0F172A]/60">
-                          {count.toLocaleString("tr-TR")}
-                        </span>
-                      )}
-                    </a>
-                  );
-                })}
-              </div>
+              {popularCities.map((city: any) => {
+                const count = cityCountMap[city.id] ?? 0;
+                return (
+                  <a
+                    key={city.id}
+                    href={`/${city.slug}-${defaultServiceSlug}-firmalari`}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#E2E8F0] hover:border-[#0EA5E9] bg-white text-sm font-medium text-[#0F172A] transition-all duration-150 whitespace-nowrap shrink-0"
+                  >
+                    <span>{city.name}</span>
+                    {count > 0 && (
+                      <span className="px-1.5 py-0.5 rounded text-[11px] bg-[#F1F5F9] text-[#0F172A]/60">
+                        {count.toLocaleString("tr-TR")}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>

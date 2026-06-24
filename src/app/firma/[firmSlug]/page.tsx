@@ -470,7 +470,7 @@ export default async function FirmProfilePage({ params }: PageParams) {
             <FirmReviewForm firmId={firm.id} firmName={firm.name} />
 
             {/* Related firms */}
-            {relatedFirms && relatedFirms.length > 0 && (
+            {!firm.is_premium && relatedFirms && relatedFirms.length > 0 && (
               <div>
                 <h2 className="text-base font-extrabold text-[#0F172A] mb-4">
                   {cityObj?.name} Bölgesindeki Diğer Firmalar

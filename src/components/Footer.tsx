@@ -40,7 +40,7 @@ export default function Footer() {
           <ul className="space-y-3.5 text-sm text-slate-400 font-medium">
             <li><a href="/hakkimizda" className="hover:text-[#0EA5E9] hover:translate-x-1 inline-block transition-all duration-200">Hakkımızda</a></li>
             <li><a href="/#sehirler" className="hover:text-[#0EA5E9] hover:translate-x-1 inline-block transition-all duration-200">Hizmet Bölgeleri</a></li>
-            <li><a href="/panel/login" className="hover:text-[#0EA5E9] hover:translate-x-1 inline-block transition-all duration-200 text-emerald-400">Ücretsiz Firma Ekle</a></li>
+            <li><a href="/firma-ekle" className="hover:text-[#0EA5E9] hover:translate-x-1 inline-block transition-all duration-200 text-emerald-400">Ücretsiz Firma Ekle</a></li>
             <li><a href="/iletisim" className="hover:text-[#0EA5E9] hover:translate-x-1 inline-block transition-all duration-200">Bize Ulaşın</a></li>
           </ul>
         </div>

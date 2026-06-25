@@ -69,46 +69,64 @@ export default function FirmaEklePage() {
       <main className="flex-1">
         <div className="max-w-6xl mx-auto px-4 py-16 md:py-24 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center">
           
-          {/* Left Side: Marketing Copy */}
-          <div>
-            <span className="text-[#0EA5E9] font-extrabold text-[10px] tracking-widest uppercase bg-[#0EA5E9]/10 px-3 py-1 rounded-full mb-6 inline-block">
-              SU ARITMA REHBERİ İŞ ORTAKLIĞI
+          {/* Left Side: Marketing Copy & Video */}
+          <div className="flex flex-col justify-center">
+            <span className="text-[#0EA5E9] font-extrabold text-[10px] tracking-widest uppercase bg-[#0EA5E9]/10 px-3 py-1 rounded-full mb-6 inline-block self-start">
+              YENİ MÜŞTERİLERE ULAŞMANIN EN KOLAY YOLU
             </span>
             <h1 className="text-4xl md:text-5xl font-black text-[#0F172A] leading-tight tracking-tight mb-6">
-              Müşterileriniz Sizi<br />
+              Su Arıtma Rehberi'nde<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0EA5E9] to-emerald-400">
-                Kolayca Bulsun
+                Ücretsiz Yerinizi Alın
               </span>
             </h1>
+
+            {/* Introduction Video */}
+            <div className="mb-8">
+              <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0] bg-black">
+                <iframe
+                  className="w-full h-full border-0"
+                  src="https://www.youtube.com/embed/v6xnbfhl1D8"
+                  title="Su Arıtma Rehberi Tanıtım Videosu"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+
             <p className="text-base text-[#0F172A]/70 leading-relaxed font-medium mb-8">
-              Türkiye'nin en hızlı büyüyen su arıtma rehberinde ücretsiz yerinizi alın. 
-              Sıfır komisyon, sınırsız müşteri. Profilinizi oluşturun ve binlerce potansiyel müşteriye anında ulaşın.
+              Su arıtma sektöründe hizmet veren firmaları, doğrudan müşterilerle buluşturan şeffaf ve tarafsız bir platform kuruyoruz. Komisyon yok. Şimdi ücretsiz kaydolun, firmanızı potansiyel müşterilerin önüne çıkarın.
             </p>
 
-            <ul className="space-y-4 mb-8">
-              {[
-                "100% Ücretsiz Standart Kayıt",
-                "İl ve İlçeye Göre Listelenme",
-                "Doğrudan Telefon ve WhatsApp Erişimi",
-                "Kapsamlı Firma ve Fiyat Analitikleri"
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-sm font-bold text-[#0F172A]/80">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                    <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-                  </div>
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <div className="mb-8">
+              <h3 className="text-sm font-extrabold text-[#0F172A] uppercase tracking-wider mb-4">
+                Ücretsiz standart kayıt ile neler var:
+              </h3>
+              <ul className="space-y-4">
+                {[
+                  "İl ve ilçeye göre listelenme",
+                  "Doğrudan telefon ve WhatsApp erişimi",
+                  "Detaylı firma profili ve fotoğraf galerisi",
+                  "Müşteri yorumlarına yanıt verme imkânı"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm font-bold text-[#0F172A]/80">
+                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Right Side: Registration Form */}
-          <div className="relative">
+          <div className="relative animate-fade-in-up">
             <div className="absolute inset-0 bg-gradient-to-br from-[#0EA5E9] to-emerald-400 opacity-10 blur-3xl rounded-full" />
             <div className="relative bg-white border border-[#E2E8F0] shadow-2xl shadow-slate-200/50 rounded-3xl p-8 sm:p-10">
               <h2 className="text-2xl font-black text-[#0F172A] mb-2">Hemen Başlayın</h2>
               <p className="text-xs text-[#0F172A]/60 font-medium mb-8">
-                Dakikalar içinde firmanızı sisteme ekleyin.
+                Kayıt 1 dakikadan kısa sürer. E-posta adresinizle ücretsiz hesap oluşturun.
               </p>
 
               <form onSubmit={handleRegister} className="space-y-5">

@@ -137,6 +137,34 @@ export default function FirmPremium() {
             </div>
           </div>
         </div>
+
+        {/* Video Showcase Card for Premium Members */}
+        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#0EA5E9] bg-[#0EA5E9]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-4">
+                🎥 Premium Rehber Videosu
+              </span>
+              <h2 className="text-xl font-extrabold text-[#0F172A] tracking-tight mb-3">
+                Premium Ayrıcalıklarını Keşfedin
+              </h2>
+              <p className="text-sm text-[#0F172A]/60 leading-relaxed font-semibold">
+                Premium üyeliğin getirdiği tüm özellikleri nasıl en etkili şekilde kullanabileceğinizi ve rehber üzerinden müşteri potansiyelinizi nasıl artıracağınızı bu videodan izleyebilirsiniz.
+              </p>
+            </div>
+            <div className="w-full">
+              <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0] bg-black">
+                <iframe
+                  className="w-full h-full border-0"
+                  src="https://www.youtube.com/embed/rO7Kq5En-m0"
+                  title="Su Arıtma Rehberi Premium Avantajları"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -148,6 +176,34 @@ export default function FirmPremium() {
       <div>
         <h1 className="text-2xl font-extrabold text-[#0F172A] tracking-tight">Premium Üyelik</h1>
         <p className="text-sm text-[#0F172A]/50 font-semibold mt-0.5 uppercase tracking-wider">Firma Profilinizi Yükseltin ve Satışlarınızı Artırın</p>
+      </div>
+
+      {/* Video Showcase Card */}
+      <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#0EA5E9] bg-[#0EA5E9]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-4">
+              🎥 Premium Tanıtım Videosu
+            </span>
+            <h2 className="text-xl font-extrabold text-[#0F172A] tracking-tight mb-3">
+              Premium Üyelik Size Neler Kazandırır?
+            </h2>
+            <p className="text-sm text-[#0F172A]/60 leading-relaxed font-semibold">
+              Su Arıtma Rehberi Premium paketiyle nasıl daha fazla müşteriye ulaşabileceğinizi, aramalarda nasıl en üst sırada çıkacağınızı ve tüm ilçelerde görünürlük kazanmanın detaylarını bu tanıtım videosunda izleyebilirsiniz.
+            </p>
+          </div>
+          <div className="w-full">
+            <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0] bg-black">
+              <iframe
+                className="w-full h-full border-0"
+                src="https://www.youtube.com/embed/rO7Kq5En-m0"
+                title="Su Arıtma Rehberi Premium Avantajları"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Comparison Grid */}

@@ -314,7 +314,7 @@ export default function FirmLayout({ children }: { children: React.ReactNode }) 
       ),
     },
     {
-      name: "Urunler",
+      name: "Ürünler",
       href: "/panel/firma/products",
       premiumOnly: true,
       icon: (

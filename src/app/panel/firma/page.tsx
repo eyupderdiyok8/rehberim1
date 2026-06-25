@@ -327,23 +327,48 @@ export default function FirmDashboard() {
 
       {/* Premium / Upsell */}
       {!firm.is_premium ? (
-        <div className="bg-gradient-to-r from-sky-400/5 via-sky-500/10 to-amber-500/10 border border-sky-200/50 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-3">
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              ⭐ Premium Fırsat
-            </span>
-            <h2 className="text-xl font-extrabold text-[#0F172A] tracking-tight">Profilinizi Premium Modeline Yükseltin!</h2>
-            <p className="text-xs text-[#0F172A]/65 leading-relaxed max-w-xl">
-              Öncelikli listeleme sayesinde kategorilerde en üstte yer alın. Rakip reklamları gizleyin, yorumlara yanıt verin ve WhatsApp/Telefon butonları ile etkileşimi artırın.
-            </p>
-          </div>
-          <div className="shrink-0 w-full md:w-auto">
-            <a
-              href="/panel/firma/premium"
-              className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0F172A] hover:bg-[#0F172A]/90 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-slate-900/10"
-            >
-              Bilgi Al &amp; Başvur
-            </a>
+        <div className="relative overflow-hidden bg-gradient-to-br from-amber-500/10 via-sky-500/5 to-white border border-amber-300 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Text details */}
+            <div className="space-y-4">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-black text-amber-600 bg-amber-500/10 border border-amber-500/25 px-3 py-1 rounded-full uppercase tracking-wider self-start">
+                ⭐ Premium Üyelik Fırsatı
+              </span>
+              <h2 className="text-2xl font-black text-[#0F172A] tracking-tight leading-tight">
+                Su Arıtma Rehberi Premium ile Satışlarınızı Katlayın!
+              </h2>
+              <p className="text-xs text-[#0F172A]/70 leading-relaxed font-semibold">
+                Öncelikli listeleme, tüm ilçelerde görünürlük, reklamsız profil sayfası, yorum yanıtlama yetkisi ve daha birçok ayrıcalıkla rakiplerinizin önüne geçin.
+              </p>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <a
+                  href="/panel/firma/premium"
+                  className="px-6 py-3 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-slate-900/10"
+                >
+                  Fiyatları Gör & Yükselt
+                </a>
+                <a
+                  href="https://wa.me/905345957147?text=Merhaba%2C%20Premium%20%C3%BCyelik%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 bg-[#25D366] hover:bg-[#20BA56] text-white text-xs font-bold rounded-xl transition-all flex items-center gap-2"
+                >
+                  WhatsApp'tan Bilgi Al
+                </a>
+              </div>
+            </div>
+            {/* Video embed */}
+            <div className="w-full">
+              <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg border border-[#E2E8F0] bg-black">
+                <iframe
+                  className="w-full h-full border-0"
+                  src="https://www.youtube.com/embed/rO7Kq5En-m0"
+                  title="Su Arıtma Rehberi Premium Tanıtımı"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+            </div>
           </div>
         </div>
       ) : (

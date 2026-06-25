@@ -241,7 +241,9 @@ export default function FirmProfile() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">Firma Logosu</label>
+            <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">
+              Firma Logosu <span className="text-[#0EA5E9] font-normal lowercase">(Önerilen: 500x500 px - Kare)</span>
+            </label>
             <LogoUploader
               currentUrl={formData.logo_url}
               firmName={formData.name}
@@ -252,7 +254,7 @@ export default function FirmProfile() {
           {firm?.is_premium && (
             <div>
               <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">
-                Kapak Görseli (Premium Özel)
+                Kapak Görseli (Premium Özel) <span className="text-[#0EA5E9] font-normal lowercase">(Önerilen: 1200x400 px - Yatay)</span>
               </label>
               <CoverUploader
                 currentUrl={formData.cover_image_url}

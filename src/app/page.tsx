@@ -269,6 +269,17 @@ export default async function Home() {
         </section>
       )}
 
+      {/* ── BANNER: TOP ──────────────────────────── */}
+      <section className="py-6 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          {topBanner ? (
+            <BannerSlot banner={topBanner} variant="horizontal" />
+          ) : (
+            <BannerPlaceholder variant="horizontal" />
+          )}
+        </div>
+      </section>
+
       {/* ── 3. FEATURED FIRMS ───────────────────────── */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -315,16 +326,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── BANNER: TOP ──────────────────────────── */}
-      <section className="py-6 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          {topBanner ? (
-            <BannerSlot banner={topBanner} variant="horizontal" />
-          ) : (
-            <BannerPlaceholder variant="horizontal" />
-          )}
-        </div>
-      </section>
+
 
       {/* ── 4. HOW IT WORKS ─────────────────────────── */}
       <section className="py-20 px-4 bg-[#F8FAFC]">

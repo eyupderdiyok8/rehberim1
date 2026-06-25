@@ -50,23 +50,46 @@ export default function HakkimizdaPage() {
           </p>
         </div>
 
-        {/* Mission */}
+        {/* Neden Kurulduk */}
         <section className="mb-12">
           <div className="border border-[#E2E8F0] rounded-2xl overflow-hidden">
             <div className="px-6 py-5 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-              <h2 className="font-extrabold text-lg text-[#0F172A]">Misyonumuz</h2>
+              <h2 className="font-extrabold text-lg text-[#0F172A]">Neden Kurulduk?</h2>
             </div>
             <div className="px-6 py-6 space-y-4 text-sm text-[#0F172A]/70 leading-relaxed">
               <p>
-                Türkiye'de su arıtma sektörü hızla büyürken, tüketiciler güvenilir firma bulmakta
-                zorlanıyor. Fiyat karşılaştırması yapmak, gerçek müşteri yorumlarını okumak ve
-                yetkili servisleri tek bir yerde bulmak neredeyse imkansız.
+                Türkiye'de su arıtma sektörü hızla büyüyor. Ama tüketicilerin güvenilir firma bulması
+                hâlâ zor. Fiyat karşılaştırması yapmak, gerçek müşteri yorumlarını okumak ve yetkili
+                servisleri tek bir yerde bulmak neredeyse imkânsız.
               </p>
-              <p>
-                <strong className="text-[#0F172A]">Su Arıtma Rehberi</strong> bu sorunu çözmek
-                için kuruldu. Amacımız; şeffaf fiyat bilgisi, doğrulanmış müşteri yorumları ve
-                detaylı firma profilleri ile tüketicilerin doğru kararı vermesine yardımcı olmaktır.
+              <p className="font-semibold text-[#0F172A]">
+                Biz bu sorunu çözmek için yola çıktık.
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Hedefimiz */}
+        <section className="mb-12">
+          <div className="border border-[#E2E8F0] rounded-2xl overflow-hidden">
+            <div className="px-6 py-5 bg-[#F8FAFC] border-b border-[#E2E8F0]">
+              <h2 className="font-extrabold text-lg text-[#0F172A]">Hedefimiz</h2>
+            </div>
+            <div className="divide-y divide-[#E2E8F0]">
+              {[
+                "Şeffaf fiyat bilgisi sunmak",
+                "Doğrulanmış müşteri yorumları oluşturmak",
+                "Detaylı firma profilleri ile tüketicilerin doğru karar vermesini sağlamak",
+              ].map((item, i) => (
+                <div key={i} className="px-6 py-4 flex gap-3 items-center">
+                  <span className="w-5 h-5 rounded-full bg-sky-50 border border-sky-200 flex items-center justify-center shrink-0">
+                    <svg className="w-3 h-3 text-[#0EA5E9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  <p className="text-sm text-[#0F172A]/75 font-medium">{item}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -102,7 +125,7 @@ export default function HakkimizdaPage() {
                   </svg>
                 ),
                 title: "Tarafsızlık",
-                desc: "Hiçbir firmaya ayrıcalık tanınmaz. Sıralamalar müşteri puanları ve premium üyelik durumuna göre belirlenir.",
+                desc: "Hiçbir firmaya ayrıcalık tanınmaz. Sıralamalar müşteri puanları ve hizmet kalitesine göre belirlenir.",
               },
             ].map((item, i) => (
               <div
@@ -123,29 +146,29 @@ export default function HakkimizdaPage() {
         <section className="mb-12">
           <div className="border border-[#E2E8F0] rounded-2xl overflow-hidden">
             <div className="px-6 py-5 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-              <h2 className="font-extrabold text-lg text-[#0F172A]">Platformumuzda Neler Var?</h2>
+              <h2 className="font-extrabold text-lg text-[#0F172A]">Platformumuzda Neler Olacak?</h2>
             </div>
             <div className="divide-y divide-[#E2E8F0]">
               {[
                 {
                   title: "Detaylı Firma Profilleri",
-                  desc: "Her firmanın iletişim bilgileri, hizmet alanları, fiyat aralıkları, müşteri yorumları ve fotoğraf galerisi.",
+                  desc: "İletişim bilgileri, hizmet alanları, fiyat aralıkları, müşteri yorumları ve fotoğraf galerisi.",
                 },
                 {
                   title: "Gerçek Müşteri Yorumları",
-                  desc: "Sadece onaylanmış müşteri yorumları yayınlanır. Firmalar yorumlara yanıt verebilir.",
+                  desc: "Sadece onaylanmış yorumlar. Firmalar yorumlara yanıt verebilir.",
                 },
                 {
                   title: "Fiyat Karşılaştırması",
-                  desc: "Farklı firmaların hizmet fiyatlarını yan yana karşılaştırarak bütçenize en uygun seçeneği bulun.",
+                  desc: "Farklı firmaların hizmet fiyatlarını yan yana karşılaştırma.",
                 },
                 {
                   title: "Şehir ve İlçe Bazlı Arama",
-                  desc: "Türkiye'nin 81 ilinde su arıtma firmalarını şehir ve ilçe bazında filtreleyin.",
+                  desc: "Türkiye'nin 81 ilinde filtreleme.",
                 },
                 {
                   title: "Premium Firma Ayrıcalıkları",
-                  desc: "Premium üyeler öncelikli sıralama, reklamsız profil, ürün kataloğu ve gelişmiş iletişim butonları elde eder.",
+                  desc: "Öncelikli sıralama, reklamsız profil, ürün kataloğu ve gelişmiş iletişim butonları.",
                 },
                 {
                   title: "Su Arıtma Blog",
@@ -164,20 +187,25 @@ export default function HakkimizdaPage() {
           </div>
         </section>
 
-        {/* Stats */}
+        {/* Journey / Stats */}
         <section className="mb-12">
+          <h2 className="font-extrabold text-lg text-[#0F172A] mb-2">Yolculuğumuz</h2>
+          <p className="text-sm text-[#0F172A]/55 mb-5">
+            Her gün büyüyoruz. Her yeni firma, her yeni yorum bizi bu hedeflere bir adım daha yaklaştırıyor.
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { value: "81", label: "İl Kapsamında" },
-              { value: "500+", label: "Kayıtlı Firma" },
-              { value: "10.000+", label: "Müşteri Yorumu" },
-              { value: "4.8", label: "Ortalama Puan" },
+              { icon: "🎯", value: "81 İl", label: "Kapsamında Hizmet" },
+              { icon: "🏢", value: "500+", label: "Doğrulanmış Firma" },
+              { icon: "💬", value: "10.000+", label: "Gerçek Müşteri Yorumu" },
+              { icon: "⭐", value: "4.8+", label: "Ortalama Puan" },
             ].map((stat, i) => (
               <div
                 key={i}
                 className="border border-[#E2E8F0] rounded-xl p-5 text-center bg-white"
               >
-                <p className="text-2xl font-black text-[#0EA5E9]">{stat.value}</p>
+                <p className="text-2xl mb-1">{stat.icon}</p>
+                <p className="text-xl font-black text-[#0EA5E9]">{stat.value}</p>
                 <p className="text-[10px] font-bold text-[#0F172A]/50 uppercase tracking-wider mt-1">
                   {stat.label}
                 </p>

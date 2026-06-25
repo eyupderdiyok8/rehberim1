@@ -8,7 +8,7 @@ const AD_SPACES = [
     title: "Ana Sayfa — Üst Alan",
     location: "Ana sayfa, Öne Çıkan Firmalar ile Nasıl Çalışır bölümü arasında",
     format: "Yatay Banner",
-    size: "Görsel: 200 × 200 px (Kare / Logo)",
+    size: "Önerilen: 1200 × 150 px (veya 970 × 90 px)",
     description: "Siteye ilk girişte görünen en değerli reklam alanıdır. Tüm ziyaretçilere ulaşır, marka bilinirliği için idealdir.",
     visibility: "Tüm ziyaretçiler",
     badge: "En Popüler",
@@ -19,7 +19,7 @@ const AD_SPACES = [
     title: "Ana Sayfa — Alt Alan",
     location: "Ana sayfa, Fiyat Rehberi ile Hizmet Kategorileri arasında",
     format: "Yatay Banner",
-    size: "Görsel: 200 × 200 px (Kare / Logo)",
+    size: "Önerilen: 1200 × 150 px (veya 970 × 90 px)",
     description: "Fiyat araştırması yapan bilinçli tüketicilere ulaşır. Karar aşamasındaki kullanıcılara yönelik etkili bir alandır.",
     visibility: "Tüm ziyaretçiler",
     badge: "Yüksek Dönüşüm",
@@ -30,7 +30,7 @@ const AD_SPACES = [
     title: "Firma Listeleri — Üst",
     location: "Şehir/ilçe firma listeleme sayfalarının en üstünde",
     format: "Yatay Banner",
-    size: "Görsel: 200 × 200 px (Kare / Logo)",
+    size: "Önerilen: 1200 × 150 px (veya 970 × 90 px)",
     description: "Firma arayan kullanıcıların ilk gördüğü alandır. Belirli bir şehir veya hizmet için hedeflenebilir.",
     visibility: "Şehir/hizmet arayan kullanıcılar",
     badge: "Hedeflenebilir",
@@ -41,7 +41,7 @@ const AD_SPACES = [
     title: "Firma Listeleri — Orta",
     location: "Firma kartları listesinin ortasında, kullanıcılar scroll ederken görünür",
     format: "Yatay Banner",
-    size: "Görsel: 200 × 200 px (Kare / Logo)",
+    size: "Önerilen: 1200 × 150 px (veya 970 × 90 px)",
     description: "Kullanıcılar firma karşılaştırması yaparken dikkat çeker. Scroll sırasında doğal bir duraklama noktası oluşturur.",
     visibility: "Şehir/hizmet arayan kullanıcılar",
     badge: null,
@@ -52,7 +52,7 @@ const AD_SPACES = [
     title: "Fiyat Sayfaları — Yan Menü",
     location: "Şehir/ilçe fiyat sayfalarının sağ yan menüsünde",
     format: "Sidebar Kart",
-    size: "Görsel: 600 × 450 px (4:3 Oranında)",
+    size: "Önerilen: 600 × 450 px (4:3 Oranında)",
     description: "Fiyat araştırması yapan ve bütçe karşılaştıran kullanıcılara ulaşır. Satın alma niyeti yüksek bir kitle.",
     visibility: "Fiyat araştıran kullanıcılar",
     badge: "Satın Alma Niyeti Yüksek",
@@ -63,7 +63,7 @@ const AD_SPACES = [
     title: "Blog Listesi — Üst Alan",
     location: "Blog ana sayfasında, yazı listelerinin üstünde",
     format: "Yatay Banner",
-    size: "Görsel: 200 × 200 px (Kare / Logo)",
+    size: "Önerilen: 1200 × 150 px (veya 970 × 90 px)",
     description: "İçerik tüketen, bilgi arayan kullanıcılara ulaşır. Eğitim ve bilinçlendirme odaklı reklamlar için idealdir.",
     visibility: "Blog okuyucuları",
     badge: null,
@@ -74,7 +74,7 @@ const AD_SPACES = [
     title: "Blog Yazısı — Alt",
     location: "Blog yazılarının sonunda, yazar kartının altında",
     format: "Inline Banner",
-    size: "Görsel: 200 × 200 px (Kare / Logo)",
+    size: "Önerilen: 200 × 200 px (Kare / Logo)",
     description: "Yazıyı sonuna kadar okuyan ilgili kullanıcılara ulaşır. İçerik bağlamına uygun teklifler için etkili.",
     visibility: "Aktif okuyucular",
     badge: null,
@@ -85,7 +85,7 @@ const AD_SPACES = [
     title: "Firma Profili — Yan Menü",
     location: "Standart (non-premium) firma profil sayfalarının sağ menüsünde",
     format: "Sidebar Kart",
-    size: "Görsel: 600 × 450 px (4:3 Oranında)",
+    size: "Önerilen: 600 × 450 px (4:3 Oranında)",
     description: "Rakip firma profillerini inceleyen kullanıcılara ulaşır. Karşılaştırma aşamasındaki karar vericilere hitap eder.",
     visibility: "Firma profili ziyaretçileri",
     badge: "Rakip Hedefleme",
@@ -149,15 +149,11 @@ export default function FirmAdsPage() {
               {/* Visual mockup */}
               <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] p-4 relative">
                 {space.format === "Yatay Banner" ? (
-                  <div className="border border-dashed border-[#CBD5E1] rounded-lg bg-white px-4 py-3 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-[#E2E8F0] shrink-0" />
-                      <div>
-                        <div className="h-2 bg-[#E2E8F0] rounded w-6 mb-1" />
-                        <div className="h-2.5 bg-[#E2E8F0] rounded w-24" />
-                      </div>
-                    </div>
-                    <div className="h-2 bg-[#E2E8F0] rounded w-8" />
+                  <div className="border border-dashed border-[#CBD5E1] rounded-lg bg-white h-10 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-[#CBD5E1]/70 mr-1.5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                    <span className="text-[9px] font-bold text-[#CBD5E1] uppercase tracking-wider">1200 × 150 px Yatay Görsel</span>
                   </div>
                 ) : space.format === "Sidebar Kart" ? (
                   <div className="max-w-[140px] mx-auto">

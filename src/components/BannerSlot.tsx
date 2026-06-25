@@ -86,27 +86,14 @@ export default function BannerSlot({ banner, variant = "horizontal" }: Props) {
       href={banner.target_url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center justify-between gap-6 border border-[#E2E8F0] rounded-lg px-6 py-4 bg-[#F8FAFC] hover:border-[#0EA5E9]/40 transition-colors group"
+      className="block w-full overflow-hidden rounded-xl border border-[#E2E8F0] bg-white hover:border-[#0EA5E9]/40 shadow-sm transition-all duration-200"
     >
-      <div className="flex items-center gap-4 min-w-0">
-        <div className="w-12 h-12 rounded-lg overflow-hidden bg-[#E2E8F0] shrink-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={banner.image_url}
-            alt={banner.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="min-w-0">
-          <span className="text-[10px] font-bold text-[#0EA5E9] border border-[#0EA5E9]/20 bg-[#0EA5E9]/5 px-2 py-0.5 rounded tracking-wide uppercase">
-            Sponsorlu
-          </span>
-          <p className="font-bold text-[#0F172A] mt-1 truncate">{banner.title}</p>
-        </div>
-      </div>
-      <span className="text-xs font-bold text-[#0EA5E9] whitespace-nowrap shrink-0 group-hover:underline">
-        İncele →
-      </span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={banner.image_url}
+        alt={banner.title}
+        className="w-full h-auto object-cover max-h-[160px] md:max-h-[200px]"
+      />
     </a>
   );
 }

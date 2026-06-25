@@ -8,7 +8,7 @@ const AD_SPACES = [
     title: "Ana Sayfa — Üst Alan",
     location: "Ana sayfa, Öne Çıkan Firmalar ile Nasıl Çalışır bölümü arasında",
     format: "Yatay Banner",
-    size: "Tam genişlik × ~80px",
+    size: "Görsel: 200 × 200 px (Kare / Logo)",
     description: "Siteye ilk girişte görünen en değerli reklam alanıdır. Tüm ziyaretçilere ulaşır, marka bilinirliği için idealdir.",
     visibility: "Tüm ziyaretçiler",
     badge: "En Popüler",
@@ -19,7 +19,7 @@ const AD_SPACES = [
     title: "Ana Sayfa — Alt Alan",
     location: "Ana sayfa, Fiyat Rehberi ile Hizmet Kategorileri arasında",
     format: "Yatay Banner",
-    size: "Tam genişlik × ~80px",
+    size: "Görsel: 200 × 200 px (Kare / Logo)",
     description: "Fiyat araştırması yapan bilinçli tüketicilere ulaşır. Karar aşamasındaki kullanıcılara yönelik etkili bir alandır.",
     visibility: "Tüm ziyaretçiler",
     badge: "Yüksek Dönüşüm",
@@ -30,7 +30,7 @@ const AD_SPACES = [
     title: "Firma Listeleri — Üst",
     location: "Şehir/ilçe firma listeleme sayfalarının en üstünde",
     format: "Yatay Banner",
-    size: "Tam genişlik × ~80px",
+    size: "Görsel: 200 × 200 px (Kare / Logo)",
     description: "Firma arayan kullanıcıların ilk gördüğü alandır. Belirli bir şehir veya hizmet için hedeflenebilir.",
     visibility: "Şehir/hizmet arayan kullanıcılar",
     badge: "Hedeflenebilir",
@@ -41,7 +41,7 @@ const AD_SPACES = [
     title: "Firma Listeleri — Orta",
     location: "Firma kartları listesinin ortasında, kullanıcılar scroll ederken görünür",
     format: "Yatay Banner",
-    size: "Tam genişlik × ~80px",
+    size: "Görsel: 200 × 200 px (Kare / Logo)",
     description: "Kullanıcılar firma karşılaştırması yaparken dikkat çeker. Scroll sırasında doğal bir duraklama noktası oluşturur.",
     visibility: "Şehir/hizmet arayan kullanıcılar",
     badge: null,
@@ -52,7 +52,7 @@ const AD_SPACES = [
     title: "Fiyat Sayfaları — Yan Menü",
     location: "Şehir/ilçe fiyat sayfalarının sağ yan menüsünde",
     format: "Sidebar Kart",
-    size: "280px × ~380px",
+    size: "Görsel: 600 × 450 px (4:3 Oranında)",
     description: "Fiyat araştırması yapan ve bütçe karşılaştıran kullanıcılara ulaşır. Satın alma niyeti yüksek bir kitle.",
     visibility: "Fiyat araştıran kullanıcılar",
     badge: "Satın Alma Niyeti Yüksek",
@@ -63,7 +63,7 @@ const AD_SPACES = [
     title: "Blog Listesi — Üst Alan",
     location: "Blog ana sayfasında, yazı listelerinin üstünde",
     format: "Yatay Banner",
-    size: "Tam genişlik × ~80px",
+    size: "Görsel: 200 × 200 px (Kare / Logo)",
     description: "İçerik tüketen, bilgi arayan kullanıcılara ulaşır. Eğitim ve bilinçlendirme odaklı reklamlar için idealdir.",
     visibility: "Blog okuyucuları",
     badge: null,
@@ -74,7 +74,7 @@ const AD_SPACES = [
     title: "Blog Yazısı — Alt",
     location: "Blog yazılarının sonunda, yazar kartının altında",
     format: "Inline Banner",
-    size: "Kompakt, satır içi",
+    size: "Görsel: 200 × 200 px (Kare / Logo)",
     description: "Yazıyı sonuna kadar okuyan ilgili kullanıcılara ulaşır. İçerik bağlamına uygun teklifler için etkili.",
     visibility: "Aktif okuyucular",
     badge: null,
@@ -85,7 +85,7 @@ const AD_SPACES = [
     title: "Firma Profili — Yan Menü",
     location: "Standart (non-premium) firma profil sayfalarının sağ menüsünde",
     format: "Sidebar Kart",
-    size: "280px × ~380px",
+    size: "Görsel: 600 × 450 px (4:3 Oranında)",
     description: "Rakip firma profillerini inceleyen kullanıcılara ulaşır. Karşılaştırma aşamasındaki karar vericilere hitap eder.",
     visibility: "Firma profili ziyaretçileri",
     badge: "Rakip Hedefleme",
@@ -200,7 +200,11 @@ export default function FirmAdsPage() {
                   )}
                 </div>
                 <p className="text-sm text-[#0F172A]/55 leading-relaxed">{space.description}</p>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1">
+                <div className="flex flex-wrap gap-x-6 gap-y-2 pt-1">
+                  <div>
+                    <span className="text-[11px] font-bold text-[#0F172A]/30 uppercase tracking-wider">Ölçüler</span>
+                    <p className="text-xs text-[#0EA5E9] font-bold">{space.size}</p>
+                  </div>
                   <div>
                     <span className="text-[11px] font-bold text-[#0F172A]/30 uppercase tracking-wider">Konum</span>
                     <p className="text-xs text-[#0F172A]/60 font-medium">{space.location}</p>

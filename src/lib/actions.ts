@@ -53,11 +53,12 @@ function generatePassword(length = 12): string {
 export async function createFirmAccount(
   firmId: string,
   firmEmail: string,
-  firmName: string
+  firmName: string,
+  adminEmail?: string
 ): Promise<{ success: boolean; email?: string; password?: string; error?: string }> {
   try {
     // 1. Verify caller is admin
-    const role = await getAdminRole();
+    const role = await getAdminRole(adminEmail);
     if (role !== "admin") {
       return { success: false, error: "Bu işlem için yetkiniz yok." };
     }

@@ -388,7 +388,8 @@ export default function AdminFirms() {
     setAccountError("");
     setAccountResult(null);
     try {
-      const result = await createFirmAccount(firm.id, firm.email, firm.name);
+      const { data: { session } } = await supabase.auth.getSession();
+      const result = await createFirmAccount(firm.id, firm.email, firm.name, session?.user?.email || undefined);
       if (result.success && result.email && result.password) {
         setAccountResult({ email: result.email, password: result.password });
         setSuccess(`${firm.name} için hesap oluşturuldu. Şifre ekranda gösteriliyor.`);

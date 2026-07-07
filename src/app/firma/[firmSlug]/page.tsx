@@ -297,13 +297,13 @@ export default async function FirmProfilePage({ params }: PageParams) {
                   {firm.is_premium && (
                     <div className="mt-4 flex flex-wrap gap-2">
                       <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-bold text-amber-800">
-                        Öncelikli görünürlük
+                        Yetkili servis desteği
                       </span>
                       <span className="rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-[11px] font-bold text-[#0369A1]">
-                        Reklamsız profil
+                        Montaj ve bakım hizmeti
                       </span>
                       <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700">
-                        Gelişmiş iletişim
+                        Hızlı teklif al
                       </span>
                     </div>
                   )}

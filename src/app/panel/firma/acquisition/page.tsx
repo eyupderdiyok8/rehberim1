@@ -205,8 +205,8 @@ function RoiCalculator() {
         <div className="mt-5 bg-white/5 rounded-xl p-4 border border-white/10">
           <p className="text-[13px] text-white/60 text-center">
             <span className="text-white font-bold">Yatırımınız:</span> sadece{' '}
-            <span className="text-emerald-400 font-black">₺9.900</span>{' '}
-            — İlk <span className="text-amber-400 font-bold">{aylikKazanc >= 9900 ? Math.ceil(9900 / aylikKazanc) : '2'} ayda</span> kendini amorti eder!
+            <span className="text-emerald-400 font-black">210$ (₺9.600)</span>{' '}
+            — İlk <span className="text-amber-400 font-bold">{aylikKazanc >= 9600 ? Math.ceil(9600 / aylikKazanc) : '2'} ayda</span> kendini amorti eder!
           </p>
         </div>
       </div>
@@ -354,7 +354,8 @@ export default function FirmAcquisitionPage() {
             <p className="text-[13px] font-black text-white/80 uppercase tracking-widest mb-1">Özel Tanıtım Teklifi</p>
             <h3 className="text-2xl font-black text-white leading-tight">
               <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-lg border border-white/30 text-white inline-block">
-                6 Ay Premium Hediye!
+                6 Ay Premium Hediye!{" "}
+                <span className="text-white/80 font-bold text-xl">(₺5.300 değerinde)</span>
               </span>
             </h3>
             <p className="text-[15px] text-white/85 font-semibold mt-2">
@@ -365,7 +366,8 @@ export default function FirmAcquisitionPage() {
           {/* Price tag */}
           <div className="shrink-0 text-center bg-white/15 backdrop-blur-sm rounded-2xl px-6 py-4 border border-white/20">
             <p className="text-[12px] font-bold text-white/70 uppercase tracking-wider mb-1">Yatırımınız</p>
-            <p className="text-5xl font-black text-white leading-none">₺9.900</p>
+            <p className="text-4xl font-black text-white leading-none">210$</p>
+            <p className="text-[15px] font-black text-white/90 mt-1">(₺9.600)</p>
             <p className="text-[13px] font-bold text-white/80 mt-1.5">Toplam Değer: <span className="line-through decoration-2 decoration-white/50 text-white/50">₺14.900</span></p>
             <p className="text-[12px] font-black text-white mt-1">6 Ay Premium HEDİYE dahil!</p>
           </div>

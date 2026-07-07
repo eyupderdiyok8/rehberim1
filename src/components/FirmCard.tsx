@@ -48,20 +48,31 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
   const displayDistrict = unwrap(firm.district)?.name;
   const locationText = [displayCity, displayDistrict].filter(Boolean).join(", ");
   const ratingNum = Number(firm.rating);
+  const visibleServices = firm.is_premium ? 4 : 3;
 
   return (
-    <div className={`bg-white rounded-lg hover:shadow-md transition-all duration-200 group overflow-hidden flex flex-col ${
+    <div className={`relative bg-white rounded-lg transition-all duration-200 group overflow-hidden flex flex-col ${
       firm.is_premium
-        ? "border-t-2 border-t-amber-400 border-l border-l-amber-100 border-r border-r-amber-100 border-b border-b-amber-100 shadow-amber-50 hover:shadow-amber-100/50"
+        ? "border border-amber-300 shadow-[0_18px_45px_-32px_rgba(180,83,9,0.75)] hover:-translate-y-1 hover:shadow-[0_24px_60px_-30px_rgba(180,83,9,0.9)]"
         : "border border-[#E2E8F0] hover:border-[#CBD5E1]"
     }`}>
+      {firm.is_premium && (
+        <>
+          <div className="h-1.5 bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-500" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-amber-50/90 via-amber-50/35 to-transparent" />
+        </>
+      )}
 
-      <div className="p-5 flex-1 flex flex-col">
+      <div className="relative p-5 flex-1 flex flex-col">
         {/* Logo + name row */}
         <div className="flex items-start gap-3 mb-4">
-          <div className="w-12 h-12 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0] relative">
+          <div className={`rounded-lg flex items-center justify-center font-bold shrink-0 overflow-hidden relative ${
+            firm.is_premium
+              ? "w-14 h-14 bg-white text-[#0F172A] border border-amber-200 shadow-md shadow-amber-200/50 text-base"
+              : "w-12 h-12 bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0] text-sm"
+          }`}>
             {firm.logo_url ? (
-              <Image src={firm.logo_url} alt={firm.name} fill sizes="48px" className="object-contain p-1" />
+              <Image src={firm.logo_url} alt={firm.name} fill sizes={firm.is_premium ? "56px" : "48px"} className="object-contain p-1" />
             ) : (
               initials
             )}
@@ -77,11 +88,25 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
             )}
           </div>
           {firm.is_premium && (
-            <span className="text-[10px] font-bold text-amber-700 bg-gradient-to-r from-amber-50 to-yellow-50 px-2 py-1 rounded border border-amber-200 shrink-0 mt-0.5 shadow-sm">
-              ⭐ Premium
+            <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-800 bg-white px-2.5 py-1.5 rounded-full border border-amber-300 shrink-0 mt-0.5 shadow-sm shadow-amber-200/50 uppercase tracking-wide">
+              <span className="text-amber-500">★</span>
+              Premium
             </span>
           )}
         </div>
+
+        {firm.is_premium && (
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            <span className="text-[10px] font-bold text-amber-800 bg-amber-100/80 border border-amber-200 px-2 py-1 rounded-full">
+              Öne çıkan üye
+            </span>
+            {firm.is_verified && (
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-full">
+                Onaylı firma
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Description (premium only) */}
         {firm.is_premium && firm.description && (
@@ -110,23 +135,40 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
         {/* Service tags */}
         {firm.firm_services && firm.firm_services.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-4">
-            {firm.firm_services.slice(0, 3).map((fs, i) => {
+            {firm.firm_services.slice(0, visibleServices).map((fs, i) => {
               const svc = unwrap(fs.service);
               if (!svc) return null;
               return (
                 <span
                   key={svc.slug + i}
-                  className="text-[11px] font-medium text-[#475569] bg-[#F8FAFC] border border-[#E2E8F0] px-2 py-0.5 rounded"
+                  className={`text-[11px] font-medium border px-2 py-0.5 rounded ${
+                    firm.is_premium
+                      ? "text-[#334155] bg-white/80 border-amber-100"
+                      : "text-[#475569] bg-[#F8FAFC] border-[#E2E8F0]"
+                  }`}
                 >
                   {svc.name}
                 </span>
               );
             })}
-            {firm.firm_services.length > 3 && (
+            {firm.firm_services.length > visibleServices && (
               <span className="text-[11px] font-medium text-[#94A3B8] px-1 py-0.5">
-                +{firm.firm_services.length - 3}
+                +{firm.firm_services.length - visibleServices}
               </span>
             )}
+          </div>
+        )}
+
+        {firm.is_premium && (
+          <div className="mb-4 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-amber-100 bg-amber-100">
+            <div className="bg-white/80 px-3 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">Puan</p>
+              <p className="text-sm font-black text-amber-700">{ratingNum.toFixed(1)}</p>
+            </div>
+            <div className="bg-white/80 px-3 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">Yorum</p>
+              <p className="text-sm font-black text-amber-700">{firm.review_count}</p>
+            </div>
           </div>
         )}
 
@@ -137,7 +179,11 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
         <div className="mt-auto flex items-center gap-2 pt-3 border-t border-[#F1F5F9]">
           <a
             href={`/firma/${firm.slug}`}
-            className="text-center text-[12px] font-semibold py-2 px-4 rounded-md bg-[#0F172A] text-white hover:bg-[#1E293B] transition-colors whitespace-nowrap"
+            className={`text-center text-[12px] font-semibold py-2 px-4 rounded-md transition-colors whitespace-nowrap ${
+              firm.is_premium
+                ? "bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white shadow-sm shadow-slate-900/20 hover:from-[#1E293B] hover:to-[#334155]"
+                : "bg-[#0F172A] text-white hover:bg-[#1E293B]"
+            }`}
           >
             Profili Görüntüle
           </a>

@@ -219,14 +219,17 @@ export default async function FirmProfilePage({ params }: PageParams) {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Header card */}
-            <div className={`border rounded-xl overflow-hidden bg-white shadow-sm ${
+            <div className={`relative border rounded-xl overflow-hidden bg-white ${
               firm.is_premium
-                ? "border-amber-200/60 ring-1 ring-amber-100 shadow-amber-100/30"
+                ? "border-amber-300 ring-1 ring-amber-100 shadow-[0_24px_70px_-45px_rgba(180,83,9,0.9)]"
                 : "border-[#E2E8F0]"
             }`}>
               {/* Premium Gold Accent Bar */}
               {firm.is_premium && (
-                <div className="h-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500" />
+                <>
+                  <div className="h-1.5 bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-500" />
+                  <div className="pointer-events-none absolute inset-x-0 top-1.5 h-44 bg-gradient-to-b from-amber-50/80 via-amber-50/30 to-transparent" />
+                </>
               )}
               {/* Cover Image */}
               {firm.cover_image_url ? (
@@ -241,7 +244,11 @@ export default async function FirmProfilePage({ params }: PageParams) {
                   />
                 </div>
               ) : (
-                <div className="w-full h-24 sm:h-32 bg-gradient-to-r from-[#F1F5F9] to-[#E2E8F0]" />
+                <div className={`w-full h-24 sm:h-32 ${
+                  firm.is_premium
+                    ? "bg-[linear-gradient(135deg,#fff7ed_0%,#f8fafc_45%,#e0f2fe_100%)]"
+                    : "bg-gradient-to-r from-[#F1F5F9] to-[#E2E8F0]"
+                }`} />
               )}
 
               <div className="px-6 pb-6 relative">
@@ -249,7 +256,11 @@ export default async function FirmProfilePage({ params }: PageParams) {
                 <div className="flex items-end justify-between gap-4">
                   {/* Logo only — overlaps cover */}
                   <div className="flex gap-4 -mt-10 sm:-mt-12 relative z-10 shrink-0">
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white border-4 border-white shadow-md flex items-center justify-center font-bold text-2xl text-[#0F172A] shrink-0 overflow-hidden relative">
+                    <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white border-4 flex items-center justify-center font-bold text-2xl text-[#0F172A] shrink-0 overflow-hidden relative ${
+                      firm.is_premium
+                        ? "border-amber-50 shadow-xl shadow-amber-200/50 ring-1 ring-amber-200"
+                        : "border-white shadow-md"
+                    }`}>
                       {firm.logo_url ? (
                         <Image src={firm.logo_url} alt={firm.name} fill sizes="96px" className="object-contain" />
                       ) : (
@@ -261,7 +272,7 @@ export default async function FirmProfilePage({ params }: PageParams) {
                   {/* Badges */}
                   <div className="flex gap-2 flex-wrap sm:justify-end pb-2">
                     {firm.is_premium && (
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wide text-amber-700 bg-gradient-to-r from-amber-50 to-yellow-50 px-3 py-1.5 border border-amber-200 shadow-sm shadow-amber-100/50">
+                      <span className="inline-flex items-center gap-1.5 rounded-full text-[11px] font-black tracking-wide text-amber-800 bg-white px-3 py-1.5 border border-amber-300 shadow-sm shadow-amber-200/50 uppercase">
                         <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                         Premium Üye
                       </span>
@@ -283,6 +294,19 @@ export default async function FirmProfilePage({ params }: PageParams) {
                   <p className="text-sm text-[#0F172A]/60 font-semibold mt-1">
                     {[cityObj?.name, districtObj?.name].filter(Boolean).join(" · ")}
                   </p>
+                  {firm.is_premium && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-bold text-amber-800">
+                        Öncelikli görünürlük
+                      </span>
+                      <span className="rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-[11px] font-bold text-[#0369A1]">
+                        Reklamsız profil
+                      </span>
+                      <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700">
+                        Gelişmiş iletişim
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Rating summary */}
@@ -314,18 +338,24 @@ export default async function FirmProfilePage({ params }: PageParams) {
 
                 {/* Premium Trust Strip */}
                 {firm.is_premium && (
-                  <div className="mt-5 pt-5 border-t border-amber-100 grid grid-cols-3 gap-3">
+                  <div className="mt-5 pt-5 border-t border-amber-100 grid grid-cols-3 gap-px overflow-hidden rounded-lg bg-amber-100">
                     <div className="text-center">
-                      <p className="text-lg font-black text-amber-600">{reviewsList.length}</p>
+                      <div className="bg-white/80 py-3">
+                      <p className="text-lg font-black text-amber-700">{reviewsList.length}</p>
                       <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider">Müşteri Yorumu</p>
-                    </div>
-                    <div className="text-center border-x border-amber-100">
-                      <p className="text-lg font-black text-amber-600">{avgRating.toFixed(1)}</p>
-                      <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider">Ortalama Puan</p>
+                      </div>
                     </div>
                     <div className="text-center">
-                      <p className="text-lg font-black text-amber-600">✓</p>
+                      <div className="bg-white/80 py-3">
+                      <p className="text-lg font-black text-amber-700">{avgRating.toFixed(1)}</p>
+                      <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider">Ortalama Puan</p>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="bg-white/80 py-3">
+                      <p className="text-lg font-black text-amber-700">✓</p>
                       <p className="text-[10px] font-bold text-[#0F172A]/40 uppercase tracking-wider">Onaylı Firma</p>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -492,20 +522,48 @@ export default async function FirmProfilePage({ params }: PageParams) {
           <div className="space-y-4">
             {/* Contact card */}
             <div className={`border rounded-lg overflow-hidden ${
-              firm.is_premium ? "border-amber-200/60" : "border-[#E2E8F0]"
+              firm.is_premium
+                ? "border-amber-300 bg-[linear-gradient(180deg,#fffbeb_0%,#ffffff_34%)] shadow-[0_20px_55px_-38px_rgba(180,83,9,0.8)]"
+                : "border-[#E2E8F0]"
             }`}>
               <div className={`px-5 py-4 border-b ${
                 firm.is_premium
-                  ? "bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200/60"
+                  ? "bg-gradient-to-r from-amber-100/80 via-yellow-50 to-white border-amber-200"
                   : "bg-[#F8FAFC] border-[#E2E8F0]"
               }`}>
-                <h3 className={`font-bold text-[15px] ${
-                  firm.is_premium ? "text-amber-800" : "text-[#0F172A]"
-                }`}>
-                  {firm.is_premium ? "⭐ İletişim" : "İletişim"}
-                </h3>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className={`font-bold text-[15px] ${
+                      firm.is_premium ? "text-amber-900" : "text-[#0F172A]"
+                    }`}>
+                      {firm.is_premium ? "Premium İletişim" : "İletişim"}
+                    </h3>
+                    {firm.is_premium && (
+                      <p className="mt-1 text-[11px] font-semibold text-amber-800/70">
+                        Doğrudan ulaşın, hızlı teklif alın.
+                      </p>
+                    )}
+                  </div>
+                  {firm.is_premium && (
+                    <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-amber-800 border border-amber-200">
+                      ★ Seçkin
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="px-5 py-5 space-y-5">
+                {firm.is_premium && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-md border border-amber-100 bg-white/80 px-3 py-2">
+                      <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">Durum</p>
+                      <p className="text-xs font-black text-amber-800">Premium</p>
+                    </div>
+                    <div className="rounded-md border border-emerald-100 bg-white/80 px-3 py-2">
+                      <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">Profil</p>
+                      <p className="text-xs font-black text-emerald-700">Reklamsız</p>
+                    </div>
+                  </div>
+                )}
                 {firm.phone && (
                   <div>
                     <p className="text-[11px] uppercase font-bold text-[#0F172A]/40 tracking-wide mb-1">
@@ -513,7 +571,9 @@ export default async function FirmProfilePage({ params }: PageParams) {
                     </p>
                     <a
                       href={`tel:${firm.phone}`}
-                      className="text-sm font-bold text-[#0F172A] hover:text-[#0EA5E9] transition-colors"
+                      className={`text-sm font-bold transition-colors ${
+                        firm.is_premium ? "text-[#0F172A] hover:text-amber-700" : "text-[#0F172A] hover:text-[#0EA5E9]"
+                      }`}
                     >
                       {firm.phone}
                     </a>
@@ -529,7 +589,9 @@ export default async function FirmProfilePage({ params }: PageParams) {
                       href={`https://wa.me/${firm.whatsapp.replace(/\D/g, "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0EA5E9] hover:text-[#0284C7] transition-colors"
+                      className={`inline-flex items-center gap-1.5 text-sm font-bold transition-colors ${
+                        firm.is_premium ? "text-amber-700 hover:text-amber-800" : "text-[#0EA5E9] hover:text-[#0284C7]"
+                      }`}
                     >
                       Mesaj Gönder →
                     </a>
@@ -581,9 +643,9 @@ export default async function FirmProfilePage({ params }: PageParams) {
 
             {/* Google Maps (Premium) */}
             {firm.is_premium && firm.google_maps_url && (
-              <div className="border border-amber-200/60 rounded-lg overflow-hidden">
-                <div className="px-5 py-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-amber-200/60">
-                  <h3 className="font-extrabold text-sm text-amber-800">📍 Konum</h3>
+              <div className="border border-amber-300 rounded-lg overflow-hidden shadow-[0_18px_45px_-36px_rgba(180,83,9,0.75)]">
+                <div className="px-5 py-4 bg-gradient-to-r from-amber-100/80 via-yellow-50 to-white border-b border-amber-200">
+                  <h3 className="font-extrabold text-sm text-amber-900">Konum</h3>
                 </div>
                 <div className="aspect-video w-full">
                   <iframe
@@ -606,7 +668,7 @@ export default async function FirmProfilePage({ params }: PageParams) {
                 type="contact_click"
                 className={`w-full flex items-center justify-center gap-2 text-center font-bold text-sm py-3 rounded-lg transition-colors duration-150 ${
                   firm.is_premium
-                    ? "bg-gradient-to-r from-[#0EA5E9] to-[#0284C7] text-white shadow-md shadow-sky-500/10"
+                    ? "bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white shadow-lg shadow-slate-900/15 hover:from-[#1E293B] hover:to-[#334155]"
                     : "bg-[#0EA5E9] hover:bg-[#0284C7] text-white"
                 }`}
               >

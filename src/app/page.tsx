@@ -118,11 +118,10 @@ export default async function Home() {
       ? Math.round(allPrices.reduce((a, b) => a + b, 0) / allPrices.length)
       : 4500;
 
-  // Calculate dynamic segments if we have enough data, else fallback
   let segments = [
-    { label: "Temel Sistem", range: "₺2.500 – ₺4.000" },
-    { label: "Orta Segment", range: "₺4.000 – ₺8.000" },
-    { label: "Premium Sistem", range: "₺8.000+" },
+    { label: "Temel Sistem", range: "₺5.000 – ₺8.000" },
+    { label: "Orta Segment", range: "₺8.000 – ₺12.000" },
+    { label: "Premium Sistem", range: "₺12.000+" },
   ];
 
   if (allPrices.length >= 3) {
@@ -181,7 +180,7 @@ export default async function Home() {
             { "@type": "Question", "name": "Filtre değişimi ne sıklıkta yapılmalı?", "acceptedAnswer": { "@type": "Answer", "text": "Ön filtreler 6 ayda bir, ana membran filtre ise kullanım yoğunluğuna göre 1-2 yılda bir değiştirilmelidir. Yetkili servisler periyodik bakım planı sunar." } },
             { "@type": "Question", "name": "Sitenizdeki firmalar güvenilir mi?", "acceptedAnswer": { "@type": "Answer", "text": "Tüm firmalar ekibimiz tarafından onaylandıktan sonra listeye eklenir. Gerçek müşteri yorumları ve puanlama sistemi ile şeffaf bir değerlendirme sunarız." } },
             { "@type": "Question", "name": "Firmalarla iletişim ücretli mi?", "acceptedAnswer": { "@type": "Answer", "text": "Hayır, sitemizdeki tüm firmalarla telefon veya WhatsApp üzerinden doğrudan ve ücretsiz iletişime geçebilirsiniz." } },
-            { "@type": "Question", "name": "Su arıtma cihazı fiyatları ne kadar?", "acceptedAnswer": { "@type": "Answer", "text": "Giriş seviyesi sistemler 2.500 TL'den başlarken, premium ters osmoz sistemleri 8.000-15.000 TL aralığındadır." } },
+            { "@type": "Question", "name": "Su arıtma cihazı fiyatları ne kadar?", "acceptedAnswer": { "@type": "Answer", "text": "Giriş seviyesi sistemler 5.000 TL'den başlarken, premium ters osmoz sistemleri 8.000-15.000 TL aralığındadır." } },
             { "@type": "Question", "name": "Hangi şehirlerde hizmet veriyorsunuz?", "acceptedAnswer": { "@type": "Answer", "text": "Su Arıtma Rehberi olarak Türkiye genelinde 81 il ve 900+ ilçede onaylı firmalar listeliyoruz." } }
           ]
         }) }}
@@ -502,7 +501,7 @@ export default async function Home() {
               },
               {
                 q: "Su arıtma cihazı fiyatları ne kadar?",
-                a: "Giriş seviyesi sistemler 2.500 TL'den başlarken, premium ters osmoz sistemleri 8.000-15.000 TL aralığındadır. Güncel fiyatları sitemizdeki fiyat sayfalarından inceleyebilirsiniz."
+                a: "Giriş seviyesi sistemler 5.000 TL'den başlarken, premium ters osmoz sistemleri 8.000-15.000 TL aralığındadır. Güncel fiyatları sitemizdeki fiyat sayfalarından inceleyebilirsiniz."
               },
               {
                 q: "Hangi şehirlerde hizmet veriyorsunuz?",

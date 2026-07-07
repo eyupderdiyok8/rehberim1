@@ -286,7 +286,7 @@ export default async function Home() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-[#E2E8F0] pb-4">
             <div>
               <h2 className="text-2xl font-extrabold text-[#0F172A] tracking-tight">
-                Öne Çıkan Üyelerimiz
+                Öne Çıkan Firmalar
               </h2>
               <p className="text-[15px] text-[#0F172A]/60 mt-1">
                 Kullanıcı değerlendirmeleri ve hizmet kalitesine göre sıralanmıştır.

@@ -6,7 +6,7 @@ import CityPricePage from '@/components/pages/CityPricePage';
 import DistrictPricePage from '@/components/pages/DistrictPricePage';
 import EmptyDistrictPage from '@/components/pages/EmptyDistrictPage';
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 86400; // Revalidate daily to reduce ISR writes on programmatic SEO pages.
 
 interface PageParams {
   params: Promise<{ slug: string }>;

@@ -7,7 +7,7 @@ import FirmCard from "@/components/FirmCard";
 import BannerSlot from "@/components/BannerSlot";
 import BannerPlaceholder from "@/components/BannerPlaceholder";
 
-export const revalidate = 3600;
+export const revalidate = 21600;
 
 export async function generateMetadata() {
   return {
@@ -189,12 +189,6 @@ export default async function Home() {
 
       {/* ── 1. HERO ──────────────────────────────── */}
       <section className="relative bg-[#0F172A] pt-20 pb-24 px-4">
-        {/* Subtle geometric accent — not blobs */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 right-0 w-px h-[60%] bg-gradient-to-b from-[#0EA5E9]/40 to-transparent" style={{ right: '18%' }} />
-          <div className="absolute bottom-0 left-0 w-[40%] h-px bg-gradient-to-r from-transparent to-[#0EA5E9]/20" />
-        </div>
-
         <div className="relative max-w-4xl mx-auto text-center z-10">
           <p className="text-[#0EA5E9] text-xs font-semibold tracking-wide uppercase mb-5">
             Türkiye'nin Su Arıtma Rehberi

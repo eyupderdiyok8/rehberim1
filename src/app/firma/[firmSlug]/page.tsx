@@ -13,7 +13,7 @@ import ImageLightbox from "@/components/ImageLightbox";
 import ProductGallery from "@/components/ProductGallery";
 import Image from "next/image";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 function appendUtm(url: string, firmSlug: string): string {
   try {
@@ -262,7 +262,8 @@ export default async function FirmProfilePage({ params }: PageParams) {
                         : "border-white shadow-md"
                     }`}>
                       {firm.logo_url ? (
-                        <Image src={firm.logo_url} alt={firm.name} fill sizes="96px" className="object-contain" />
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain" loading="lazy" />
                       ) : (
                         firm.name.split(" ").slice(0, 2).map((w: string) => w[0]).join("")
                       )}

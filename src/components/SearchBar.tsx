@@ -262,17 +262,47 @@ export default function SearchBar({ cities, districts = [], services }: Props) {
         </button>
       </form>
 
-      <div className="relative z-10 mt-3 flex justify-center">
-        <button
-          type="button"
-          onClick={navigateToNearbyServices}
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black text-white shadow-lg shadow-slate-900/20 backdrop-blur transition-all hover:bg-white/15 hover:-translate-y-0.5"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2m5-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          Yakınımdaki servisleri bul
-        </button>
+      <div className="relative z-10 mt-4 overflow-hidden rounded-2xl border border-sky-300/25 bg-gradient-to-r from-sky-500/15 via-white/[0.08] to-emerald-500/10 p-3 shadow-2xl shadow-slate-950/30 backdrop-blur">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3 text-left">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#0F172A] shadow-lg shadow-slate-950/20">
+              <svg className="w-5 h-5 text-[#0EA5E9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 22s7-5.25 7-12a7 7 0 10-14 0c0 6.75 7 12 7 12z" />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-black text-white">
+                Acil servis mi lazım?
+              </p>
+              <p className="mt-0.5 text-xs font-semibold leading-relaxed text-slate-300">
+                Konumunuza en yakın su arıtma servislerini mesafeye göre görün.
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white/75">
+                  20 km yakın arama
+                </span>
+                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white/75">
+                  Hemen Ara / WhatsApp
+                </span>
+                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white/75">
+                  Konum kaydedilmez
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={navigateToNearbyServices}
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-black text-[#0F172A] shadow-lg shadow-slate-950/20 transition-all hover:-translate-y-0.5 hover:bg-slate-50 sm:min-w-56"
+          >
+            <svg className="w-4 h-4 text-[#0EA5E9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Yakınımdaki Servisleri Bul
+          </button>
+        </div>
       </div>
 
       {/* Custom filtered dropdown */}

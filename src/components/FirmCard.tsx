@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 
 type MaybeArray<T> = T | T[] | null | undefined;
 
@@ -72,7 +71,8 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
               : "w-12 h-12 bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0] text-sm"
           }`}>
             {firm.logo_url ? (
-              <Image src={firm.logo_url} alt={firm.name} fill sizes={firm.is_premium ? "56px" : "48px"} className="object-contain p-1" />
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain p-1" loading="lazy" />
             ) : (
               initials
             )}

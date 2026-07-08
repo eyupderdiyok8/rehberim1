@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Breadcrumb from "@/components/Breadcrumb";
 import ComparisonTable from "@/components/ComparisonTable";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   searchParams: Promise<{ ids?: string }>;

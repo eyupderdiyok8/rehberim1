@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 
 type MaybeArray<T> = T | T[] | null | undefined;
 
@@ -82,7 +81,8 @@ export default function ComparisonTable({ firms }: ComparisonTableProps) {
                 <div className="flex flex-col items-center gap-2">
                   <div className="w-14 h-14 rounded-lg flex items-center justify-center overflow-hidden bg-white border border-[#E2E8F0] relative shrink-0">
                     {firm.logo_url ? (
-                      <Image src={firm.logo_url} alt={firm.name} fill sizes="56px" className="object-contain p-1" />
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={firm.logo_url} alt={firm.name} className="w-full h-full object-contain p-1" loading="lazy" />
                     ) : (
                       <span className="text-sm font-bold text-[#64748B]">
                         {firm.name.split(" ").slice(0, 2).map((w) => w[0]).join("")}

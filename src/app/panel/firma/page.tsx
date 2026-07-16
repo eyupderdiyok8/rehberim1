@@ -9,6 +9,13 @@ interface Firm {
   slug: string;
   city_id?: string;
   district_id?: string;
+  phone?: string | null;
+  whatsapp?: string | null;
+  address?: string | null;
+  description?: string | null;
+  logo_url?: string | null;
+  cover_image_url?: string | null;
+  google_maps_url?: string | null;
   is_premium: boolean;
   is_verified: boolean;
   is_active: boolean;
@@ -30,6 +37,7 @@ export default function FirmDashboard() {
   const [totalClicks, setTotalClicks] = useState(0);
   const [todayViews, setTodayViews] = useState(0);
   const [todayClicks, setTodayClicks] = useState(0);
+  const [serviceCount, setServiceCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,6 +57,12 @@ export default function FirmDashboard() {
         if (!firmData) return;
 
         setFirm(firmData);
+
+        const { count: servicesCount } = await supabase
+          .from("firm_services")
+          .select("id", { count: "exact", head: true })
+          .eq("firm_id", firmData.id);
+        setServiceCount(servicesCount || 0);
 
         // Fetch last 30 days of stats for this firm
         const thirtyDaysAgo = new Date();
@@ -129,6 +143,18 @@ export default function FirmDashboard() {
   const maxViews = Math.max(...statDays.map((d) => d.page_views), 1);
   const maxClicks = Math.max(...statDays.map((d) => d.contact_clicks), 1);
   const ctr = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : "0.0";
+  const profileTasks = [
+    { label: "Logo ekle", done: !!firm.logo_url, href: "/panel/firma/profile" },
+    { label: "Telefon ekle", done: !!firm.phone, href: "/panel/firma/profile" },
+    { label: "WhatsApp ekle", done: !!firm.whatsapp, href: "/panel/firma/profile" },
+    { label: "Firma açıklaması yaz", done: !!firm.description && firm.description.length >= 40, href: "/panel/firma/profile" },
+    { label: "Adres / konum ekle", done: !!firm.address && !!firm.city_id && !!firm.district_id, href: "/panel/firma/profile" },
+    { label: "Hizmet ve fiyatları düzenle", done: serviceCount > 0, href: "/panel/firma/services" },
+    { label: "Premium kapak/harita ekle", done: !firm.is_premium || !!firm.cover_image_url || !!firm.google_maps_url, href: "/panel/firma/profile" },
+  ];
+  const completedTasks = profileTasks.filter((task) => task.done).length;
+  const profileScore = Math.round((completedTasks / profileTasks.length) * 100);
+  const nextTask = profileTasks.find((task) => !task.done);
 
   return (
     <div className="space-y-8">
@@ -175,6 +201,52 @@ export default function FirmDashboard() {
         <p className="text-xs text-[#0F172A]/50 font-semibold mt-0.5 uppercase tracking-wider">
           {firm.name} · Performans Özeti
         </p>
+      </div>
+
+      <div className="relative overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-4">
+            <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border text-xl font-black ${
+              profileScore >= 80
+                ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                : profileScore >= 55
+                  ? "border-amber-200 bg-amber-50 text-amber-700"
+                  : "border-sky-200 bg-sky-50 text-[#0369A1]"
+            }`}>
+              %{profileScore}
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-[#0EA5E9]">Profil Gücü</p>
+              <h2 className="mt-1 text-lg font-black text-[#0F172A]">
+                Firmanızı daha güvenilir ve aranabilir gösterin
+              </h2>
+              <p className="mt-1 max-w-2xl text-xs font-semibold leading-relaxed text-[#0F172A]/55">
+                Dolu profil daha güçlü kart, daha net hizmet algısı ve daha fazla iletişim tıklaması demek.
+              </p>
+              {nextTask && (
+                <a href={nextTask.href} className="mt-3 inline-flex rounded-lg bg-[#0F172A] px-4 py-2 text-xs font-black text-white transition-colors hover:bg-[#1E293B]">
+                  Sıradaki adım: {nextTask.label}
+                </a>
+              )}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:w-96">
+            {profileTasks.slice(0, 6).map((task) => (
+              <a
+                key={task.label}
+                href={task.href}
+                className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-bold transition-colors ${
+                  task.done
+                    ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+                    : "border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A]/65 hover:bg-white"
+                }`}
+              >
+                <span>{task.done ? "✓" : "○"}</span>
+                {task.label}
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Top KPI Cards — Rating visible to all, analytics gated */}

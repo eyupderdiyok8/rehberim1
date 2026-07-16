@@ -145,7 +145,7 @@ export default async function FirmProfilePage({ params }: PageParams) {
     .from("firms")
     .select(`
       id, name, slug, rating, review_count,
-      is_premium, is_verified,
+      is_premium, is_verified, phone, whatsapp, description, logo_url,
       district:districts(name),
       firm_services(
         price_min, price_max,
@@ -168,6 +168,10 @@ export default async function FirmProfilePage({ params }: PageParams) {
   const serviceSlug = firstService?.slug ?? "su-aritma-cihazi";
   const citySlug = cityObj?.slug ?? "";
   const districtSlug = districtObj?.slug ?? "";
+  const serviceNames = (firm.firm_services ?? [])
+    .map((fs: any) => fs.service?.name)
+    .filter(Boolean)
+    .slice(0, 3);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -308,6 +312,57 @@ export default async function FirmProfilePage({ params }: PageParams) {
                       </span>
                     </div>
                   )}
+                </div>
+
+                <div className={`mb-5 rounded-xl border p-4 ${
+                  firm.is_premium
+                    ? "border-amber-200 bg-gradient-to-r from-amber-50/80 via-white to-sky-50/60"
+                    : "border-[#E2E8F0] bg-[#F8FAFC]"
+                }`}>
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-black uppercase tracking-wider text-[#0EA5E9]">
+                        Bu firmadan alabileceğiniz hizmet
+                      </p>
+                      <h2 className="mt-1 text-lg font-black text-[#0F172A] leading-snug">
+                        {serviceNames.length > 0
+                          ? `${serviceNames.join(", ")} için doğrudan iletişime geçin`
+                          : "Su arıtma cihazı, bakım ve servis için doğrudan iletişime geçin"}
+                      </h2>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700">
+                          Telefon ve WhatsApp ile hızlı ulaşım
+                        </span>
+                        <span className="rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-[11px] font-bold text-[#0369A1]">
+                          Hizmet ve fiyat bilgisi iste
+                        </span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:w-72">
+                      {firm.phone && (
+                        <TrackLink
+                          href={`tel:${firm.phone}`}
+                          firmId={firm.id}
+                          type="contact_click"
+                          className="flex items-center justify-center rounded-lg bg-[#0F172A] px-4 py-3 text-sm font-black text-white transition-colors hover:bg-[#1E293B]"
+                        >
+                          Hemen Ara
+                        </TrackLink>
+                      )}
+                      {firm.whatsapp && (
+                        <TrackLink
+                          href={`https://wa.me/${firm.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent("Merhaba, su arıtma hizmeti için bilgi almak istiyorum.")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          firmId={firm.id}
+                          type="contact_click"
+                          className="flex items-center justify-center rounded-lg bg-[#25D366] px-4 py-3 text-sm font-black text-white transition-colors hover:bg-[#20BA56]"
+                        >
+                          WhatsApp
+                        </TrackLink>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Rating summary */}
@@ -560,8 +615,8 @@ export default async function FirmProfilePage({ params }: PageParams) {
                       <p className="text-xs font-black text-amber-800">Premium</p>
                     </div>
                     <div className="rounded-md border border-emerald-100 bg-white/80 px-3 py-2">
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">Profil</p>
-                      <p className="text-xs font-black text-emerald-700">Reklamsız</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">İletişim</p>
+                      <p className="text-xs font-black text-emerald-700">Hızlı dönüş</p>
                     </div>
                   </div>
                 )}

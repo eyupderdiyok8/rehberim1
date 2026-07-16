@@ -79,7 +79,7 @@ function getInitials(name: string) {
     .join("");
 }
 
-function NearbyFirmCard({ firm }: { firm: NearbyFirm }) {
+function NearbyFirmCard({ firm, rank }: { firm: NearbyFirm; rank: number }) {
   const rating = Number(firm.rating);
   const location = [firm.city?.name, firm.district?.name].filter(Boolean).join(", ");
   const whatsapp = firm.whatsapp?.replace(/\D/g, "");
@@ -100,6 +100,19 @@ function NearbyFirmCard({ firm }: { firm: NearbyFirm }) {
       )}
 
       <div className="relative p-5">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wide ${
+            rank === 1
+              ? "bg-[#0F172A] text-white"
+              : "bg-[#F1F5F9] text-[#475569]"
+          }`}>
+            {rank === 1 ? "En yakın seçenek" : `${rank}. yakın seçenek`}
+          </span>
+          <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-black text-emerald-700">
+            Hızlı servis araması
+          </span>
+        </div>
+
         <div className="flex items-start gap-4">
           <div
             className={`w-14 h-14 rounded-lg shrink-0 flex items-center justify-center overflow-hidden border font-black ${
@@ -158,6 +171,23 @@ function NearbyFirmCard({ firm }: { firm: NearbyFirm }) {
             {firm.description}
           </p>
         )}
+
+        <div className={`mt-4 grid grid-cols-3 gap-px overflow-hidden rounded-lg border ${
+          firm.is_premium ? "border-amber-100 bg-amber-100" : "border-[#E2E8F0] bg-[#E2E8F0]"
+        }`}>
+          <div className="bg-white px-3 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/35">Mesafe</p>
+            <p className="text-xs font-black text-[#0F172A]">{Number(firm.distance_km).toFixed(Number(firm.distance_km) < 10 ? 1 : 0)} km</p>
+          </div>
+          <div className="bg-white px-3 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/35">Puan</p>
+            <p className="text-xs font-black text-[#0F172A]">{rating.toFixed(1)}</p>
+          </div>
+          <div className="bg-white px-3 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/35">İletişim</p>
+            <p className="text-xs font-black text-emerald-600">{whatsapp ? "WhatsApp" : firm.phone ? "Telefon" : "Profil"}</p>
+          </div>
+        </div>
 
         {firm.firm_services && firm.firm_services.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-1.5">
@@ -405,8 +435,8 @@ export default function NearbyServicesClient({ cities, districts, services }: Pr
           {firms.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-6">
               <div className="space-y-4">
-                {firms.map((firm) => (
-                  <NearbyFirmCard key={firm.id} firm={firm} />
+                {firms.map((firm, index) => (
+                  <NearbyFirmCard key={firm.id} firm={firm} rank={index + 1} />
                 ))}
               </div>
               <div className="lg:sticky lg:top-24 lg:self-start">

@@ -91,7 +91,7 @@ export default async function Page({ params }: PageParams) {
           .from('firms')
           .select(`
             id, name, slug, address, rating, review_count,
-            is_premium, is_verified, logo_url,
+            is_premium, is_verified, logo_url, description, phone, whatsapp,
             latitude, longitude,
             district:districts(id, name),
             firm_services(price_min, price_max, service:services(name, slug))
@@ -156,7 +156,7 @@ export default async function Page({ params }: PageParams) {
     .from('firms')
     .select(`
       id, name, slug, address, rating, review_count,
-      is_premium, is_verified, logo_url,
+      is_premium, is_verified, logo_url, description, phone, whatsapp,
       latitude, longitude,
       district:districts(id, name),
       firm_services(

@@ -19,6 +19,7 @@ interface Firm {
   logo_url?: string | null;
   description?: string | null;
   phone?: string | null;
+  whatsapp?: string | null;
   city?: MaybeArray<{ name: string }>;
   district?: MaybeArray<{ name: string }>;
   firm_services?: Array<{
@@ -48,6 +49,7 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
   const locationText = [displayCity, displayDistrict].filter(Boolean).join(", ");
   const ratingNum = Number(firm.rating);
   const visibleServices = firm.is_premium ? 4 : 3;
+  const whatsappNumber = firm.whatsapp?.replace(/\D/g, "");
 
   return (
     <div className={`relative bg-white rounded-lg transition-all duration-200 group overflow-hidden flex flex-col ${
@@ -98,13 +100,16 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
         {firm.is_premium && (
           <div className="mb-3 flex flex-wrap gap-1.5">
             <span className="text-[10px] font-bold text-amber-800 bg-amber-100/80 border border-amber-200 px-2 py-1 rounded-full">
-              Öne çıkan üye
+              Premium servis
             </span>
             {firm.is_verified && (
               <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-full">
                 Onaylı firma
               </span>
             )}
+            <span className="text-[10px] font-bold text-[#0369A1] bg-sky-50 border border-sky-100 px-2 py-1 rounded-full">
+              Hızlı iletişim
+            </span>
           </div>
         )}
 
@@ -160,7 +165,7 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
         )}
 
         {firm.is_premium && (
-          <div className="mb-4 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-amber-100 bg-amber-100">
+          <div className="mb-4 grid grid-cols-3 gap-px overflow-hidden rounded-md border border-amber-100 bg-amber-100">
             <div className="bg-white/80 px-3 py-2">
               <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">Puan</p>
               <p className="text-sm font-black text-amber-700">{ratingNum.toFixed(1)}</p>
@@ -169,6 +174,10 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
               <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">Yorum</p>
               <p className="text-sm font-black text-amber-700">{firm.review_count}</p>
             </div>
+            <div className="bg-white/80 px-3 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-[#0F172A]/40">İletişim</p>
+              <p className="text-sm font-black text-emerald-600">Aktif</p>
+            </div>
           </div>
         )}
 
@@ -176,17 +185,40 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
         <div className="flex-1" />
 
         {/* CTA row */}
-        <div className="mt-auto flex items-center gap-2 pt-3 border-t border-[#F1F5F9]">
-          <a
-            href={`/firma/${firm.slug}`}
-            className={`text-center text-[12px] font-semibold py-2 px-4 rounded-md transition-colors whitespace-nowrap ${
-              firm.is_premium
-                ? "bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white shadow-sm shadow-slate-900/20 hover:from-[#1E293B] hover:to-[#334155]"
-                : "bg-[#0F172A] text-white hover:bg-[#1E293B]"
-            }`}
-          >
-            Profili Görüntüle
-          </a>
+        <div className={`mt-auto flex items-center gap-2 pt-3 border-t border-[#F1F5F9] ${firm.is_premium ? "flex-wrap" : ""}`}>
+          {firm.is_premium && firm.phone ? (
+            <a
+              href={`tel:${firm.phone}`}
+              className="flex-1 text-center text-[12px] font-black py-2.5 px-3 rounded-md bg-[#0F172A] text-white hover:bg-[#1E293B] transition-colors whitespace-nowrap"
+            >
+              Hemen Ara
+            </a>
+          ) : (
+            <a
+              href={`/firma/${firm.slug}`}
+              className="text-center text-[12px] font-semibold py-2 px-4 rounded-md bg-[#0F172A] text-white hover:bg-[#1E293B] transition-colors whitespace-nowrap"
+            >
+              Profili Görüntüle
+            </a>
+          )}
+          {firm.is_premium && whatsappNumber && (
+            <a
+              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Merhaba, su arıtma hizmeti için bilgi almak istiyorum.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 text-center text-[12px] font-black py-2.5 px-3 rounded-md bg-[#25D366] text-white hover:bg-[#20BA56] transition-colors whitespace-nowrap"
+            >
+              WhatsApp
+            </a>
+          )}
+          {firm.is_premium && (
+            <a
+              href={`/firma/${firm.slug}`}
+              className="w-full text-center text-[11px] font-bold py-2 px-3 rounded-md border border-amber-200 bg-white/80 text-amber-800 hover:bg-amber-50 transition-colors"
+            >
+              Profili ve hizmetleri incele
+            </a>
+          )}
           {onCompareToggle && (
             <label className="flex items-center gap-1 cursor-pointer group/cmp" title={compareChecked ? 'Karşılaştırmadan çıkar' : compareDisabled ? 'Maksimum 3 firma seçebilirsiniz' : 'Karşılaştırmaya ekle'}>
               <input
@@ -199,7 +231,7 @@ export default function FirmCard({ firm, cityName, compareChecked, compareDisabl
               <span className="text-[10px] font-bold text-[#64748B] group-hover/cmp:text-[#0EA5E9] uppercase tracking-wider select-none hidden sm:inline">Karşılaştır</span>
             </label>
           )}
-          {firm.phone && (
+          {!firm.is_premium && firm.phone && (
             <a
               href={`tel:${firm.phone}`}
               className="ml-auto px-2.5 py-2 rounded-md border border-[#E2E8F0] text-[#64748B] hover:text-[#0F172A] hover:border-[#CBD5E1] transition-colors text-[12px] font-medium flex items-center gap-1.5"

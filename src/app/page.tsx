@@ -49,7 +49,7 @@ export default async function Home() {
       .from("firms")
       .select(`
         id, name, slug, rating, review_count,
-        is_premium, is_verified, address, logo_url, description, phone,
+        is_premium, is_verified, address, logo_url, description, phone, whatsapp,
         city:cities(name),
         district:districts(name),
         firm_services(

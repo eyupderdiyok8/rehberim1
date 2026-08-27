@@ -11,7 +11,7 @@ import BannerSlot from "@/components/BannerSlot";
 import BannerPlaceholder from "@/components/BannerPlaceholder";
 import ImageLightbox from "@/components/ImageLightbox";
 import ProductGallery from "@/components/ProductGallery";
-import FirmLocationMap from "@/components/FirmLocationMap";
+import PremiumFirmLocationMap from "@/components/PremiumFirmLocationMap";
 import Image from "next/image";
 
 export const revalidate = 86400;
@@ -705,7 +705,7 @@ export default async function FirmProfilePage({ params }: PageParams) {
                   <h3 className="font-extrabold text-sm text-amber-900">Konum</h3>
                   <p className="mt-1 text-[11px] font-medium text-amber-800/70">Haritada görüntüleyin ve yol tarifi alın.</p>
                 </div>
-                <FirmLocationMap
+                <PremiumFirmLocationMap
                   latitude={Number(firm.latitude)}
                   longitude={Number(firm.longitude)}
                   firmName={firm.name}

@@ -20,6 +20,8 @@ interface Firm {
   cover_image_url: string | null;
   google_maps_url: string | null;
   is_premium: boolean;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 export default function FirmProfile() {
@@ -115,7 +117,10 @@ export default function FirmProfile() {
     try {
       // Auto-geocode from address if it has changed
       let geoUpdate: { latitude?: number; longitude?: number } = {};
-      if (formData.address && formData.address !== firm.address) {
+      if (
+        formData.address &&
+        (formData.address !== firm.address || firm.latitude === null || firm.longitude === null)
+      ) {
         const coords = await geocodeAddress({ address: formData.address });
         if (coords) {
           geoUpdate = { latitude: coords.latitude, longitude: coords.longitude };
@@ -286,12 +291,17 @@ export default function FirmProfile() {
               placeholder="Müşterilerin fiziki olarak sizi ziyaret edebilmesi için açık adres yazın..."
               className="w-full px-3 py-2 border border-[#E2E8F0] rounded-lg text-sm focus:outline-none focus:ring-[#0EA5E9] focus:border-[#0EA5E9] leading-relaxed"
             />
+            {firm?.is_premium && (
+              <p className="text-[10px] text-slate-400 mt-1">
+                Adresi kaydettiğinizde konumunuz ücretsiz OpenStreetMap üzerinde otomatik oluşturulur; Google Maps API anahtarı gerekmez.
+              </p>
+            )}
           </div>
 
           {firm?.is_premium && (
             <div>
               <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">
-                Google Haritalar (Premium Özel)
+                Google Haritalar Bağlantısı (İsteğe Bağlı)
               </label>
               <input
                 type="text"
@@ -302,7 +312,7 @@ export default function FirmProfile() {
                 className="w-full px-3 py-2 border border-[#E2E8F0] rounded-lg text-sm focus:outline-none focus:ring-[#0EA5E9] focus:border-[#0EA5E9]"
               />
               <p className="text-[10px] text-slate-400 mt-1">
-                Google Maps'te firmanızı bulup "Paylaş" → "Harita paylaş" ile aldığınız linki yapıştırın.
+                Adresinizden otomatik konum oluşturulur. Google Maps'teki mevcut işletme sayfanıza da bağlantı vermek isterseniz buraya ekleyin.
               </p>
             </div>
           )}

@@ -11,6 +11,7 @@ import BannerSlot from "@/components/BannerSlot";
 import BannerPlaceholder from "@/components/BannerPlaceholder";
 import ImageLightbox from "@/components/ImageLightbox";
 import ProductGallery from "@/components/ProductGallery";
+import FirmLocationMap from "@/components/FirmLocationMap";
 import Image from "next/image";
 
 export const revalidate = 86400;
@@ -697,8 +698,28 @@ export default async function FirmProfilePage({ params }: PageParams) {
               </div>
             </div>
 
-            {/* Google Maps (Premium) */}
-            {firm.is_premium && firm.google_maps_url && (
+            {/* Premium location map: coordinates are collected from the firm address. */}
+            {firm.is_premium && firm.latitude !== null && firm.longitude !== null ? (
+              <div className="border border-amber-300 rounded-lg overflow-hidden shadow-[0_18px_45px_-36px_rgba(180,83,9,0.75)]">
+                <div className="px-5 py-4 bg-gradient-to-r from-amber-100/80 via-yellow-50 to-white border-b border-amber-200">
+                  <h3 className="font-extrabold text-sm text-amber-900">Konum</h3>
+                  <p className="mt-1 text-[11px] font-medium text-amber-800/70">Haritada görüntüleyin ve yol tarifi alın.</p>
+                </div>
+                <FirmLocationMap
+                  latitude={Number(firm.latitude)}
+                  longitude={Number(firm.longitude)}
+                  firmName={firm.name}
+                />
+                <a
+                  href={`https://www.openstreetmap.org/?mlat=${firm.latitude}&mlon=${firm.longitude}#map=17/${firm.latitude}/${firm.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-5 py-3 text-center text-xs font-bold text-amber-800 hover:bg-amber-50 transition-colors"
+                >
+                  Yol tarifini aç →
+                </a>
+              </div>
+            ) : firm.is_premium && firm.google_maps_url ? (
               <div className="border border-amber-300 rounded-lg overflow-hidden shadow-[0_18px_45px_-36px_rgba(180,83,9,0.75)]">
                 <div className="px-5 py-4 bg-gradient-to-r from-amber-100/80 via-yellow-50 to-white border-b border-amber-200">
                   <h3 className="font-extrabold text-sm text-amber-900">Konum</h3>
@@ -714,7 +735,7 @@ export default async function FirmProfilePage({ params }: PageParams) {
                   />
                 </div>
               </div>
-            )}
+            ) : null}
 
             {/* Quick CTA */}
             {firm.phone && (

@@ -41,8 +41,9 @@ export default function B2BImageUploader({ value, onChange, max = 8 }: { value: 
     setDragging(false);
     upload(Array.from(event.dataTransfer.files));
   };
-  const remove = async (image: UploadedB2BImage) => {
-    onChange(value.filter((item) => item.path !== image.path));
+  const remove = async (image: UploadedB2BImage, index: number) => {
+    onChange(value.filter((_, itemIndex) => itemIndex !== index));
+    if (!image.path) return;
     const { data } = await supabase.auth.getSession();
     if (!data.session) return;
     await fetch("/api/b2b/product-image", { method: "DELETE", headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session.access_token}` }, body: JSON.stringify({ path: image.path }) });
@@ -67,6 +68,6 @@ export default function B2BImageUploader({ value, onChange, max = 8 }: { value: 
       <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={pick} className="sr-only" />
     </div>
     {error && <p role="alert" className="mt-2 text-xs font-bold text-red-600">{error}</p>}
-    {value.length > 0 && <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">{value.map((image, index) => <div key={image.path} className="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-white"><img src={image.url} alt={`Ürün görseli ${index + 1}`} className="h-full w-full object-cover" />{index === 0 && <span className="absolute left-2 top-2 rounded-md bg-slate-950/85 px-2 py-1 text-[9px] font-black text-white">KAPAK</span>}<button type="button" onClick={(event) => { event.stopPropagation(); remove(image); }} aria-label="Görseli kaldır" className="absolute right-2 top-2 flex size-7 items-center justify-center rounded-full bg-white/95 text-sm font-black text-red-600 opacity-0 shadow transition group-hover:opacity-100">×</button></div>)}</div>}
+    {value.length > 0 && <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">{value.map((image, index) => <div key={`${image.url}-${index}`} className="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-white"><img src={image.url} alt={`Ürün görseli ${index + 1}`} className="h-full w-full object-cover" />{index === 0 && <span className="absolute left-2 top-2 rounded-md bg-slate-950/85 px-2 py-1 text-[9px] font-black text-white">KAPAK</span>}<button type="button" onClick={(event) => { event.stopPropagation(); remove(image, index); }} aria-label="Görseli kaldır" className="absolute right-2 top-2 flex size-7 items-center justify-center rounded-full bg-white/95 text-sm font-black text-red-600 opacity-100 shadow transition sm:opacity-0 sm:group-hover:opacity-100">×</button></div>)}</div>}
   </div>;
 }

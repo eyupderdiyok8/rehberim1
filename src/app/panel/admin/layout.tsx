@@ -143,6 +143,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       ),
     },
     {
+      name: "B2B Toptancılar",
+      href: "/panel/admin/b2b/toptancilar",
+      badge: 0,
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7l1.5-3h15L21 7m-18 0h18v13H3V7zm4 4h4v5H7v-5zm8 0h2" />
+        </svg>
+      ),
+    },
+    {
       name: "İstatistikler",
       href: "/panel/admin/stats",
       badge: 0,

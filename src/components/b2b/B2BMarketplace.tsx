@@ -78,16 +78,23 @@ export default function B2BMarketplace() {
   }, [category, products, query]);
 
   const verified = member?.verification_status === "verified";
+  const storeCount = new Set(products.map((product) => product.wholesaler_id)).size;
 
   if (loading) return <div className="py-24 text-center text-sm font-bold text-slate-500">Ürünler hazırlanıyor…</div>;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8">
-      <section className="mb-7 rounded-2xl bg-slate-950 px-6 py-8 text-white sm:px-9">
-        <span className="text-xs font-black uppercase tracking-[0.2em] text-sky-400">Özel B2B pazarı</span>
-        <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <div><h1 className="text-3xl font-black tracking-tight sm:text-4xl">Toptan ürünü güvenle bulun.</h1><p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-slate-300">Doğrulanmış toptancılar, net sipariş koşulları ve esnafa özel fiyat geçmişi.</p></div>
-          <div className={`rounded-xl px-4 py-3 text-xs font-bold ${verified ? "bg-emerald-400/15 text-emerald-300" : "bg-amber-400/15 text-amber-200"}`}>{verified ? "✓ Fiyat erişiminiz açık" : "🔒 Fiyat erişimi için esnaf doğrulaması gerekli"}</div>
+      <section className="relative mb-7 min-h-[330px] overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl shadow-slate-900/15">
+        <div className="absolute inset-0 bg-[url('/b2b/marketplace-hero.webp')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 to-slate-950/20" />
+        <div className="relative flex min-h-[330px] max-w-3xl flex-col justify-center px-6 py-10 sm:px-10">
+          <span className="w-fit rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-sky-300">Profesyonellere özel pazar</span>
+          <h1 className="mt-5 max-w-xl text-4xl font-black tracking-tight sm:text-5xl">Toptan alımın yeni ve güvenli yolu.</h1>
+          <p className="mt-4 max-w-xl text-sm font-medium leading-6 text-slate-300">Doğrulanmış tedarikçiler, net sipariş koşulları ve geçmişi görülebilen esnaf fiyatları tek katalogda.</p>
+          <div className="mt-7 flex flex-wrap items-center gap-3">
+            <div className={`rounded-xl border px-4 py-3 text-xs font-black backdrop-blur ${verified ? "border-emerald-300/20 bg-emerald-400/15 text-emerald-200" : "border-amber-300/20 bg-amber-400/15 text-amber-100"}`}>{verified ? "✓ Fiyat erişiminiz açık" : "🔒 Doğrulama sonrası fiyat erişimi"}</div>
+            <div className="rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-xs font-black backdrop-blur">{products.length} ürün · {storeCount} toptancı</div>
+          </div>
         </div>
       </section>
 
@@ -97,8 +104,8 @@ export default function B2BMarketplace() {
         </Link>
       )}
 
-      <div className="mb-6 grid gap-3 md:grid-cols-[1fr_auto]">
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Ürün, marka veya toptancı ara…" className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 text-base font-medium outline-none focus:border-sky-500" />
+      <div className="mb-7 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm md:grid md:grid-cols-[1fr_auto] md:gap-3">
+        <div className="relative"><span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Ürün, marka veya toptancı ara…" className="min-h-12 w-full rounded-xl border-0 bg-slate-50 pl-11 pr-4 text-base font-medium outline-none ring-sky-500 focus:ring-2" /></div>
         <div className="flex gap-2 overflow-x-auto pb-1">
           {categories.map((item) => <button key={item} onClick={() => setCategory(item)} className={`min-h-12 shrink-0 rounded-xl px-4 text-xs font-bold ${category === item ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-600"}`}>{item}</button>)}
         </div>

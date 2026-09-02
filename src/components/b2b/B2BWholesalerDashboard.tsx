@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { B2BMember, B2BProduct } from "@/types/b2b";
+import B2BImageUploader, { type UploadedB2BImage } from "@/components/b2b/B2BImageUploader";
 
 type Store = {
   id: string;
@@ -24,7 +25,7 @@ type ProductPriceRow = { product_id: string; price: number; currency: "TRY" | "U
 type TradeRequest = { id: string; product_name: string; buyer_user_id: string; buyer_business_name: string; quantity: number; unit: string; status: string; created_at: string; review_submitted: boolean };
 
 const blankProfile = { name: "", description: "", logo_url: "", cover_url: "", city: "", phone: "", whatsapp: "", website: "", shipping_terms: "" };
-const blankProduct = { name: "", brand: "", category: "", description: "", image_urls: "", minimum_order_quantity: "1", unit: "adet", vat_included: true, stock_status: "in_stock", lead_time_days: "1", price: "", currency: "TRY" };
+const blankProduct = { name: "", brand: "", category: "", description: "", minimum_order_quantity: "1", unit: "adet", vat_included: true, stock_status: "in_stock", lead_time_days: "1", price: "", currency: "TRY" };
 
 function makeSlug(value: string) {
   const normalized = value.toLocaleLowerCase("tr-TR").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ı/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -36,7 +37,10 @@ export default function B2BWholesalerDashboard() {
   const [store, setStore] = useState<Store | null>(null);
   const [products, setProducts] = useState<ManagedProduct[]>([]);
   const [profile, setProfile] = useState(blankProfile);
+  const [profileLogo, setProfileLogo] = useState<UploadedB2BImage[]>([]);
+  const [profileCover, setProfileCover] = useState<UploadedB2BImage[]>([]);
   const [product, setProduct] = useState(blankProduct);
+  const [productImages, setProductImages] = useState<UploadedB2BImage[]>([]);
   const [priceDrafts, setPriceDrafts] = useState<Record<string, string>>({});
   const [requests, setRequests] = useState<TradeRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,6 +86,8 @@ export default function B2BWholesalerDashboard() {
       website: typedStore.website ?? "",
       shipping_terms: typedStore.shipping_terms ?? "",
     });
+    setProfileLogo(typedStore.logo_url ? [{ path: "", url: typedStore.logo_url }] : []);
+    setProfileCover(typedStore.cover_url ? [{ path: "", url: typedStore.cover_url }] : []);
 
     const { data: productData, error: productError } = await supabase.from("b2b_products").select("id, wholesaler_id, name, slug, brand, category, description, image_urls, specifications, minimum_order_quantity, unit, vat_included, stock_status, lead_time_days, is_active").eq("wholesaler_id", typedStore.id).order("created_at", { ascending: false });
     if (productError) setError(productError.message);
@@ -123,12 +129,12 @@ export default function B2BWholesalerDashboard() {
   const addProduct = async (event: FormEvent) => {
     event.preventDefault();
     if (!store) return;
+    if (!productImages.length) return setError("Ürünü yayınlamak için en az bir görsel yükleyin.");
     setBusy("product");
     setError("");
-    const imageUrls = product.image_urls.split(/[\n,]/).map((item) => item.trim()).filter(Boolean).slice(0, 8);
     const { data: inserted, error: insertError } = await supabase.from("b2b_products").insert({
       wholesaler_id: store.id, name: product.name.trim(), slug: makeSlug(product.name), brand: product.brand.trim() || null,
-      category: product.category.trim(), description: product.description.trim() || null, image_urls: imageUrls,
+      category: product.category.trim(), description: product.description.trim() || null, image_urls: productImages.map((image) => image.url),
       minimum_order_quantity: Number(product.minimum_order_quantity), unit: product.unit,
       vat_included: product.vat_included, stock_status: product.stock_status,
       lead_time_days: Number(product.lead_time_days), is_active: true,
@@ -140,6 +146,7 @@ export default function B2BWholesalerDashboard() {
     setBusy("");
     if (priceError) return setError("Ürün eklendi fakat fiyat kaydedilemedi: " + priceError.message);
     setProduct(blankProduct);
+    setProductImages([]);
     notify("Ürün ve ilk fiyat kaydı eklendi.");
     await load();
   };
@@ -196,7 +203,7 @@ export default function B2BWholesalerDashboard() {
         <label className="text-xs font-bold text-slate-600 sm:col-span-2">Mağaza adı<input required value={profile.name} onChange={(e) => setProfile({...profile, name:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label>
         <label className="text-xs font-bold text-slate-600">Şehir<input value={profile.city} onChange={(e) => setProfile({...profile, city:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label><label className="text-xs font-bold text-slate-600">Telefon<input value={profile.phone} onChange={(e) => setProfile({...profile, phone:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label>
         <label className="text-xs font-bold text-slate-600">WhatsApp<input value={profile.whatsapp} onChange={(e) => setProfile({...profile, whatsapp:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label><label className="text-xs font-bold text-slate-600">Web sitesi<input value={profile.website} onChange={(e) => setProfile({...profile, website:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label>
-        <label className="text-xs font-bold text-slate-600 sm:col-span-2">Logo görsel adresi<input value={profile.logo_url} onChange={(e) => setProfile({...profile, logo_url:e.target.value})} placeholder="https://…" className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label><label className="text-xs font-bold text-slate-600 sm:col-span-2">Kapak görsel adresi<input value={profile.cover_url} onChange={(e) => setProfile({...profile, cover_url:e.target.value})} placeholder="https://…" className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label>
+        <div className="sm:col-span-2"><span className="mb-1.5 block text-xs font-bold text-slate-600">Mağaza logosu</span><B2BImageUploader max={1} value={profileLogo} onChange={(images) => { setProfileLogo(images); setProfile({...profile, logo_url:images[0]?.url ?? ""}); }} /></div><div className="sm:col-span-2"><span className="mb-1.5 block text-xs font-bold text-slate-600">Mağaza kapak görseli</span><B2BImageUploader max={1} value={profileCover} onChange={(images) => { setProfileCover(images); setProfile({...profile, cover_url:images[0]?.url ?? ""}); }} /></div>
         <label className="text-xs font-bold text-slate-600 sm:col-span-2">Hakkımızda<textarea rows={4} value={profile.description} onChange={(e) => setProfile({...profile, description:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label><label className="text-xs font-bold text-slate-600 sm:col-span-2">Sevkiyat koşulları<textarea rows={3} value={profile.shipping_terms} onChange={(e) => setProfile({...profile, shipping_terms:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label>
       </div><button disabled={busy === "profile"} className="mt-5 rounded-lg bg-slate-950 px-5 py-3 text-sm font-black text-white disabled:opacity-50">{busy === "profile" ? "Kaydediliyor…" : "Profili kaydet"}</button></form>
 
@@ -205,7 +212,7 @@ export default function B2BWholesalerDashboard() {
         <label className="text-xs font-bold text-slate-600">Toptan fiyat<input required min="0" step="0.01" type="number" value={product.price} onChange={(e) => setProduct({...product, price:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label><label className="text-xs font-bold text-slate-600">Para birimi<select value={product.currency} onChange={(e) => setProduct({...product, currency:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"><option>TRY</option><option>USD</option><option>EUR</option></select></label>
         <label className="text-xs font-bold text-slate-600">Minimum sipariş<input required min="0.01" step="0.01" type="number" value={product.minimum_order_quantity} onChange={(e) => setProduct({...product, minimum_order_quantity:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label><label className="text-xs font-bold text-slate-600">Birim<select value={product.unit} onChange={(e) => setProduct({...product, unit:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm">{["adet","koli","paket","palet","metre","kilogram"].map((v)=><option key={v}>{v}</option>)}</select></label>
         <label className="text-xs font-bold text-slate-600">Stok durumu<select value={product.stock_status} onChange={(e) => setProduct({...product, stock_status:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"><option value="in_stock">Stokta</option><option value="low_stock">Az kaldı</option><option value="preorder">Ön sipariş</option><option value="out_of_stock">Tükendi</option></select></label><label className="text-xs font-bold text-slate-600">Hazırlık günü<input required min="0" type="number" value={product.lead_time_days} onChange={(e) => setProduct({...product, lead_time_days:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label>
-        <label className="flex items-center gap-2 text-xs font-bold text-slate-600 sm:col-span-2"><input type="checkbox" checked={product.vat_included} onChange={(e) => setProduct({...product, vat_included:e.target.checked})} className="size-4" /> Fiyata KDV dahil</label><label className="text-xs font-bold text-slate-600 sm:col-span-2">Görsel adresleri<textarea rows={2} value={product.image_urls} onChange={(e) => setProduct({...product, image_urls:e.target.value})} placeholder="Her satıra bir görsel adresi" className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label><label className="text-xs font-bold text-slate-600 sm:col-span-2">Ürün açıklaması<textarea rows={4} value={product.description} onChange={(e) => setProduct({...product, description:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label>
+        <label className="flex items-center gap-2 text-xs font-bold text-slate-600 sm:col-span-2"><input type="checkbox" checked={product.vat_included} onChange={(e) => setProduct({...product, vat_included:e.target.checked})} className="size-4" /> Fiyata KDV dahil</label><div className="sm:col-span-2"><span className="mb-1.5 block text-xs font-bold text-slate-600">Ürün görselleri</span><B2BImageUploader value={productImages} onChange={setProductImages} /></div><label className="text-xs font-bold text-slate-600 sm:col-span-2">Ürün açıklaması<textarea rows={4} value={product.description} onChange={(e) => setProduct({...product, description:e.target.value})} className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm" /></label>
       </div><button disabled={busy === "product"} className="mt-5 rounded-lg bg-sky-600 px-5 py-3 text-sm font-black text-white disabled:opacity-50">{busy === "product" ? "Ekleniyor…" : "Ürünü yayına al"}</button></form>
     </div>
 

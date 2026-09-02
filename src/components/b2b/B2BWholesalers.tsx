@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import type { B2BWholesaler } from "@/types/b2b";
 
@@ -32,14 +33,11 @@ export default function B2BWholesalers() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-9">
-      <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <div><span className="text-xs font-black uppercase tracking-[0.18em] text-sky-600">Özel mağazalar</span><h1 className="mt-2 text-3xl font-black text-slate-950">Doğrulanmış toptancılar</h1><p className="mt-2 text-sm font-medium text-slate-600">Mağaza koşullarını, ürünlerini ve işlem sonrası değerlendirmeleri inceleyin.</p></div>
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Toptancı veya şehir ara…" className="min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none focus:border-sky-500 md:max-w-sm" />
-      </div>
+      <section className="relative mb-8 overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-xl shadow-sky-950/5"><div className="absolute inset-y-0 right-0 hidden w-3/5 bg-[url('/b2b/catalog-showcase.webp')] bg-cover bg-center md:block" /><div className="absolute inset-0 bg-gradient-to-r from-white via-white to-white/10" /><div className="relative max-w-2xl p-7 sm:p-10"><span className="text-xs font-black uppercase tracking-[0.18em] text-sky-600">Özel mağazalar</span><h1 className="mt-3 text-3xl font-black text-slate-950 sm:text-4xl">Doğrulanmış toptancılar</h1><p className="mt-3 max-w-lg text-sm font-medium leading-6 text-slate-600">Mağaza koşullarını, ürünlerini ve yalnızca gerçek ticaret sonrası verilen değerlendirmeleri inceleyin.</p><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Toptancı veya şehir ara…" className="mt-6 min-h-12 w-full rounded-xl border border-slate-200 bg-white/95 px-4 text-base shadow-sm outline-none focus:border-sky-500 sm:max-w-md" /></div></section>
       {error ? <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-700">{error}</div> : filtered.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-20 text-center text-sm font-semibold text-slate-500">Henüz aktif toptancı mağazası bulunmuyor.</div> : (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((store) => (
-            <a key={store.id} href={`/b2b/toptanci/${store.slug}`} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/5">
+            <Link key={store.id} href={`/b2b/toptanci/${store.slug}`} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/5">
               <div className="relative h-32 bg-gradient-to-br from-slate-900 to-sky-800">{store.cover_url && <img src={store.cover_url} alt="" className="h-full w-full object-cover opacity-80" />}</div>
               <div className="relative p-5 pt-10">
                 <div className="absolute -top-8 left-5 flex size-16 items-center justify-center overflow-hidden rounded-xl border-4 border-white bg-sky-50 text-xl font-black text-sky-700 shadow-sm">{store.logo_url ? <img src={store.logo_url} alt={`${store.name} logosu`} className="h-full w-full object-cover" /> : store.name.slice(0, 2).toLocaleUpperCase("tr-TR")}</div>
@@ -47,11 +45,10 @@ export default function B2BWholesalers() {
                 {store.description && <p className="mt-4 line-clamp-2 text-sm leading-6 text-slate-600">{store.description}</p>}
                 <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 text-xs"><strong className="text-amber-600">★ {Number(store.rating).toFixed(1)} <span className="text-slate-400">({store.review_count})</span></strong><span className="font-black text-sky-700">Mağazaya gir →</span></div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       )}
     </main>
   );
 }
-

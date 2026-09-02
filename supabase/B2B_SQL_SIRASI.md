@@ -10,6 +10,7 @@ SQL dosyaları artık değiştirilmeyecek, numaralı güncellemeler halinde iler
 2. `b2b_updates/002_trade_workflow.sql`
 3. `b2b_updates/003_advertising.sql`
 4. `b2b_updates/004_audit_logs.sql`
+5. `b2b_updates/005_conversation_delete.sql`
 
 Her dosya kendi içinde transaction kullanır. Hata oluşursa o dosyanın yaptığı işlemler geri alınır. Dosyalar mümkün olduğunca tekrar çalıştırılabilir hazırlanmıştır.
 
@@ -27,3 +28,4 @@ Eski `b2b_trade_network.sql` dosyasını daha önce çalıştırdıysanız da 00
 | 002 | Satın alma görüşmesi ve teklif akışı | ☐ |
 | 003 | Bildirim ve popup reklamları | ☐ |
 | 004 | Toptancı hareket kayıtları | ☐ |
+| 005 | Mesaj görüşmesini kullanıcı bazında silme | ☐ |

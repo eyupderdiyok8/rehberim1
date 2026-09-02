@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { B2BMember, B2BProduct } from "@/types/b2b";
 
@@ -38,11 +39,13 @@ function PriceHistory({ points, currency }: { points: PricePoint[]; currency: st
 }
 
 export default function B2BProductDetail({ slug }: { slug: string }) {
+  const router = useRouter();
   const [product, setProduct] = useState<B2BProduct | null>(null);
   const [member, setMember] = useState<B2BMember | null>(null);
   const [history, setHistory] = useState<PricePoint[]>([]);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [purchaseNote, setPurchaseNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -77,10 +80,11 @@ export default function B2BProductDetail({ slug }: { slug: string }) {
   const requestQuote = async () => {
     if (!product || !verified) return;
     setMessage("");
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) return;
-    const { error } = await supabase.from("b2b_trade_requests").insert({ product_id: product.id, buyer_id: userData.user.id, wholesaler_id: product.wholesaler_id, quantity });
-    setMessage(error ? "Talep gönderilemedi: " + error.message : "Teklif talebiniz toptancıya iletildi.");
+    const { data: requestId, error } = await supabase.rpc("create_b2b_trade_request", { p_product_id: product.id, p_quantity: quantity, p_message: purchaseNote.trim() });
+    if (error) return setMessage("Görüşme başlatılamadı: " + error.message);
+    const { data: conversationId, error: conversationError } = await supabase.rpc("open_b2b_conversation", { p_wholesaler_id: product.wholesaler_id, p_trade_request_id: requestId });
+    if (conversationError) return setMessage("Görüşme açıldı fakat mesaj ekranı yüklenemedi: " + conversationError.message);
+    router.push(`/b2b/mesajlar?conversation=${conversationId}`);
   };
 
   if (loading) return <div className="py-24 text-center text-sm font-bold text-slate-500">Ürün hazırlanıyor…</div>;
@@ -101,7 +105,7 @@ export default function B2BProductDetail({ slug }: { slug: string }) {
           {product.description && <p className="mt-5 text-sm font-medium leading-7 text-slate-600">{product.description}</p>}
           <div className="relative mt-6 overflow-hidden rounded-2xl bg-[#07111f] p-5 text-white"><div className="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full bg-sky-500/20 blur-2xl" /><div className="relative flex items-end justify-between gap-4"><div><span className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-300">Esnafa özel toptan fiyat</span><strong className="mt-2 block text-2xl font-black sm:text-3xl">{verified && product.price !== undefined ? new Intl.NumberFormat("tr-TR", { style: "currency", currency: product.currency || "TRY" }).format(product.price) : "Fiyat erişimi kapalı"}</strong></div><span className={`shrink-0 rounded-lg px-2.5 py-1.5 text-[9px] font-black uppercase ${verified ? "bg-emerald-400/15 text-emerald-300" : "bg-amber-300/15 text-amber-200"}`}>{verified ? "Yetkili erişim" : "🔒 Kilitli"}</span></div>{!verified && <Link href="/b2b/dogrulama" className="relative mt-4 inline-block text-xs font-black text-sky-300">İşletmenizi doğrulayın →</Link>}</div>
           <div className="mt-5 grid grid-cols-3 gap-px overflow-hidden rounded-xl bg-slate-200"><div className="bg-white p-4"><span className="block text-[10px] font-bold uppercase text-slate-400">Minimum</span><strong className="mt-1 block text-sm">{product.minimum_order_quantity} {product.unit}</strong></div><div className="bg-white p-4"><span className="block text-[10px] font-bold uppercase text-slate-400">Vergi</span><strong className="mt-1 block text-sm">{product.vat_included ? "KDV dahil" : "KDV hariç"}</strong></div><div className="bg-white p-4"><span className="block text-[10px] font-bold uppercase text-slate-400">Hazırlık</span><strong className="mt-1 block text-sm">{product.lead_time_days} gün</strong></div></div>
-          {verified && <div className="mt-6 flex gap-3"><div className="relative w-32"><input type="number" min={product.minimum_order_quantity} step="1" value={quantity} onChange={(e) => setQuantity(Math.max(Number(product.minimum_order_quantity), Number(e.target.value)))} aria-label={`Sipariş miktarı (${product.unit})`} className="h-full w-full rounded-xl border border-slate-200 px-3 pr-10 text-base font-black outline-none focus:border-sky-500" /><span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">{product.unit}</span></div><button type="button" onClick={requestQuote} className="min-h-14 flex-1 rounded-xl bg-slate-950 px-5 text-sm font-black text-white shadow-lg shadow-slate-900/15 transition hover:-translate-y-0.5 hover:bg-sky-600">Tedarikçiden teklif iste →</button></div>}
+          {verified && <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4"><label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Satıcıya ilk mesajınız<textarea required rows={3} value={purchaseNote} onChange={(event) => setPurchaseNote(event.target.value)} placeholder="Örn. 50 adet için teslim tarihi ve ödeme koşullarını paylaşabilir misiniz?" className="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium normal-case tracking-normal outline-none focus:border-sky-500" /></label><div className="mt-3 flex gap-3"><div className="relative w-32"><input type="number" min={product.minimum_order_quantity} step="1" value={quantity} onChange={(e) => setQuantity(Math.max(Number(product.minimum_order_quantity), Number(e.target.value)))} aria-label={`Sipariş miktarı (${product.unit})`} className="h-full w-full rounded-xl border border-slate-200 bg-white px-3 pr-10 text-base font-black outline-none focus:border-sky-500" /><span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">{product.unit}</span></div><button type="button" disabled={purchaseNote.trim().length < 3} onClick={requestQuote} className="min-h-14 flex-1 rounded-xl bg-slate-950 px-5 text-sm font-black text-white shadow-lg shadow-slate-900/15 transition hover:-translate-y-0.5 hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-40">Satın alma görüşmesi başlat →</button></div><p className="mt-2 text-[10px] font-semibold text-slate-400">Görüşme açılır; toptancı fiyat ve koşulları sistem içinde gönderir.</p></div>}
           {message && <p className="mt-3 rounded-lg bg-sky-50 p-3 text-xs font-bold text-sky-800">{message}</p>}
           <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-slate-100 pt-5 text-[10px] font-black uppercase tracking-wide text-slate-400"><span>✓ Doğrulanmış satıcı</span><span>✓ Kayıtlı fiyat geçmişi</span><span>✓ Güvenli talep akışı</span></div>
         </section>

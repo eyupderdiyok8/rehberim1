@@ -2,16 +2,29 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { B2BMember, B2BProduct, B2BWholesaler } from "@/types/b2b";
 
 type ProductPriceRow = { product_id: string; price: number; currency: "TRY" | "USD" | "EUR" };
 
 export default function B2BWholesalerDetail({ slug }: { slug: string }) {
+  const router = useRouter();
   const [store, setStore] = useState<B2BWholesaler | null>(null);
   const [products, setProducts] = useState<B2BProduct[]>([]);
   const [verified, setVerified] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [chatBusy, setChatBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const startChat = async () => {
+    if (!store) return;
+    setChatBusy(true);
+    const { data, error: chatError } = await supabase.rpc("open_b2b_conversation", { p_wholesaler_id: store.id, p_trade_request_id: null });
+    setChatBusy(false);
+    if (chatError) return setError(chatError.message);
+    router.push(`/b2b/mesajlar?conversation=${data}`);
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -41,11 +54,12 @@ export default function B2BWholesalerDetail({ slug }: { slug: string }) {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8">
+      {error && <div role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div>}
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="h-48 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-800">{store.cover_url && <img src={store.cover_url} alt="" className="h-full w-full object-cover opacity-80" />}</div>
         <div className="relative p-6 pt-14 sm:p-8 sm:pt-16">
           <div className="absolute -top-12 left-6 flex size-24 items-center justify-center overflow-hidden rounded-2xl border-4 border-white bg-sky-50 text-3xl font-black text-sky-700 shadow-lg sm:left-8">{store.logo_url ? <img src={store.logo_url} alt={`${store.name} logosu`} className="h-full w-full object-cover" /> : store.name.slice(0, 2).toLocaleUpperCase("tr-TR")}</div>
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start"><div><div className="flex flex-wrap items-center gap-2"><h1 className="text-3xl font-black text-slate-950">{store.name}</h1><span className="rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">✓ Doğrulanmış toptancı</span></div><p className="mt-2 text-sm font-semibold text-slate-500">{store.city || "Türkiye geneli"} · <span className="text-amber-600">★ {Number(store.rating).toFixed(1)} ({store.review_count} değerlendirme)</span></p>{store.description && <p className="mt-4 max-w-3xl text-sm font-medium leading-6 text-slate-600">{store.description}</p>}</div>{store.shipping_terms && <div className="rounded-xl bg-slate-50 p-4 text-xs font-semibold text-slate-600 md:max-w-xs"><span className="block font-black text-slate-900">Teslimat koşulları</span><span className="mt-1 block">{store.shipping_terms}</span></div>}</div>
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start"><div><div className="flex flex-wrap items-center gap-2"><h1 className="text-3xl font-black text-slate-950">{store.name}</h1><span className="rounded-lg bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">✓ Doğrulanmış toptancı</span></div><p className="mt-2 text-sm font-semibold text-slate-500">{store.city || "Türkiye geneli"} · <span className="text-amber-600">★ {Number(store.rating).toFixed(1)} ({store.review_count} değerlendirme)</span></p>{store.description && <p className="mt-4 max-w-3xl text-sm font-medium leading-6 text-slate-600">{store.description}</p>}<button disabled={!verified || chatBusy} onClick={startChat} className="mt-5 rounded-xl bg-slate-950 px-5 py-3 text-xs font-black text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-40">{verified ? "Toptancıya mesaj gönder →" : "Mesaj için işletmenizi doğrulayın"}</button></div>{store.shipping_terms && <div className="rounded-xl bg-slate-50 p-4 text-xs font-semibold text-slate-600 md:max-w-xs"><span className="block font-black text-slate-900">Teslimat koşulları</span><span className="mt-1 block">{store.shipping_terms}</span></div>}</div>
         </div>
       </section>
       <div className="mb-5 mt-9 flex items-end justify-between"><div><span className="text-xs font-black uppercase tracking-wider text-sky-600">Mağaza kataloğu</span><h2 className="mt-1 text-2xl font-black text-slate-950">Ürünler</h2></div><span className="text-sm font-bold text-slate-500">{products.length} ürün</span></div>

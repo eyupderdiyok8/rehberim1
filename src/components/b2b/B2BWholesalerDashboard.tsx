@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import type { B2BMember, B2BProduct } from "@/types/b2b";
 import B2BImageUploader, { type UploadedB2BImage } from "@/components/b2b/B2BImageUploader";
@@ -22,7 +23,8 @@ type Store = {
 
 type ManagedProduct = B2BProduct & { is_active: boolean; price?: number; currency?: string };
 type ProductPriceRow = { product_id: string; price: number; currency: "TRY" | "USD" | "EUR" };
-type TradeRequest = { id: string; product_name: string; buyer_user_id: string; buyer_business_name: string; quantity: number; unit: string; status: string; created_at: string; review_submitted: boolean };
+type TradeRequest = { id: string; product_name: string; buyer_user_id: string; buyer_business_name: string; quantity: number; unit: string; status: string; created_at: string; review_submitted: boolean; quoted_unit_price: number | null; quoted_currency: string | null; quote_note: string | null; quote_valid_until: string | null; conversation_id: string | null };
+type QuoteDraft = { price: string; currency: string; note: string; validUntil: string };
 
 const blankProfile = { name: "", description: "", logo_url: "", cover_url: "", city: "", phone: "", whatsapp: "", website: "", shipping_terms: "" };
 const blankProduct = { name: "", brand: "", category: "", description: "", minimum_order_quantity: "1", unit: "adet", vat_included: true, stock_status: "in_stock", lead_time_days: "1", price: "", currency: "TRY" };
@@ -43,6 +45,7 @@ export default function B2BWholesalerDashboard() {
   const [productImages, setProductImages] = useState<UploadedB2BImage[]>([]);
   const [priceDrafts, setPriceDrafts] = useState<Record<string, string>>({});
   const [requests, setRequests] = useState<TradeRequest[]>([]);
+  const [quoteDrafts, setQuoteDrafts] = useState<Record<string, QuoteDraft>>({});
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
@@ -100,7 +103,12 @@ export default function B2BWholesalerDashboard() {
     setProducts(rows);
     setPriceDrafts(Object.fromEntries(rows.map((item) => [item.id, item.price?.toString() ?? ""])));
     const { data: requestData } = await supabase.rpc("list_own_b2b_trade_requests");
-    setRequests((requestData ?? []) as TradeRequest[]);
+    const requestRows = (requestData ?? []) as TradeRequest[];
+    setRequests(requestRows);
+    setQuoteDrafts((current) => Object.fromEntries(requestRows.map((request) => [request.id, current[request.id] ?? {
+      price: request.quoted_unit_price?.toString() ?? "", currency: request.quoted_currency ?? "TRY",
+      note: request.quote_note ?? "", validUntil: request.quote_valid_until?.slice(0,10) ?? new Date(Date.now() + 7 * 86_400_000).toISOString().slice(0,10),
+    }])));
     setLoading(false);
   };
 
@@ -178,6 +186,20 @@ export default function B2BWholesalerDashboard() {
     await load();
   };
 
+  const submitQuote = async (request: TradeRequest) => {
+    const draft = quoteDrafts[request.id];
+    if (!draft?.price) return setError("Birim fiyat girin.");
+    setBusy(`quote-${request.id}`);
+    const { error: quoteError } = await supabase.rpc("submit_b2b_quote", {
+      p_request_id: request.id, p_unit_price: Number(draft.price), p_currency: draft.currency,
+      p_note: draft.note, p_valid_until: draft.validUntil ? new Date(`${draft.validUntil}T23:59:59`).toISOString() : null,
+    });
+    setBusy("");
+    if (quoteError) return setError(quoteError.message);
+    notify("Özel teklif esnafa gönderildi ve görüşmeye işlendi.");
+    await load();
+  };
+
   const rateBuyer = async (request: TradeRequest, rating: number) => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
@@ -194,7 +216,7 @@ export default function B2BWholesalerDashboard() {
   if (!store) return <main className="mx-auto max-w-3xl px-4 py-16"><div className="rounded-2xl border border-sky-200 bg-white p-8"><h1 className="text-xl font-black">Hesabınız hazır, mağaza ataması bekleniyor</h1><p className="mt-2 text-sm text-slate-600">Yönetici mağazanızı oluşturduğunda ürün ve fiyat yönetimi burada açılacak.</p></div></main>;
 
   return <main className="mx-auto max-w-7xl px-4 py-8">
-    <div className="mb-8 flex flex-col justify-between gap-4 rounded-2xl bg-slate-950 p-7 text-white sm:flex-row sm:items-end"><div><span className="text-xs font-black uppercase tracking-[0.2em] text-sky-400">Toptancı çalışma alanı</span><h1 className="mt-2 text-3xl font-black">{store.name}</h1><p className="mt-2 text-sm text-slate-300">Mağaza, ürün ve esnafa özel fiyatları tek yerden yönetin.</p></div><span className={`w-fit rounded-lg px-3 py-2 text-xs font-black ${store.is_active ? "bg-emerald-400/15 text-emerald-300" : "bg-amber-400/15 text-amber-200"}`}>{store.is_active ? "● Mağaza aktif" : "● Yönetici onayı bekliyor"}</span></div>
+    <div className="mb-8 flex flex-col justify-between gap-4 rounded-2xl bg-slate-950 p-7 text-white sm:flex-row sm:items-end"><div><span className="text-xs font-black uppercase tracking-[0.2em] text-sky-400">Toptancı çalışma alanı</span><h1 className="mt-2 text-3xl font-black">{store.name}</h1><p className="mt-2 text-sm text-slate-300">Mağaza, ürün, ticaret görüşmeleri ve kampanyaları tek yerden yönetin.</p></div><div className="flex flex-wrap gap-2"><Link href="/b2b/mesajlar" className="rounded-lg bg-white/10 px-3 py-2 text-xs font-black text-white hover:bg-white/15">Mesajlar</Link><Link href="/b2b/reklamlar" className="rounded-lg bg-violet-400 px-3 py-2 text-xs font-black text-slate-950">Reklam merkezi</Link><span className={`w-fit rounded-lg px-3 py-2 text-xs font-black ${store.is_active ? "bg-emerald-400/15 text-emerald-300" : "bg-amber-400/15 text-amber-200"}`}>{store.is_active ? "● Mağaza aktif" : "● Yönetici onayı bekliyor"}</span></div></div>
     {error && <div role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div>}
     {message && <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">{message}</div>}
 
@@ -220,8 +242,11 @@ export default function B2BWholesalerDashboard() {
       {products.length === 0 ? <div className="rounded-xl border border-dashed border-slate-300 py-14 text-center text-sm font-semibold text-slate-500">Henüz ürün eklenmedi.</div> : <div className="divide-y divide-slate-100">{products.map((item)=><article key={item.id} className="grid gap-4 py-4 md:grid-cols-[1fr_auto_auto] md:items-center"><div className="flex items-center gap-3">{item.image_urls?.[0] ? <img src={item.image_urls[0]} alt="" className="size-14 rounded-lg object-cover" /> : <div className="flex size-14 items-center justify-center rounded-lg bg-sky-50 text-sky-300">◈</div>}<div><h3 className="font-black text-slate-900">{item.name}</h3><p className="mt-1 text-xs font-semibold text-slate-500">Min. {item.minimum_order_quantity} {item.unit} · {item.vat_included ? "KDV dahil" : "KDV hariç"}</p></div></div><div className="flex items-center gap-2"><input min="0" step="0.01" type="number" value={priceDrafts[item.id] ?? ""} onChange={(e)=>setPriceDrafts({...priceDrafts,[item.id]:e.target.value})} className="w-32 rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold" /><span className="text-xs font-black text-slate-500">{item.currency ?? "TRY"}</span><button onClick={()=>savePrice(item)} disabled={busy===`price-${item.id}`} className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white">Güncelle</button></div><button onClick={()=>toggleProduct(item)} disabled={busy===`toggle-${item.id}`} className={`rounded-lg px-3 py-2 text-xs font-black ${item.is_active ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{item.is_active ? "Yayında" : "Pasif"}</button></article>)}</div>}
     </section>
 
-    <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div className="mb-5 flex items-center justify-between"><div><h2 className="text-lg font-black">Teklif talepleri</h2><p className="mt-1 text-xs font-medium text-slate-500">Doğrulanmış esnaftan gelen talepleri yönetin.</p></div><span className="rounded-lg bg-sky-50 px-3 py-2 text-xs font-black text-sky-700">{requests.length} talep</span></div>
-      {requests.length === 0 ? <div className="rounded-xl border border-dashed border-slate-300 py-14 text-center text-sm font-semibold text-slate-500">Henüz teklif talebi yok.</div> : <div className="divide-y divide-slate-100">{requests.map((request)=><article key={request.id} className="grid gap-4 py-4 md:grid-cols-[1fr_auto] md:items-center"><div><h3 className="font-black text-slate-900">{request.product_name}</h3><p className="mt-1 text-xs font-semibold text-slate-500">{request.buyer_business_name} · {request.quantity} {request.unit} · {new Date(request.created_at).toLocaleDateString("tr-TR")}</p>{request.status === "completed" && !request.review_submitted && <div className="mt-3 flex items-center gap-1"><span className="mr-1 text-[10px] font-black uppercase text-slate-400">Esnafı puanla</span>{[1,2,3,4,5].map((rating)=><button key={rating} disabled={busy===`review-${request.id}`} onClick={()=>rateBuyer(request,rating)} aria-label={`${rating} yıldız ver`} className="text-lg text-amber-400 hover:scale-125">★</button>)}</div>}</div><div className="flex flex-wrap gap-2"><span className="rounded-lg bg-slate-100 px-3 py-2 text-xs font-black text-slate-600">{request.status}</span><button disabled={busy===`request-${request.id}`} onClick={()=>updateRequest(request.id,"quoted")} className="rounded-lg bg-sky-50 px-3 py-2 text-xs font-black text-sky-700">Teklif verildi</button><button disabled={busy===`request-${request.id}`} onClick={()=>updateRequest(request.id,"completed")} className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">Tamamlandı</button><button disabled={busy===`request-${request.id}`} onClick={()=>updateRequest(request.id,"cancelled")} className="rounded-lg bg-red-50 px-3 py-2 text-xs font-black text-red-700">İptal</button></div></article>)}</div>}
+    <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div className="mb-5 flex items-center justify-between"><div><h2 className="text-lg font-black">Satın alma görüşmeleri</h2><p className="mt-1 text-xs font-medium text-slate-500">Esnafın mesajını yanıtlayın, özel fiyatı gönderin ve siparişi sonuçlandırın.</p></div><span className="rounded-lg bg-sky-50 px-3 py-2 text-xs font-black text-sky-700">{requests.length} görüşme</span></div>
+      {requests.length === 0 ? <div className="rounded-xl border border-dashed border-slate-300 py-14 text-center text-sm font-semibold text-slate-500">Henüz satın alma görüşmesi yok.</div> : <div className="space-y-4">{requests.map((request) => { const draft = quoteDrafts[request.id] ?? {price:"",currency:"TRY",note:"",validUntil:""}; return <article key={request.id} className="rounded-2xl border border-slate-200 p-5"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><span className="text-[9px] font-black uppercase tracking-wider text-sky-600">{request.buyer_business_name}</span><h3 className="mt-1 font-black text-slate-900">{request.product_name}</h3><p className="mt-1 text-xs font-semibold text-slate-500">{request.quantity} {request.unit} · {new Date(request.created_at).toLocaleDateString("tr-TR")}</p></div><span className="rounded-lg bg-slate-100 px-3 py-2 text-xs font-black text-slate-600">{request.status}</span></div>
+        {(request.status === "requested" || request.status === "quoted") && <div className="mt-5 grid gap-3 rounded-2xl bg-slate-50 p-4 lg:grid-cols-[130px_100px_140px_1fr_auto] lg:items-end"><label className="text-[10px] font-black uppercase text-slate-500">Birim fiyat<input min="0.01" step="0.01" type="number" value={draft.price} onChange={(e)=>setQuoteDrafts({...quoteDrafts,[request.id]:{...draft,price:e.target.value}})} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-black" /></label><label className="text-[10px] font-black uppercase text-slate-500">Para<select value={draft.currency} onChange={(e)=>setQuoteDrafts({...quoteDrafts,[request.id]:{...draft,currency:e.target.value}})} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm"><option>TRY</option><option>USD</option><option>EUR</option></select></label><label className="text-[10px] font-black uppercase text-slate-500">Geçerlilik<input type="date" value={draft.validUntil} onChange={(e)=>setQuoteDrafts({...quoteDrafts,[request.id]:{...draft,validUntil:e.target.value}})} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm" /></label><label className="text-[10px] font-black uppercase text-slate-500">Koşul notu<input value={draft.note} onChange={(e)=>setQuoteDrafts({...quoteDrafts,[request.id]:{...draft,note:e.target.value}})} placeholder="Ödeme, sevkiyat…" className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm normal-case" /></label><button disabled={busy===`quote-${request.id}`} onClick={()=>submitQuote(request)} className="rounded-xl bg-sky-600 px-4 py-3 text-xs font-black text-white">Teklifi gönder</button></div>}
+        <div className="mt-4 flex flex-wrap gap-2">{request.conversation_id && <Link href={`/b2b/mesajlar?conversation=${request.conversation_id}`} className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white">Mesajları aç</Link>}{request.status === "accepted" && <button disabled={busy===`request-${request.id}`} onClick={()=>updateRequest(request.id,"completed")} className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">Sipariş tamamlandı</button>}{["requested","quoted","accepted"].includes(request.status) && <button disabled={busy===`request-${request.id}`} onClick={()=>updateRequest(request.id,"cancelled")} className="rounded-lg bg-red-50 px-3 py-2 text-xs font-black text-red-700">Görüşmeyi kapat</button>}{request.status === "completed" && !request.review_submitted && <div className="flex items-center gap-1"><span className="mr-1 text-[10px] font-black uppercase text-slate-400">Esnafı puanla</span>{[1,2,3,4,5].map((rating)=><button key={rating} disabled={busy===`review-${request.id}`} onClick={()=>rateBuyer(request,rating)} aria-label={`${rating} yıldız ver`} className="text-lg text-amber-400 hover:scale-125">★</button>)}</div>}</div>
+      </article>; })}</div>}
     </section>
   </main>;
 }

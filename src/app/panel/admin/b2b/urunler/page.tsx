@@ -1,0 +1,66 @@
+"use client";
+
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import B2BImageUploader, { type UploadedB2BImage } from "@/components/b2b/B2BImageUploader";
+
+type Product = { id: string; wholesaler_id: string; name: string; slug: string; brand: string | null; category: string; description: string | null; image_urls: string[]; minimum_order_quantity: number; unit: string; vat_included: boolean; stock_status: string; lead_time_days: number; is_active: boolean; created_at: string; price?: number; currency?: string };
+type Store = { id: string; name: string };
+type Price = { product_id: string; price: number; currency: string };
+
+export default function AdminB2BProductsPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [stores, setStores] = useState<Store[]>([]);
+  const [selected, setSelected] = useState<Product | null>(null);
+  const [selectedImages, setSelectedImages] = useState<UploadedB2BImage[]>([]);
+  const [query, setQuery] = useState("");
+  const [storeFilter, setStoreFilter] = useState("all");
+  const [busy, setBusy] = useState("");
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  const load = async () => {
+    const [productsResult, pricesResult, storesResult] = await Promise.all([
+      supabase.from("b2b_products").select("id, wholesaler_id, name, slug, brand, category, description, image_urls, minimum_order_quantity, unit, vat_included, stock_status, lead_time_days, is_active, created_at").order("created_at", { ascending: false }),
+      supabase.from("b2b_product_prices").select("product_id, price, currency"),
+      supabase.from("b2b_wholesalers").select("id, name").order("name"),
+    ]);
+    const firstError = productsResult.error || pricesResult.error || storesResult.error;
+    if (firstError) setError(firstError.message);
+    const priceMap = new Map(((pricesResult.data ?? []) as Price[]).map((price) => [price.product_id, price]));
+    const rows = (productsResult.data ?? []) as Product[];
+    rows.forEach((product) => Object.assign(product, priceMap.get(product.id) ?? {}));
+    setProducts(rows); setStores((storesResult.data ?? []) as Store[]);
+  };
+
+  useEffect(() => {
+    // Admin data is loaded after the parent layout verifies the session.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, []);
+
+  const storeNames = useMemo(() => new Map(stores.map((store) => [store.id, store.name])), [stores]);
+  const filtered = useMemo(() => { const normalized = query.trim().toLocaleLowerCase("tr-TR"); return products.filter((product) => (storeFilter === "all" || product.wholesaler_id === storeFilter) && (!normalized || [product.name, product.brand, product.category, storeNames.get(product.wholesaler_id)].filter(Boolean).some((value) => String(value).toLocaleLowerCase("tr-TR").includes(normalized)))); }, [products, query, storeFilter, storeNames]);
+
+  const openEditor = (product: Product) => { setSelected({...product}); setSelectedImages((product.image_urls || []).map((url) => ({ path: "", url }))); };
+  const save = async (event: FormEvent) => {
+    event.preventDefault(); if (!selected) return; setBusy(selected.id); setError("");
+    const { data: userData } = await supabase.auth.getUser();
+    const [productResult, priceResult] = await Promise.all([
+      supabase.from("b2b_products").update({ name:selected.name.trim(), slug:selected.slug.trim(), brand:selected.brand?.trim()||null, category:selected.category.trim(), description:selected.description?.trim()||null, image_urls:selectedImages.map((image)=>image.url), minimum_order_quantity:Number(selected.minimum_order_quantity), unit:selected.unit, vat_included:selected.vat_included, stock_status:selected.stock_status, lead_time_days:Number(selected.lead_time_days), is_active:selected.is_active, updated_at:new Date().toISOString() }).eq("id",selected.id),
+      supabase.from("b2b_product_prices").upsert({ product_id:selected.id, price:Number(selected.price||0), currency:selected.currency||"TRY", updated_by:userData.user?.id, updated_at:new Date().toISOString() }),
+    ]);
+    setBusy(""); if (productResult.error || priceResult.error) return setError(productResult.error?.message || priceResult.error?.message || "Ürün kaydedilemedi.");
+    setMessage("Ürün ve fiyatı güncellendi; işlem hareket kaydına işlendi."); setSelected(null); await load();
+  };
+
+  const toggle = async (product: Product) => { setBusy(product.id); const { error: updateError } = await supabase.from("b2b_products").update({is_active:!product.is_active,updated_at:new Date().toISOString()}).eq("id",product.id); setBusy(""); if(updateError)return setError(updateError.message); await load(); };
+
+  return <div className="space-y-6"><header><span className="text-xs font-black uppercase tracking-[0.18em] text-sky-600">B2B katalog denetimi</span><h1 className="mt-2 text-3xl font-black text-slate-950">Toptancı ürünleri</h1><p className="mt-2 text-sm font-medium text-slate-500">Her mağazanın ürününü, fiyatını, stok bilgisini ve yayın durumunu yönetebilirsiniz.</p></header>
+    {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div>}{message && <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">{message}</div>}
+    <section className="grid gap-4 sm:grid-cols-3">{[[products.length,"Toplam ürün"],[products.filter((product)=>product.is_active).length,"Yayında"],[products.filter((product)=>!product.is_active).length,"Pasif"]].map(([value,label])=><div key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-5"><strong className="text-3xl font-black text-slate-950">{value}</strong><span className="ml-2 text-xs font-bold text-slate-500">{label}</span></div>)}</section>
+    <section className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-[1fr_260px]"><input value={query} onChange={(event)=>setQuery(event.target.value)} placeholder="Ürün, marka, kategori veya toptancı ara…" className="min-h-12 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-sky-500" /><select value={storeFilter} onChange={(event)=>setStoreFilter(event.target.value)} className="rounded-xl border border-slate-200 px-4 text-sm font-bold"><option value="all">Tüm toptancılar</option>{stores.map((store)=><option key={store.id} value={store.id}>{store.name}</option>)}</select></section>
+    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">{filtered.length===0?<div className="py-20 text-center text-sm font-semibold text-slate-500">Ürün bulunamadı.</div>:<div className="divide-y divide-slate-100">{filtered.map((product)=><article key={product.id} className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-center"><div className="flex min-w-0 items-center gap-4"><div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-xl bg-slate-100">{product.image_urls?.[0]?<img src={product.image_urls[0]} alt="" className="h-full w-full object-cover"/>:<span className="text-2xl text-slate-300">◈</span>}</div><div className="min-w-0"><span className="text-[9px] font-black uppercase tracking-wider text-sky-600">{storeNames.get(product.wholesaler_id)} · {product.category}</span><h2 className="mt-1 truncate font-black text-slate-950">{product.name}</h2><p className="mt-1 text-xs font-semibold text-slate-500">Min. {product.minimum_order_quantity} {product.unit} · {product.price !== undefined ? new Intl.NumberFormat("tr-TR",{style:"currency",currency:product.currency||"TRY"}).format(product.price) : "Fiyat yok"}</p></div></div><div className="flex flex-wrap gap-2"><span className={`rounded-lg px-3 py-2 text-xs font-black ${product.is_active?"bg-emerald-50 text-emerald-700":"bg-slate-100 text-slate-500"}`}>{product.is_active?"Yayında":"Pasif"}</span><button onClick={()=>openEditor(product)} className="rounded-lg bg-sky-50 px-3 py-2 text-xs font-black text-sky-700">Düzenle</button><button disabled={busy===product.id} onClick={()=>toggle(product)} className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-black text-amber-700">{product.is_active?"Pasife al":"Yayına aç"}</button></div></article>)}</div>}</section>
+    {selected && <div className="fixed inset-0 z-[100] flex items-end justify-end bg-slate-950/55 backdrop-blur-sm sm:p-4" onMouseDown={()=>setSelected(null)}><form onSubmit={save} onMouseDown={(event)=>event.stopPropagation()} className="h-[95vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:h-full sm:rounded-3xl sm:p-8"><div className="flex justify-between"><div><span className="text-[10px] font-black uppercase tracking-wider text-sky-600">{storeNames.get(selected.wholesaler_id)}</span><h2 className="mt-2 text-2xl font-black">Ürünü düzenle</h2></div><button type="button" onClick={()=>setSelected(null)} className="size-9 rounded-full bg-slate-100 text-xl">×</button></div><div className="mt-7 grid gap-4 sm:grid-cols-2"><label className="text-xs font-bold text-slate-600 sm:col-span-2">Ürün adı<input required value={selected.name} onChange={(e)=>setSelected({...selected,name:e.target.value})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"/></label><label className="text-xs font-bold text-slate-600">Marka<input value={selected.brand||""} onChange={(e)=>setSelected({...selected,brand:e.target.value})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"/></label><label className="text-xs font-bold text-slate-600">Kategori<input required value={selected.category} onChange={(e)=>setSelected({...selected,category:e.target.value})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"/></label><label className="text-xs font-bold text-slate-600">Bağlantı adresi<input required value={selected.slug} onChange={(e)=>setSelected({...selected,slug:e.target.value})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"/></label><label className="text-xs font-bold text-slate-600">Stok<select value={selected.stock_status} onChange={(e)=>setSelected({...selected,stock_status:e.target.value})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"><option value="in_stock">Stokta</option><option value="low_stock">Az kaldı</option><option value="preorder">Ön sipariş</option><option value="out_of_stock">Tükendi</option></select></label><label className="text-xs font-bold text-slate-600">Minimum sipariş<input min="0.01" step="0.01" type="number" value={selected.minimum_order_quantity} onChange={(e)=>setSelected({...selected,minimum_order_quantity:Number(e.target.value)})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"/></label><label className="text-xs font-bold text-slate-600">Birim<select value={selected.unit} onChange={(e)=>setSelected({...selected,unit:e.target.value})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm">{["adet","koli","paket","palet","metre","kilogram"].map((unit)=><option key={unit}>{unit}</option>)}</select></label><label className="text-xs font-bold text-slate-600">Birim fiyat<input min="0" step="0.01" type="number" value={selected.price??""} onChange={(e)=>setSelected({...selected,price:Number(e.target.value)})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"/></label><label className="text-xs font-bold text-slate-600">Para birimi<select value={selected.currency||"TRY"} onChange={(e)=>setSelected({...selected,currency:e.target.value})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"><option>TRY</option><option>USD</option><option>EUR</option></select></label><label className="text-xs font-bold text-slate-600">Hazırlık günü<input min="0" type="number" value={selected.lead_time_days} onChange={(e)=>setSelected({...selected,lead_time_days:Number(e.target.value)})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"/></label><label className="flex items-center gap-2 text-xs font-bold text-slate-600"><input type="checkbox" checked={selected.vat_included} onChange={(e)=>setSelected({...selected,vat_included:e.target.checked})}/> KDV dahil</label><label className="flex items-center gap-2 text-xs font-bold text-slate-600"><input type="checkbox" checked={selected.is_active} onChange={(e)=>setSelected({...selected,is_active:e.target.checked})}/> Ürün yayında</label><div className="sm:col-span-2"><span className="mb-1.5 block text-xs font-bold text-slate-600">Ürün görselleri</span><B2BImageUploader value={selectedImages} onChange={setSelectedImages}/></div><label className="text-xs font-bold text-slate-600 sm:col-span-2">Açıklama<textarea rows={5} value={selected.description||""} onChange={(e)=>setSelected({...selected,description:e.target.value})} className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"/></label></div><button disabled={busy===selected.id} className="mt-7 w-full rounded-xl bg-slate-950 px-5 py-4 text-sm font-black text-white">Ürünü ve fiyatı kaydet</button></form></div>}
+  </div>;
+}

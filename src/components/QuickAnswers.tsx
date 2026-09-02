@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
+import { usePathname } from "next/navigation";
 
 /* ──────────────────────────────────────────────────────────
    Q&A Data — categorised, with optional firm-page deep links
@@ -124,6 +125,7 @@ const QA_DATA: QAItem[] = [
    Component
    ────────────────────────────────────────────────────────── */
 export default function QuickAnswers() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [activeCat, setActiveCat] = useState<Category | "all">("all");
@@ -159,6 +161,10 @@ export default function QuickAnswers() {
       return catMatch && searchMatch;
     });
   }, [search, activeCat]);
+
+  if (pathname.startsWith("/b2b") || pathname.startsWith("/panel")) {
+    return null;
+  }
 
   return (
     <div ref={panelRef} className="fixed bottom-[5.5rem] right-5 z-50">

@@ -1,4 +1,14 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
 export default function WhatsAppButton() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/b2b") || pathname.startsWith("/panel")) {
+    return null;
+  }
+
   return (
     <a
       href="https://wa.me/905345957147?text=Merhaba%2C%20Su%20Ar%C4%B1tma%20Rehberi%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum."

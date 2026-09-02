@@ -279,3 +279,19 @@ body {
 .animate-slide-up {
   animation: slide-up 0.25s ease-out;
 }
+
+/* B2B is a working interface used throughout the day; keep dense data readable. */
+.b2b-shell .text-\[8px\]  { font-size: 0.6875rem; line-height: 1rem; }
+.b2b-shell .text-\[9px\]  { font-size: 0.75rem; line-height: 1rem; }
+.b2b-shell .text-\[10px\] { font-size: 0.78125rem; line-height: 1.1rem; }
+.b2b-shell .text-\[11px\] { font-size: 0.8125rem; line-height: 1.15rem; }
+.b2b-shell .text-xs       { font-size: 0.875rem; line-height: 1.3rem; }
+.b2b-shell .text-sm       { font-size: 0.96875rem; line-height: 1.55rem; }
+
+@media (max-width: 639px) {
+  .b2b-shell input,
+  .b2b-shell textarea,
+  .b2b-shell select {
+    font-size: 1rem;
+  }
+}

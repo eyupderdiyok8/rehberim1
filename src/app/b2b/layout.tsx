@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function B2BLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#F4F7FB] text-[#0F172A]">
+    <div className="b2b-shell min-h-screen bg-[#F4F7FB] text-[#0F172A]">
       <B2BHeader />
       {children}
       <B2BGlobalLayer />

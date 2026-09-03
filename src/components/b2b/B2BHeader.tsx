@@ -8,6 +8,7 @@ import { useB2BNotificationCounts } from "@/components/b2b/B2BNotifications";
 
 const navItems = [
   { href: "/b2b", label: "Pazar" },
+  { href: "/b2b/favoriler", label: "Favoriler" },
   { href: "/b2b/toptancilar", label: "Tedarikçiler" },
   { href: "/b2b/cevrimici", label: "Çevrimiçi" },
   { href: "/b2b/mesajlar", label: "Mesajlar" },

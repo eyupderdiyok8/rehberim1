@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import type { B2BMember, B2BProduct, B2BWholesaler } from "@/types/b2b";
+import B2BFavoriteButton from "@/components/b2b/B2BFavoriteButton";
 
 type ProductQueryRow = Omit<B2BProduct, "wholesaler"> & { wholesaler: B2BWholesaler | B2BWholesaler[] };
 type ProductPriceRow = { product_id: string; price: number; currency: "TRY" | "USD" | "EUR" };
@@ -27,6 +28,7 @@ export default function B2BMarketplace() {
   const [sort, setSort] = useState<"newest" | "rating" | "moq">("newest");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const load = async () => {
@@ -34,12 +36,14 @@ export default function B2BMarketplace() {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) return;
 
-      const [memberResult, productsResult] = await Promise.all([
+      const [memberResult, productsResult, favoritesResult] = await Promise.all([
         supabase.from("b2b_members").select("user_id, account_type, verification_status, business_name, review_note").eq("user_id", userData.user.id).maybeSingle(),
         supabase.from("b2b_products").select("id, wholesaler_id, name, slug, brand, category, description, image_urls, specifications, minimum_order_quantity, unit, vat_included, stock_status, lead_time_days, wholesaler:b2b_wholesalers!inner(id, name, slug, description, logo_url, cover_url, city, shipping_terms, rating, review_count)").eq("is_active", true).order("created_at", { ascending: false }),
+        supabase.from("b2b_product_favorites").select("product_id").eq("user_id", userData.user.id),
       ]);
 
       if (memberResult.data) setMember(memberResult.data as B2BMember);
+      if (!favoritesResult.error) setFavoriteIds(new Set((favoritesResult.data ?? []).map((item) => item.product_id)));
       if (productsResult.error) {
         setError(productsResult.error.message.includes("b2b_products") ? "B2B veritabanı kurulumu henüz uygulanmamış." : productsResult.error.message);
         setLoading(false);
@@ -138,7 +142,8 @@ export default function B2BMarketplace() {
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((product) => (
-            <article key={product.id} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-xl hover:shadow-slate-900/8">
+            <article key={product.id} className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-xl hover:shadow-slate-900/8">
+              <div className="absolute right-3 top-3 z-20"><B2BFavoriteButton productId={product.id} initialFavorite={favoriteIds.has(product.id)} onChange={(favorite) => setFavoriteIds((current) => { const next = new Set(current); if (favorite) next.add(product.id); else next.delete(product.id); return next; })} /></div>
               <Link href={`/b2b/urun/${product.slug}`} className="relative block aspect-[4/3] overflow-hidden bg-gradient-to-br from-sky-50 to-slate-100">
                 {product.image_urls?.[0] ? <img src={product.image_urls[0]} alt={product.name} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-5xl text-sky-200">◈</div>}
                 <span className="absolute left-3 top-3 rounded-lg bg-white/90 px-2 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-700 shadow-sm backdrop-blur">● {stockLabels[product.stock_status]}</span><span className="absolute bottom-3 right-3 rounded-lg bg-slate-950/80 px-2 py-1 text-[9px] font-black text-white backdrop-blur">{product.category}</span>

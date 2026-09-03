@@ -54,36 +54,37 @@ function LoginForm() {
   };
 
   return (
-    <main className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#07111f] px-4 py-10 text-white sm:py-16">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(56,189,248,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(56,189,248,.05)_1px,transparent_1px)] bg-[size:42px_42px]" />
-      <div className="pointer-events-none absolute -left-48 top-24 size-[32rem] rounded-full bg-sky-500/10 blur-3xl" />
+    <main className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#f4f8fc] px-4 py-10 text-slate-950 sm:py-16">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(14,165,233,.045)_1px,transparent_1px),linear-gradient(90deg,rgba(14,165,233,.045)_1px,transparent_1px)] bg-[size:42px_42px]" />
+      <div className="pointer-events-none absolute -left-48 top-24 size-[32rem] rounded-full bg-sky-300/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-40 bottom-0 size-[28rem] rounded-full bg-indigo-200/25 blur-3xl" />
       <div className="relative mx-auto grid min-h-[calc(100vh-12rem)] max-w-7xl items-center gap-12 lg:grid-cols-[1.15fr_.85fr]">
         <section className="order-2 lg:order-1">
-          <div className="inline-flex items-center gap-2 rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-sky-300">
+          <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-sky-700 shadow-sm">
             <span className="size-1.5 animate-pulse rounded-full bg-emerald-400" /> Profesyonel ticaret ağı
           </div>
-          <h1 className="mt-6 max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] sm:text-6xl">WhatsApp kalabalığı değil, <span className="text-sky-400">kontrollü ticaret.</span></h1>
-          <p className="mt-6 max-w-xl text-base font-medium leading-7 text-slate-300">Doğrulanmış tedarikçileri karşılaştırın; minimum siparişi, KDV durumunu, fiyat değişimini ve teslimat koşullarını tek ekrandan yönetin.</p>
+          <h1 className="mt-6 max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] text-slate-950 sm:text-6xl">WhatsApp kalabalığı değil, <span className="text-sky-600">kontrollü ticaret.</span></h1>
+          <p className="mt-6 max-w-xl text-base font-medium leading-7 text-slate-600">Doğrulanmış tedarikçileri karşılaştırın; minimum siparişi, KDV durumunu, fiyat değişimini ve teslimat koşullarını tek ekrandan yönetin.</p>
 
-          <div className="mt-9 grid max-w-2xl grid-cols-3 divide-x divide-white/10 overflow-hidden rounded-2xl border border-white/10 bg-white/[.04]">
+          <div className="mt-9 grid max-w-2xl grid-cols-3 divide-x divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white/90 shadow-sm">
             {[["Kapalı", "Fiyat ağı"], ["Belge", "Doğrulama"], ["Çift yönlü", "İtibar"]].map(([value, label]) => (
-              <div key={label} className="px-4 py-5 sm:px-6"><strong className="block text-lg font-black text-white sm:text-xl">{value}</strong><span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">{label}</span></div>
+              <div key={label} className="px-4 py-5 sm:px-6"><strong className="block text-lg font-black text-slate-950 sm:text-xl">{value}</strong><span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">{label}</span></div>
             ))}
           </div>
 
-          <div className="mt-5 max-w-2xl rounded-2xl border border-white/10 bg-slate-950/45 p-3 shadow-2xl shadow-black/20 backdrop-blur">
-            <div className="mb-2 flex items-center justify-between px-2 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500"><span>Pazar hareketleri</span><span className="text-emerald-400">● Canlı katalog</span></div>
+          <div className="mt-5 max-w-2xl rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-xl shadow-slate-200/50 backdrop-blur">
+            <div className="mb-2 flex items-center justify-between px-2 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500"><span>Pazar hareketleri</span><span className="text-emerald-600">● Canlı katalog</span></div>
             {[['RO membran & filtreler', 'Yeni teklif'], ['Pompa ve bağlantı ekipmanı', 'Stokta'], ['Servis sarf malzemeleri', 'Güncellendi']].map(([name, status], index) => (
-              <div key={name} className="flex items-center gap-3 rounded-xl px-3 py-3 transition hover:bg-white/[.04]">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sky-400/10 text-xs font-black text-sky-300">0{index + 1}</span>
-                <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-200">{name}</span>
-                <span className="rounded-full border border-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-slate-400">{status}</span>
+              <div key={name} className="flex items-center gap-3 rounded-xl px-3 py-3 transition hover:bg-sky-50/80">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-xs font-black text-sky-700">0{index + 1}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-700">{name}</span>
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-slate-500">{status}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="order-1 rounded-[1.75rem] border border-white/10 bg-white p-6 text-slate-950 shadow-2xl shadow-black/30 sm:p-8 lg:order-2 lg:sticky lg:top-28">
+        <section className="order-1 rounded-[1.75rem] border border-sky-100 bg-white p-6 text-slate-950 shadow-2xl shadow-slate-300/45 sm:p-8 lg:order-2 lg:sticky lg:top-28">
           <div className="mb-7 flex items-center justify-between">
             <div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-600">Su Arıtma Pro</p><p className="mt-1 text-sm font-bold text-slate-400">Güvenli işletme erişimi</p></div>
             <span className="flex size-10 items-center justify-center rounded-xl bg-slate-950 text-xs font-black text-white">SA</span>

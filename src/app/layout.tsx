@@ -11,8 +11,38 @@ const nunito = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://suaritmarehberi.com.tr"),
   title: "Su Arıtma Firmaları, Fiyatları ve Gerçek Yorumlar — Su Arıtma Rehberi",
   description: "Türkiye genelinde onaylı su arıtma bayileri, şeffaf fiyat karşılaştırması ve müşteri yorumları tek adreste.",
+  applicationName: "Su Arıtma Rehberi",
+  authors: [{ name: "Su Arıtma Rehberi", url: "https://suaritmarehberi.com.tr" }],
+  creator: "Su Arıtma Rehberi",
+  publisher: "Su Arıtma Rehberi",
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    siteName: "Su Arıtma Rehberi",
+    url: "https://suaritmarehberi.com.tr",
+    title: "Su Arıtma Firmaları, Fiyatları ve Gerçek Yorumlar — Su Arıtma Rehberi",
+    description: "Türkiye genelinde onaylı su arıtma bayileri, şeffaf fiyat karşılaştırması ve müşteri yorumları tek adreste.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Su Arıtma Firmaları, Fiyatları ve Gerçek Yorumlar — Su Arıtma Rehberi",
+    description: "Türkiye genelinde onaylı su arıtma bayileri, şeffaf fiyat karşılaştırması ve müşteri yorumları tek adreste.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  category: "directory",
   icons: {
     icon: [
       { url: "/icon0.svg", type: "image/svg+xml" },
@@ -21,6 +51,9 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   manifest: "/manifest.json",
+  formatDetection: {
+    telephone: true,
+  },
 };
 
 export const viewport: Viewport = {

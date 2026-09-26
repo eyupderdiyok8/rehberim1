@@ -9,6 +9,22 @@ export const B2B_STATUS_LABELS: Record<string, string> = {
 
 export const B2B_STATUS_STEPS = ["requested", "quoted", "accepted", "completed"] as const;
 
+export const B2B_RFQ_STATUS_LABELS: Record<string, string> = {
+  open: "Tekliflere açık",
+  awarded: "Teklif seçildi",
+  cancelled: "İlan kapatıldı",
+  expired: "Süre doldu",
+};
+
+export const B2B_RFQ_OFFER_STATUS_LABELS: Record<string, string> = {
+  submitted: "Teklifin değerlendirmede",
+  accepted: "Teklifin kabul edildi",
+  declined: "Teklif reddedildi",
+  withdrawn: "Teklifin geri çekildi",
+};
+
+export const B2B_UNITS = ["adet", "koli", "paket", "palet", "metre", "kilogram"] as const;
+
 export function getB2BErrorMessage(error: unknown, fallback = "İşlem tamamlanamadı. Lütfen yeniden deneyin.") {
   const message = error instanceof Error
     ? error.message

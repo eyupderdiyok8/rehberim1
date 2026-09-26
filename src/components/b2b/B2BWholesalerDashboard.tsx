@@ -28,7 +28,9 @@ type ManagedProduct = B2BProduct & { is_active: boolean; price?: number; currenc
 type ProductPriceRow = { product_id: string; price: number; currency: "TRY" | "USD" | "EUR" };
 type TradeRequest = { id: string; product_name: string; buyer_user_id: string; buyer_business_name: string; quantity: number; unit: string; status: string; created_at: string; review_submitted: boolean; quoted_unit_price: number | null; quoted_currency: string | null; quote_note: string | null; quote_valid_until: string | null; conversation_id: string | null };
 type QuoteDraft = { price: string; currency: string; note: string; validUntil: string };
-type DashboardView = "overview" | "trades" | "products" | "store";
+type RfqPoolRow = { id: string; title: string; category: string; quantity: number; unit: string; target_price: number | null; currency: string; city: string | null; valid_until: string; status: string; created_at: string; buyer_business_name: string; offer_count: number; my_offer_status: string | null };
+type RfqOfferDraft = { price: string; currency: string; leadTime: string; note: string };
+type DashboardView = "overview" | "trades" | "rfq" | "products" | "store";
 
 const blankProfile = { name: "", description: "", logo_url: "", cover_url: "", city: "", phone: "", whatsapp: "", website: "", shipping_terms: "" };
 const blankProduct = { name: "", brand: "", category: "", description: "", minimum_order_quantity: "1", unit: "adet", vat_included: true, stock_status: "in_stock", lead_time_days: "1", price: "", currency: "TRY" };
@@ -51,12 +53,14 @@ export default function B2BWholesalerDashboard() {
   const [priceDrafts, setPriceDrafts] = useState<Record<string, string>>({});
   const [requests, setRequests] = useState<TradeRequest[]>([]);
   const [quoteDrafts, setQuoteDrafts] = useState<Record<string, QuoteDraft>>({});
+  const [rfqPool, setRfqPool] = useState<RfqPoolRow[]>([]);
+  const [rfqDrafts, setRfqDrafts] = useState<Record<string, RfqOfferDraft>>({});
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const requestedView = searchParams.get("bolum");
-  const [activeView, setActiveView] = useState<DashboardView>(requestedView === "trades" || requestedView === "products" || requestedView === "store" ? requestedView : "overview");
+  const [activeView, setActiveView] = useState<DashboardView>(["trades", "rfq", "products", "store"].includes(requestedView ?? "") ? requestedView as DashboardView : "overview");
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const productFormRef = useRef<HTMLFormElement>(null);
 
@@ -118,6 +122,10 @@ export default function B2BWholesalerDashboard() {
       price: request.quoted_unit_price?.toString() ?? "", currency: request.quoted_currency ?? "TRY",
       note: request.quote_note ?? "", validUntil: request.quote_valid_until?.slice(0,10) ?? new Date(Date.now() + 7 * 86_400_000).toISOString().slice(0,10),
     }])));
+    const { data: rfqPoolData } = await supabase.rpc("list_b2b_rfq_pool");
+    const poolRows = (rfqPoolData ?? []) as RfqPoolRow[];
+    setRfqPool(poolRows);
+    setRfqDrafts((current) => Object.fromEntries(poolRows.map((row) => [row.id, current[row.id] ?? { price: "", currency: "TRY", leadTime: "3", note: "" }])));
     setLoading(false);
   };
 
@@ -262,6 +270,20 @@ export default function B2BWholesalerDashboard() {
     await load();
   };
 
+  const submitRfqOffer = async (row: RfqPoolRow) => {
+    const draft = rfqDrafts[row.id];
+    if (!draft?.price) return setError("Birim fiyat girin.");
+    setBusy(`rfq-${row.id}`);
+    const { error: offerError } = await supabase.rpc("submit_b2b_rfq_offer", {
+      p_rfq_id: row.id, p_unit_price: Number(draft.price), p_currency: draft.currency,
+      p_lead_time_days: Number(draft.leadTime || 0), p_note: draft.note,
+    });
+    setBusy("");
+    if (offerError) return setError(getB2BErrorMessage(offerError, "Teklif gönderilemedi."));
+    notify("Teklifiniz esnafa iletildi; seçilirseniz bildiriminiz olacak.");
+    await load();
+  };
+
   if (loading) return <div className="py-24 text-center text-sm font-bold text-slate-500">Toptancı paneli hazırlanıyor…</div>;
   if (!member || !["wholesaler", "admin"].includes(member.account_type)) return <main className="mx-auto max-w-3xl px-4 py-16"><div className="rounded-2xl border border-amber-200 bg-amber-50 p-8"><h1 className="text-xl font-black text-amber-950">Bu alan toptancı hesaplarına özeldir</h1><p className="mt-2 text-sm font-medium text-amber-800">Toptancı mağazası açmak için yönetici onayı ve hesabınıza mağaza ataması gerekir.</p></div></main>;
   if (!store) return <main className="mx-auto max-w-3xl px-4 py-16"><div className="rounded-2xl border border-sky-200 bg-white p-8"><h1 className="text-xl font-black">Hesabınız hazır, mağaza ataması bekleniyor</h1><p className="mt-2 text-sm text-slate-600">Yönetici mağazanızı oluşturduğunda ürün ve fiyat yönetimi burada açılacak.</p></div></main>;
@@ -272,8 +294,8 @@ export default function B2BWholesalerDashboard() {
     {message && <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">{message}</div>}
 
     <nav className="mb-7 flex gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">{([
-      ["overview", "Genel bakış", "◫"], ["trades", "Görüşmeler", "↗"], ["products", "Ürünler", "◇"], ["store", "Mağaza profili", "◎"],
-    ] as [DashboardView,string,string][]).map(([value,label,icon])=><button key={value} onClick={()=>setActiveView(value)} className={`flex min-h-12 shrink-0 items-center gap-2 rounded-xl px-4 text-xs font-black transition ${activeView===value?"bg-slate-950 text-white shadow-lg":"text-slate-500 hover:bg-slate-50 hover:text-slate-900"}`}><span>{icon}</span>{label}{value==="trades"&&requests.filter((request)=>request.status==="requested").length>0&&<span className="rounded-full bg-sky-400 px-2 py-0.5 text-[9px] text-slate-950">{requests.filter((request)=>request.status==="requested").length}</span>}</button>)}</nav>
+      ["overview", "Genel bakış", "◫"], ["trades", "Görüşmeler", "↗"], ["rfq", "RFQ havuzu", "⌖"], ["products", "Ürünler", "◇"], ["store", "Mağaza profili", "◎"],
+    ] as [DashboardView,string,string][]).map(([value,label,icon])=><button key={value} onClick={()=>setActiveView(value)} className={`flex min-h-12 shrink-0 items-center gap-2 rounded-xl px-4 text-xs font-black transition ${activeView===value?"bg-slate-950 text-white shadow-lg":"text-slate-500 hover:bg-slate-50 hover:text-slate-900"}`}><span>{icon}</span>{label}{value==="trades"&&requests.filter((request)=>request.status==="requested").length>0&&<span className="rounded-full bg-sky-400 px-2 py-0.5 text-[9px] text-slate-950">{requests.filter((request)=>request.status==="requested").length}</span>}{value==="rfq"&&rfqPool.filter((row)=>row.status==="open"&&!row.my_offer_status).length>0&&<span className="rounded-full bg-violet-400 px-2 py-0.5 text-[9px] text-slate-950">{rfqPool.filter((row)=>row.status==="open"&&!row.my_offer_status).length}</span>}</button>)}</nav>
 
     {activeView === "overview" && <div className="space-y-6"><section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[
       [products.filter((item)=>item.is_active).length,"Yayındaki ürün","text-sky-700 bg-sky-50"],
@@ -311,6 +333,13 @@ export default function B2BWholesalerDashboard() {
       {requests.length === 0 ? <div className="rounded-xl border border-dashed border-slate-300 py-14 text-center text-sm font-semibold text-slate-500">Henüz satın alma görüşmesi yok.</div> : <div className="space-y-4">{requests.map((request) => { const draft = quoteDrafts[request.id] ?? {price:"",currency:"TRY",note:"",validUntil:""}; return <article key={request.id} className="rounded-2xl border border-slate-200 p-5"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><span className="text-[9px] font-black uppercase tracking-wider text-sky-600">{request.buyer_business_name}</span><h3 className="mt-1 font-black text-slate-900">{request.product_name}</h3><p className="mt-1 text-xs font-semibold text-slate-500">{request.quantity} {request.unit} · {new Date(request.created_at).toLocaleDateString("tr-TR")}</p></div><span className="rounded-lg bg-slate-100 px-3 py-2 text-xs font-black text-slate-600">{B2B_STATUS_LABELS[request.status] ?? request.status}</span></div><B2BTradeTimeline status={request.status} />
         {(request.status === "requested" || request.status === "quoted") && <div className="mt-5 grid gap-3 rounded-2xl bg-slate-50 p-4 lg:grid-cols-[130px_100px_140px_1fr_auto] lg:items-end"><label className="text-[10px] font-black uppercase text-slate-500">Birim fiyat<input min="0.01" step="0.01" type="number" value={draft.price} onChange={(e)=>setQuoteDrafts({...quoteDrafts,[request.id]:{...draft,price:e.target.value}})} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-black" /></label><label className="text-[10px] font-black uppercase text-slate-500">Para<select value={draft.currency} onChange={(e)=>setQuoteDrafts({...quoteDrafts,[request.id]:{...draft,currency:e.target.value}})} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm"><option>TRY</option><option>USD</option><option>EUR</option></select></label><label className="text-[10px] font-black uppercase text-slate-500">Geçerlilik<input type="date" value={draft.validUntil} onChange={(e)=>setQuoteDrafts({...quoteDrafts,[request.id]:{...draft,validUntil:e.target.value}})} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm" /></label><label className="text-[10px] font-black uppercase text-slate-500">Koşul notu<input value={draft.note} onChange={(e)=>setQuoteDrafts({...quoteDrafts,[request.id]:{...draft,note:e.target.value}})} placeholder="Ödeme, sevkiyat…" className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm normal-case" /></label><button disabled={busy===`quote-${request.id}`} onClick={()=>submitQuote(request)} className="rounded-xl bg-sky-600 px-4 py-3 text-xs font-black text-white">Teklifi gönder</button></div>}
         <div className="mt-4 flex flex-wrap gap-2">{request.conversation_id && <Link href={`/b2b/mesajlar?conversation=${request.conversation_id}`} className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white">Mesajları aç</Link>}{request.status === "accepted" && <button disabled={busy===`request-${request.id}`} onClick={()=>updateRequest(request.id,"completed")} className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">Sipariş tamamlandı</button>}{["requested","quoted","accepted"].includes(request.status) && <button disabled={busy===`request-${request.id}`} onClick={()=>updateRequest(request.id,"cancelled")} className="rounded-lg bg-red-50 px-3 py-2 text-xs font-black text-red-700">Görüşmeyi kapat</button>}{request.status === "completed" && !request.review_submitted && <div className="flex items-center gap-1"><span className="mr-1 text-[10px] font-black uppercase text-slate-400">Esnafı puanla</span>{[1,2,3,4,5].map((rating)=><button key={rating} disabled={busy===`review-${request.id}`} onClick={()=>rateBuyer(request,rating)} aria-label={`${rating} yıldız ver`} className="text-lg text-amber-400 hover:scale-125">★</button>)}</div>}</div>
+      </article>; })}</div>}
+    </section>}
+
+    {activeView === "rfq" && <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div className="mb-5 flex items-center justify-between"><div><h2 className="text-lg font-black">RFQ havuzu</h2><p className="mt-1 text-xs font-medium text-slate-500">Esnafın yayınladığı satın alma ilanlarına teklif verin; seçilen teklif bildiriminize düşer.</p></div><span className="rounded-lg bg-violet-50 px-3 py-2 text-xs font-black text-violet-700">{rfqPool.filter((row) => row.status === "open").length} açık ilan</span></div>
+      {rfqPool.length === 0 ? <div className="rounded-xl border border-dashed border-slate-300 py-14 text-center text-sm font-semibold text-slate-500">Havuzda teklif verebileceğiniz ilan yok. <Link href="/b2b/rfq" className="font-black text-sky-700">Tahtayı görüntüleyin →</Link></div> : <div className="space-y-4">{rfqPool.map((row) => { const draft = rfqDrafts[row.id] ?? { price: "", currency: "TRY", leadTime: "3", note: "" }; return <article key={row.id} className="rounded-2xl border border-slate-200 p-5"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><span className="text-[9px] font-black uppercase tracking-wider text-violet-600">{row.category}{row.city ? ` · ${row.city}` : ""}</span><Link href={`/b2b/rfq/${row.id}`} className="mt-1 block font-black text-slate-900 hover:text-sky-700">{row.title}</Link><p className="mt-1 text-xs font-semibold text-slate-500">◈ {row.buyer_business_name} · {row.quantity} {row.unit} · Son teklif: {new Date(row.valid_until).toLocaleDateString("tr-TR")}{row.target_price !== null ? ` · Hedef: ${new Intl.NumberFormat("tr-TR", { style: "currency", currency: row.currency || "TRY" }).format(Number(row.target_price))}` : ""}</p></div><span className={`shrink-0 rounded-lg px-3 py-2 text-xs font-black ${row.my_offer_status === "accepted" ? "bg-emerald-50 text-emerald-700" : row.my_offer_status ? "bg-sky-50 text-sky-700" : row.status === "open" ? "bg-slate-100 text-slate-600" : "bg-slate-100 text-slate-400"}`}>{row.my_offer_status === "submitted" ? "Teklifiniz değerlendirmede" : row.my_offer_status === "accepted" ? "✓ Teklifiniz kabul edildi" : row.my_offer_status === "declined" ? "Teklifiniz reddedildi" : row.my_offer_status === "withdrawn" ? "Teklifiniz geri çekildi" : `${row.offer_count} teklif`}</span></div>
+        {row.status === "open" && !row.my_offer_status && <div className="mt-4 grid gap-3 rounded-2xl bg-slate-50 p-4 lg:grid-cols-[130px_100px_120px_1fr_auto] lg:items-end"><label className="text-[10px] font-black uppercase text-slate-500">Birim fiyat<input min="0.01" step="0.01" type="number" value={draft.price} onChange={(e) => setRfqDrafts({ ...rfqDrafts, [row.id]: { ...draft, price: e.target.value } })} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-black" /></label><label className="text-[10px] font-black uppercase text-slate-500">Para<select value={draft.currency} onChange={(e) => setRfqDrafts({ ...rfqDrafts, [row.id]: { ...draft, currency: e.target.value } })} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm"><option>TRY</option><option>USD</option><option>EUR</option></select></label><label className="text-[10px] font-black uppercase text-slate-500">Tedarik (gün)<input min="0" max="365" type="number" value={draft.leadTime} onChange={(e) => setRfqDrafts({ ...rfqDrafts, [row.id]: { ...draft, leadTime: e.target.value } })} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm" /></label><label className="text-[10px] font-black uppercase text-slate-500">Koşul notu<input value={draft.note} onChange={(e) => setRfqDrafts({ ...rfqDrafts, [row.id]: { ...draft, note: e.target.value } })} placeholder="Ödeme, sevkiyat…" className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm normal-case" /></label><button disabled={busy === `rfq-${row.id}`} onClick={() => submitRfqOffer(row)} className="rounded-xl bg-violet-600 px-4 py-3 text-xs font-black text-white disabled:opacity-50">Teklifi gönder</button></div>}
+        {row.my_offer_status && <div className="mt-3"><Link href={`/b2b/rfq/${row.id}`} className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-black text-white">Teklif detayını gör</Link></div>}
       </article>; })}</div>}
     </section>}
   </main>;

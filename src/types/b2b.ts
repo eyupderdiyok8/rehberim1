@@ -46,3 +46,44 @@ export interface B2BProduct {
   currency?: "TRY" | "USD" | "EUR";
 }
 
+export type B2BRfqStatus = "open" | "awarded" | "cancelled" | "expired";
+export type B2BRfqOfferStatus = "submitted" | "accepted" | "declined" | "withdrawn";
+
+export interface B2BRfq {
+  id: string;
+  title: string;
+  category: string;
+  product_details: string | null;
+  quantity: number;
+  unit: string;
+  target_price: number | null;
+  currency: "TRY" | "USD" | "EUR";
+  city: string | null;
+  delivery_note: string | null;
+  valid_until: string;
+  status: B2BRfqStatus;
+  awarded_offer_id: string | null;
+  created_at: string;
+  buyer_business_name: string;
+  offer_count: number;
+}
+
+export interface B2BRfqOffer {
+  id: string;
+  rfq_id: string;
+  unit_price: number;
+  currency: "TRY" | "USD" | "EUR";
+  lead_time_days: number;
+  note: string | null;
+  status: B2BRfqOfferStatus;
+  created_at: string;
+  wholesaler?: {
+    name: string;
+    slug: string;
+    logo_url: string | null;
+    city: string | null;
+    rating: number;
+    owner_id: string;
+  };
+}
+

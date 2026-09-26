@@ -66,25 +66,25 @@ export default function B2BOnboardingGuide() {
   };
 
   return <aside aria-label="Başlangıç rehberi" className="bg-[#F4F7FB] px-4 pt-5">
-    <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-sky-100 bg-white shadow-[0_12px_34px_-28px_rgba(15,23,42,0.65)]">
-      <div className="h-1 bg-gradient-to-r from-sky-500 via-cyan-400 to-violet-400" />
+    <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="h-1 bg-slate-900" />
       <div className="p-4 sm:p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div className="flex min-w-0 flex-1 items-center gap-3">
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-sky-50 text-sm font-black text-sky-700 ring-1 ring-sky-100">{completeCount}/{steps.length}</span>
+            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-slate-100 text-sm font-black text-slate-700 ring-1 ring-slate-200">{completeCount}/{steps.length}</span>
             <div className="min-w-0">
-              <span className="mb-1 block text-[9px] font-black uppercase tracking-[0.2em] text-sky-600">Kurulum rehberi</span>
+              <span className="mb-1 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Kurulum rehberi</span>
               <strong className="block text-sm font-black text-slate-950">Başlangıç rehberiniz</strong>
               <p className="truncate text-xs font-medium text-slate-500">Sıradaki: {nextStep?.label}</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            {nextStep && <Link href={nextStep.href} className="rounded-xl bg-sky-600 px-4 py-2.5 text-xs font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-700">Devam et →</Link>}
+            {nextStep && <Link href={nextStep.href} className="rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-black text-white transition hover:bg-slate-800">Devam et</Link>}
             <button onClick={() => setExpanded((value) => !value)} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-black text-slate-700 transition hover:bg-slate-100">{expanded ? "Daralt" : "Tüm adımlar"}</button>
-            <button onClick={dismiss} aria-label="Rehberi gizle" className="grid size-10 place-items-center rounded-xl border border-transparent text-slate-400 transition hover:border-slate-200 hover:bg-slate-50">×</button>
+            <button onClick={dismiss} aria-label="Rehberi gizle" className="grid size-10 place-items-center rounded-xl border border-transparent text-slate-400 transition hover:border-slate-200 hover:bg-slate-50 hover:text-slate-700"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="size-4"><path d="M18 6 6 18M6 6l12 12" /></svg></button>
           </div>
         </div>
-        {expanded && <div className="mt-5 grid gap-3 border-t border-slate-100 pt-5 md:grid-cols-4">{steps.map((step, index) => <Link key={step.label} href={step.href} className={`rounded-xl border p-4 transition ${step.complete ? "border-emerald-200 bg-emerald-50/70" : "border-slate-200 bg-slate-50/60 hover:border-sky-300 hover:bg-white"}`}><span className={`grid size-6 place-items-center rounded-full text-[10px] font-black ${step.complete ? "bg-emerald-500 text-white" : "bg-white text-slate-600 ring-1 ring-slate-200"}`}>{step.complete ? "✓" : index + 1}</span><strong className="mt-3 block text-xs font-black text-slate-900">{step.label}</strong><p className="mt-1 text-[11px] font-medium leading-5 text-slate-500">{step.detail}</p></Link>)}</div>}
+        {expanded && <div className="mt-5 grid gap-3 border-t border-slate-100 pt-5 md:grid-cols-4">{steps.map((step, index) => <Link key={step.label} href={step.href} className={`rounded-xl border p-4 transition ${step.complete ? "border-slate-300 bg-slate-100" : "border-slate-200 bg-white hover:border-slate-400"}`}><span className={`grid size-6 place-items-center rounded-full text-[10px] font-black ${step.complete ? "bg-slate-900 text-white" : "bg-white text-slate-600 ring-1 ring-slate-200"}`}>{step.complete ? <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-3.5"><path d="M4 10.5l4 4 8-9" strokeLinecap="round" strokeLinejoin="round" /></svg> : index + 1}</span><strong className="mt-3 block text-xs font-black text-slate-900">{step.label}</strong><p className="mt-1 text-[11px] font-medium leading-5 text-slate-500">{step.detail}</p></Link>)}</div>}
       </div>
     </div>
   </aside>;

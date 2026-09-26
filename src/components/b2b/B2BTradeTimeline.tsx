@@ -11,8 +11,8 @@ export default function B2BTradeTimeline({ status }: { status: string }) {
           const complete = !terminal && index <= activeIndex;
           return (
             <div key={step} className="relative flex min-w-0 flex-1 flex-col items-center text-center">
-              {index > 0 && <span className={`absolute right-1/2 top-3 h-0.5 w-full ${complete ? "bg-sky-500" : "bg-slate-200"}`} />}
-              <span className={`relative z-10 grid size-6 place-items-center rounded-full border-2 text-[9px] font-black ${complete ? "border-sky-500 bg-sky-500 text-white" : "border-slate-300 bg-white text-slate-400"}`}>{complete ? "✓" : index + 1}</span>
+              {index > 0 && <span className={`absolute right-1/2 top-3 h-0.5 w-full ${complete ? "bg-slate-800" : "bg-slate-200"}`} />}
+              <span className={`relative z-10 grid size-6 place-items-center rounded-full border-2 text-[9px] font-black ${complete ? "border-slate-800 bg-slate-800 text-white" : "border-slate-300 bg-white text-slate-400"}`}>{complete ? <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.4" className="size-3.5"><path d="M4 10.5l4 4 8-9" strokeLinecap="round" strokeLinejoin="round" /></svg> : index + 1}</span>
               <span className={`mt-2 hidden text-[9px] font-black sm:block ${complete ? "text-slate-800" : "text-slate-400"}`}>{B2B_STATUS_LABELS[step]}</span>
             </div>
           );

@@ -91,36 +91,36 @@ function VerificationForm() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="mb-8">
-        <span className="text-xs font-black uppercase tracking-[0.18em] text-sky-600">Esnaf doğrulama</span>
+        <span className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Esnaf doğrulama</span>
         <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950">Toptan fiyat erişimini açın</h1>
         <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-slate-600">Fiyatları yalnızca sektörde faaliyet gösteren işletmelere açıyoruz. Belgeniz herkese açık değildir ve toptancılarla paylaşılmaz.</p>
       </div>
 
       {status === "verified" ? (
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8">
-          <h2 className="text-xl font-black text-emerald-900">✓ İşletmeniz doğrulandı</h2>
+          <h2 className="flex items-center gap-2 text-xl font-black text-emerald-900"><svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="size-5"><path d="M4 10.5l4 4 8-9" strokeLinecap="round" strokeLinejoin="round" /></svg>İşletmeniz doğrulandı</h2>
           <p className="mt-2 text-sm font-medium text-emerald-800">Tüm ürün fiyatlarını ve fiyat geçmişini görüntüleyebilirsiniz.</p>
-          <Link href="/b2b" className="mt-5 inline-block rounded-lg bg-emerald-700 px-5 py-3 text-sm font-bold text-white">Ürünlere dön</Link>
+          <Link href="/b2b" className="mt-5 inline-block rounded-xl bg-emerald-800 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-900">Ürünlere dön</Link>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           {status === "pending" && <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800">Başvurunuz inceleniyor. Gerekirse bilgilerinizi güncelleyip yeniden gönderebilirsiniz.</div>}
           {status === "rejected" && <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">Başvuru yeniden düzenlenmeli.{member?.review_note ? ` Yönetici notu: ${member.review_note}` : ""}</div>}
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-xs font-bold uppercase tracking-wide text-slate-600">İşletme unvanı<input required value={businessName} onChange={(e) => setBusinessName(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-sky-500" /></label>
-            <label className="text-xs font-bold uppercase tracking-wide text-slate-600">Vergi numarası<input required minLength={10} maxLength={11} inputMode="numeric" value={taxNumber} onChange={(e) => setTaxNumber(e.target.value.replace(/\D/g, ""))} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-sky-500" /></label>
-            <label className="text-xs font-bold uppercase tracking-wide text-slate-600">Vergi dairesi<input value={taxOffice} onChange={(e) => setTaxOffice(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-sky-500" /></label>
-            <label className="text-xs font-bold uppercase tracking-wide text-slate-600">Şehir<input required value={city} onChange={(e) => setCity(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-sky-500" /></label>
-            <label className="text-xs font-bold uppercase tracking-wide text-slate-600 sm:col-span-2">Telefon<input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-sky-500" /></label>
+            <label className="text-xs font-bold uppercase tracking-wide text-slate-600">İşletme unvanı<input required value={businessName} onChange={(e) => setBusinessName(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-slate-400" /></label>
+            <label className="text-xs font-bold uppercase tracking-wide text-slate-600">Vergi numarası<input required minLength={10} maxLength={11} inputMode="numeric" value={taxNumber} onChange={(e) => setTaxNumber(e.target.value.replace(/\D/g, ""))} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-slate-400" /></label>
+            <label className="text-xs font-bold uppercase tracking-wide text-slate-600">Vergi dairesi<input value={taxOffice} onChange={(e) => setTaxOffice(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-slate-400" /></label>
+            <label className="text-xs font-bold uppercase tracking-wide text-slate-600">Şehir<input required value={city} onChange={(e) => setCity(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-slate-400" /></label>
+            <label className="text-xs font-bold uppercase tracking-wide text-slate-600 sm:col-span-2">Telefon<input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base font-medium normal-case tracking-normal outline-none focus:border-slate-400" /></label>
           </div>
-          <label className="block rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-5 text-center cursor-pointer hover:border-sky-400">
+          <label className="block rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-5 text-center cursor-pointer hover:border-slate-400 hover:bg-white">
             <span className="block text-sm font-black text-slate-800">Vergi levhası veya esnaf faaliyet belgesi</span>
             <span className="mt-1 block text-xs text-slate-500">PDF, JPG, PNG veya WebP · en fazla 10 MB</span>
             <input required type="file" accept="application/pdf,image/jpeg,image/png,image/webp" onChange={(e) => setDocumentFile(e.target.files?.[0] ?? null)} className="mt-4 block w-full text-sm text-slate-600" />
           </label>
           {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
           {success && <p className="rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700">{success}</p>}
-          <button disabled={loading} className="w-full rounded-lg bg-sky-600 px-5 py-3.5 text-sm font-black text-white hover:bg-sky-700 disabled:opacity-50">{loading ? "Belge güvenli şekilde yükleniyor…" : "Doğrulamaya gönder"}</button>
+          <button disabled={loading} className="w-full rounded-xl bg-slate-900 px-5 py-3.5 text-sm font-black text-white transition hover:bg-slate-800 disabled:opacity-50">{loading ? "Belge güvenli şekilde yükleniyor…" : "Doğrulamaya gönder"}</button>
         </form>
       )}
     </main>

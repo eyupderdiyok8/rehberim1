@@ -30,7 +30,7 @@ export default function B2BAuthGate({ children }: { children: React.ReactNode })
     return (
       <div className="min-h-[55vh] flex items-center justify-center">
         <div className="flex items-center gap-3 text-sm font-bold text-slate-500">
-          <span className="size-5 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
+          <span className="size-5 rounded-full border-2 border-slate-700 border-t-transparent animate-spin" />
           Güvenli oturum kontrol ediliyor…
         </div>
       </div>

@@ -56,11 +56,11 @@ export default function B2BRfqCreate() {
     router.push(`/b2b/rfq/${data}`);
   };
 
-  const field = "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100";
+  const field = "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium outline-none transition focus:border-slate-400";
   const label = "text-xs font-black text-slate-700";
 
   return <main className="mx-auto max-w-3xl px-4 py-9">
-    <div className="mb-7"><span className="text-xs font-black uppercase tracking-[0.18em] text-sky-600">RFQ tahtası</span><h1 className="mt-2 text-3xl font-black text-slate-950">Satın alma ilanı aç</h1><p className="mt-2 text-sm font-medium text-slate-500">İhtiyacını yayınla; doğrulanmış toptancılar son teklif tarihine kadar fiyatını ve koşullarını göndersin.</p></div>
+    <div className="mb-7"><span className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">RFQ tahtası</span><h1 className="mt-2 text-3xl font-black text-slate-950">Satın alma ilanı aç</h1><p className="mt-2 text-sm font-medium text-slate-500">İhtiyacını yayınla; doğrulanmış toptancılar son teklif tarihine kadar fiyatını ve koşullarını göndersin.</p></div>
 
     {error && <div role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</div>}
 
@@ -73,8 +73,8 @@ export default function B2BRfqCreate() {
         </label>
         <label className={label}>Teslimat şehri<input value={city} onChange={(e) => setCity(e.target.value)} placeholder="İstanbul" className={field} /></label>
         <label className={`${label} sm:col-span-2`}>Ürün detayları<textarea value={productDetails} onChange={(e) => setProductDetails(e.target.value)} maxLength={2000} rows={4} placeholder="Teknik özellikler, marka/uyumluluk, ambalaj beklentisi…" className={field} /></label>
-        <label className={label}>Miktar *<div className="flex gap-2"><input required type="number" min={0.01} step="any" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={`${field} flex-1`} /><select value={unit} onChange={(e) => setUnit(e.target.value as typeof unit)} className="mt-1.5 w-28 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-black text-slate-700 outline-none focus:border-sky-400">{B2B_UNITS.map((item) => <option key={item}>{item}</option>)}</select></div></label>
-        <label className={label}>Hedef birim fiyat <span className="font-medium text-slate-400">(isteğe bağlı)</span><div className="flex gap-2"><input type="number" min={0.01} step="any" value={targetPrice} onChange={(e) => setTargetPrice(e.target.value)} placeholder="120,00" className={`${field} flex-1`} /><select value={currency} onChange={(e) => setCurrency(e.target.value as typeof currency)} className="mt-1.5 w-20 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-black text-slate-700 outline-none focus:border-sky-400"><option>TRY</option><option>USD</option><option>EUR</option></select></div></label>
+        <label className={label}>Miktar *<div className="flex gap-2"><input required type="number" min={0.01} step="any" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={`${field} flex-1`} /><select value={unit} onChange={(e) => setUnit(e.target.value as typeof unit)} className="mt-1.5 w-28 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-black text-slate-700 outline-none focus:border-slate-400">{B2B_UNITS.map((item) => <option key={item}>{item}</option>)}</select></div></label>
+        <label className={label}>Hedef birim fiyat <span className="font-medium text-slate-400">(isteğe bağlı)</span><div className="flex gap-2"><input type="number" min={0.01} step="any" value={targetPrice} onChange={(e) => setTargetPrice(e.target.value)} placeholder="120,00" className={`${field} flex-1`} /><select value={currency} onChange={(e) => setCurrency(e.target.value as typeof currency)} className="mt-1.5 w-20 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-black text-slate-700 outline-none focus:border-slate-400"><option>TRY</option><option>USD</option><option>EUR</option></select></div></label>
         <label className={label}>Son teklif tarihi *<input required type="date" min={new Date().toISOString().slice(0, 10)} value={validUntil} onChange={(e) => setValidUntil(e.target.value)} className={field} /></label>
         <label className={label}>Teslimat notu<input maxLength={500} value={deliveryNote} onChange={(e) => setDeliveryNote(e.target.value)} placeholder="İş yine teslim, irsaliyeli fatura…" className={field} /></label>
       </div>
@@ -83,11 +83,11 @@ export default function B2BRfqCreate() {
         <Link href="/b2b/rfq" className="text-xs font-black text-slate-500 transition hover:text-slate-800">← Tahtaya dön</Link>
         <div className="flex gap-3">
           <Link href="/b2b/rfq" className="rounded-xl border border-slate-200 px-5 py-3 text-xs font-black text-slate-600 transition hover:bg-slate-50">Vazgeç</Link>
-          <button type="submit" disabled={busy} className="rounded-xl bg-sky-600 px-6 py-3 text-xs font-black text-white shadow-lg shadow-sky-600/25 transition hover:bg-sky-500 disabled:opacity-50">{busy ? "Yayınlanıyor…" : "İlanı yayınla"}</button>
+          <button type="submit" disabled={busy} className="rounded-xl bg-slate-900 px-6 py-3 text-xs font-black text-white transition hover:bg-slate-800 disabled:opacity-50">{busy ? "Yayınlanıyor…" : "İlanı yayınla"}</button>
         </div>
       </div>
     </form>
 
-    <p className="mt-5 rounded-xl border border-sky-100 bg-sky-50/60 p-4 text-xs font-medium leading-5 text-sky-900">İlanın; başlık, kategori, miktar ve son teklif tarihi ile tüm doğrulanmış üyelere görünür. Hedef fiyatını yazarsan ilanın yanında paylaşılır; paylaşmak istemiyorsan bu alanı boş bırak.</p>
+    <p className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-medium leading-5 text-slate-600">İlanın; başlık, kategori, miktar ve son teklif tarihi ile tüm doğrulanmış üyelere görünür. Hedef fiyatını yazarsan ilanın yanında paylaşılır; paylaşmak istemiyorsan bu alanı boş bırak.</p>
   </main>;
 }

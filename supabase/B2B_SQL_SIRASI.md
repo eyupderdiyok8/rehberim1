@@ -14,6 +14,7 @@ SQL dosyaları artık değiştirilmeyecek, numaralı güncellemeler halinde iler
 6. `b2b_updates/006_notifications.sql`
 7. `b2b_updates/007_favorites_and_price_alerts.sql`
 8. `b2b_updates/008_rfq.sql`
+9. `b2b_updates/009_audit_all_movements.sql`
 
 Her dosya kendi içinde transaction kullanır. Hata oluşursa o dosyanın yaptığı işlemler geri alınır. Dosyalar mümkün olduğunca tekrar çalıştırılabilir hazırlanmıştır.
 
@@ -35,3 +36,4 @@ Eski `b2b_trade_network.sql` dosyasını daha önce çalıştırdıysanız da 00
 | 006 | Gerçek zamanlı işlem ve mesaj bildirimleri | ☐ |
 | 007 | Ürün favorileri ve fiyat alarmları | ☐ |
 | 008 | RFQ: Satın alma ilanları ve toptancı teklifleri | ☐ |
+| 009 | Tüm platform hareketlerinin denetim izi (mesaj, RFQ, doğrulama, fiyat geçişi) | ☐ |

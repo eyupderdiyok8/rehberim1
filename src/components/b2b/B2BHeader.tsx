@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { useB2BSession } from "@/lib/useB2BSession";
 import { useB2BNotificationCounts } from "@/components/b2b/B2BNotifications";
 
 const navItems = [
@@ -16,25 +17,38 @@ const navItems = [
   { href: "/b2b/taleplerim", label: "Taleplerim" },
 ];
 
+type MemberProfile = { account_type: string; verification_status: string; business_name: string | null };
+
 export default function B2BHeader() {
   const router = useRouter();
   const pathname = usePathname();
-  const [email, setEmail] = useState<string | null>(null);
-  const [businessName, setBusinessName] = useState<string | null>(null);
-  const [accountType, setAccountType] = useState<string | null>(null);
-  const [verification, setVerification] = useState<string | null>(null);
-  const { notificationCount, messageCount } = useB2BNotificationCounts(Boolean(email));
+  const session = useB2BSession();
+  const userId = session?.user?.id ?? null;
+  const email = session?.user?.email ?? null;
+  const [profile, setProfile] = useState<{ userId: string; member: MemberProfile } | null>(null);
+  const { notificationCount, messageCount } = useB2BNotificationCounts(Boolean(userId));
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      setEmail(data.user?.email ?? null);
-      if (!data.user) return;
-      const { data: member } = await supabase.from("b2b_members").select("account_type, verification_status, business_name").eq("user_id", data.user.id).maybeSingle();
-      setAccountType(member?.account_type ?? null);
-      setVerification(member?.verification_status ?? null);
-      setBusinessName(member?.business_name ?? null);
-    });
-  }, []);
+    if (!userId) return;
+    let active = true;
+    supabase
+      .from("b2b_members")
+      .select("account_type, verification_status, business_name")
+      .eq("user_id", userId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (active && data) setProfile({ userId, member: data as MemberProfile });
+      });
+    return () => {
+      active = false;
+    };
+  }, [userId]);
+
+  // Never render the account type of a previous session under a new user id.
+  const member = profile && profile.userId === userId ? profile.member : null;
+  const accountType = member?.account_type ?? null;
+  const verification = member?.verification_status ?? null;
+  const businessName = member?.business_name ?? null;
 
   const logout = async () => {
     await supabase.auth.signOut();

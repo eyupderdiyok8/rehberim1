@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { useB2BSession } from "@/lib/useB2BSession";
 
 type Ad = {
   id: string;
@@ -17,15 +18,30 @@ type Ad = {
 export default function B2BGlobalLayer() {
   const [notification, setNotification] = useState<Ad | null>(null);
   const [popup, setPopup] = useState<Ad | null>(null);
+  const userId = useB2BSession()?.user?.id ?? null;
 
   useEffect(() => {
     const touch = () => supabase.rpc("touch_b2b_presence");
     touch();
     const presenceTimer = window.setInterval(touch, 60_000);
+    return () => window.clearInterval(presenceTimer);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
 
     const loadAds = async () => {
+      // Sponsored slots are readable only for authenticated members, and this layer
+      // lives in the B2B layout, so it must re-read as soon as a session appears.
+      if (!userId) {
+        setNotification(null);
+        setPopup(null);
+        return;
+      }
+
       const now = new Date().toISOString();
       const { data } = await supabase.from("b2b_ads").select("id, ad_type, title, body, image_url, cta_label, target_url").in("status", ["approved", "active"]).lte("starts_at", now).gte("ends_at", now).limit(8);
+      if (!active) return;
       const rows = (data ?? []) as Ad[];
       const notificationAd = rows.find((ad) => ad.ad_type === "notification") ?? null;
       const popupAd = rows.find((ad) => ad.ad_type === "popup") ?? null;
@@ -39,9 +55,12 @@ export default function B2BGlobalLayer() {
         supabase.rpc("track_b2b_ad", { p_ad_id: popupAd.id, p_event: "impression" });
       }
     };
-    loadAds();
-    return () => window.clearInterval(presenceTimer);
-  }, []);
+
+    void loadAds();
+    return () => {
+      active = false;
+    };
+  }, [userId]);
 
   const clickAd = (ad: Ad) => supabase.rpc("track_b2b_ad", { p_ad_id: ad.id, p_event: "click" });
 
